@@ -17,6 +17,8 @@ class TeamViewSet(viewsets.ModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    filter_fields = ('teams',)
+    ordering = ('last_name',)
     
     def get_queryset(self):
         queryset = super().get_queryset()

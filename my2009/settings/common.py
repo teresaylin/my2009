@@ -101,5 +101,9 @@ LOGIN_REDIRECT_URL = '/webapp'
 # REST framework setup
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAdminUser',),
-    'PAGINATE_BY_PARAM': 'page_size'
+    'DEFAULT_FILTER_BACKENDS': (
+        'rest_framework.filters.DjangoFilterBackend',
+        'rest_framework.filters.OrderingFilter'
+    ),
+    'PAGINATE_BY_PARAM': 'page_size',
 }

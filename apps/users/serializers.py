@@ -23,7 +23,7 @@ class UserRoleMappingSerializer(serializers.ModelSerializer):
 class TeamSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Team
-        fields = ('color', 'team_email')
+        fields = ('url', 'id', 'color', 'team_email')
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
