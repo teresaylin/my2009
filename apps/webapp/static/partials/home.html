@@ -1,0 +1,8 @@
+<h1>Homepage</h1>
+
+<h2>Tasks</h2>
+<ul>
+    <li ng-repeat="task in userTasks">
+        <a ui-sref="task.detail({taskId:task.id})">{{ task.name }}</a>
+    </li>
+</ul>

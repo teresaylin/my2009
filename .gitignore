@@ -1,0 +1,7 @@
+.project
+.pydevproject
+__pycache__
+*.pyc
+*.swp
+db.sqlite3
+apps/users/fixtures/*
