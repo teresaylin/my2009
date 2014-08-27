@@ -11,6 +11,7 @@ from apps.webapp import urls as WebappUrls
 # API router
 router = routers.DefaultRouter()
 router.register(r'tasks', views.TaskViewSet)
+router.register(r'teams', views.TeamViewSet)
 router.register(r'users', views.UserViewSet)
 
 urlpatterns = patterns('',

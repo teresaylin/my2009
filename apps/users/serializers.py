@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from .models import UserProfile, Role, UserRoleMapping, Task
+from .models import UserProfile, Role, UserRoleMapping, Task, Team
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,14 +19,25 @@ class UserRoleMappingSerializer(serializers.ModelSerializer):
         fields = ('role', 'status')
         
     role = RoleSerializer()
+    
+class TeamSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Team
+        fields = ('color', 'team_email')
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ('url', 'id', 'username', 'email', 'first_name', 'last_name', 'profile', 'user_roles')
+        fields = ('url', 'id', 'username', 'email', 'first_name', 'last_name', 'full_name', 'profile', 'user_roles', 'teams')
         
     profile = UserProfileSerializer()
     user_roles = UserRoleMappingSerializer()
+    teams = TeamSerializer()
+    full_name = serializers.SerializerMethodField('getFullName')
+    
+    def getFullName(self, obj):
+        return obj.first_name + ' ' + obj.last_name
+
     
 class TaskSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:

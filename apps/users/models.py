@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 class Team(models.Model):
     color = models.CharField(max_length=10, blank = False)
     team_email = models.EmailField(max_length=30)
-    users = models.ManyToManyField(User, through='UserTeamMapping')
+    users = models.ManyToManyField(User, through='UserTeamMapping', related_name='teams')
 
     def __str__(self):
         return self.color
