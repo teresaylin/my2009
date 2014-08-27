@@ -10,7 +10,20 @@ app.factory('TaskRepository', function($http) {
         get: function(id) {
             return $http.get(baseUrl+'/'+id);
         },
-        list: function(id) {
+        list: function() {
+            return $http.get(baseUrl);
+        }
+    };
+});
+
+app.factory('TeamRepository', function($http) {
+    var baseUrl = '/api/teams';
+    
+    return {
+        get: function(id) {
+            return $http.get(baseUrl+'/'+id);
+        },
+        list: function() {
             return $http.get(baseUrl);
         }
     };
@@ -24,7 +37,10 @@ app.factory('UserRepository', function($http) {
             return $http.get(baseUrl+'/'+id);
         },
         getCurrentUser: function() {
-        	return $http.get(baseUrl+'/?current');
+            return $http.get(baseUrl+'/?current');
+        },
+        list: function(params) {
+            return $http.get(baseUrl, { params: params });
         }
     };
 });
@@ -43,15 +59,15 @@ app.config(function($stateProvider, $urlRouterProvider) {
             url: '/not-found',
             templateUrl: partial('not-found.html')
         })
-        // Homepage
-        .state('home', {
+        // Dashboard
+        .state('dashboard', {
             url: '/',
-            templateUrl: partial('home.html'),
+            templateUrl: partial('dashboard.html'),
             controller: function($scope, TaskRepository) {
                 // Get list of all tasks
                 TaskRepository.list()
                     .success(function(tasks) {
-                        $scope.userTasks = tasks.results;
+                        $scope.userTasks = tasks;
                     });
             }
         })
@@ -76,15 +92,15 @@ app.config(function($stateProvider, $urlRouterProvider) {
             }
         })
         // Tasks
-        .state('task', {
-            abstract: true,
-            url: '/task'
+        .state('tasks', {
+            url: '/tasks',
+            templateUrl: partial('tasks/tasks.html')
         })
-        .state('task.detail', {
+        .state('tasks.detail', {
             url: '/:taskId',
             views: {
                 '@': {
-                    templateUrl: partial('task/detail.html'),
+                    templateUrl: partial('tasks/detail.html'),
                     controller: function($scope, $stateParams, TaskRepository) {
                         // Get task
                         TaskRepository.get($stateParams.taskId)
@@ -95,6 +111,11 @@ app.config(function($stateProvider, $urlRouterProvider) {
                 }
             }
         })
+        // Events
+        .state('events', {
+            url: '/events',
+            templateUrl: partial('events/events.html')
+        })
         ;
 });
 
@@ -102,6 +123,55 @@ app.controller('AppCtrl', function($scope, UserRepository) {
     // Get current user
     UserRepository.getCurrentUser()
         .success(function(user) {
-            $scope.currentUser = user.results[0];
+            $scope.currentUser = user[0];
         });
+});
+
+app.controller('NavFilterCtrl', function($scope, TeamRepository, UserRepository) {
+    // Get list of all teams
+    TeamRepository.list()
+        .success(function(teams) {
+            $scope.teams = teams;
+            setTeam(teams[0]);
+        });	
+
+    var setTeam = function(team) {
+        $scope.activeTeam = team;
+
+		// Update users list with only users in active team
+    	UserRepository.list({ teams: team.id })
+            .success(function(users) {
+                $scope.users = users;
+                setUser(users[0]);
+            });	
+    };
+
+    var setUser = function(user) {
+        $scope.activeUser = user;
+    };
+    
+    // Select team click handler
+    $scope.selectTeam = function($event, team) {
+        $event.preventDefault();
+        $event.stopPropagation();
+
+        $scope.teamSelectOpen = false;
+
+    	setTeam(team);
+    };
+
+    // Select user click handler
+    $scope.selectUser = function($event, user) {
+        $event.preventDefault();
+        $event.stopPropagation();
+
+        $scope.userSelectOpen = false;
+
+    	setUser(user);
+    };
+    
+    $scope.activeTeam = null;
+    $scope.activeUser = null;
+    $scope.teamSelectOpen = false;
+    $scope.userSelectOpen = false;
 });

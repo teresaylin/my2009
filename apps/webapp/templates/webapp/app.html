@@ -13,7 +13,8 @@
             <div class="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation"></div>
         </div>
         <!-- Logo -->
-        <a ui-sref="home" class="logo"><b>App Name</b></a>
+        <a ui-sref="dashboard" class="logo"><b>App Name</b></a>
+        
         <div class="nav notify-row" id="top_menu">
             <!-- Notifications -->
             <ul class="nav top-menu">
@@ -151,6 +152,30 @@
                 </li>
             </ul>
         </div>
+
+        <!-- Nav Filter -->
+        {% verbatim %}
+        <div class="nav-filter" ng-controller="NavFilterCtrl">
+            <span class="dropdown" is-open="teamSelectOpen">
+                <a href class="dropdown-toggle">{{ activeTeam.color }}</a>
+                <ul class="dropdown-menu">
+                    <li ng-repeat="team in teams">
+                        <a href ng-click="selectTeam($event, team)">{{ team.color }}</a>
+                    </li>
+                </ul>
+            </span>
+            /
+            <span class="dropdown" is-open="userSelectOpen">
+                <a href class="dropdown-toggle">{{ activeUser.full_name }}</a>
+                <ul class="dropdown-menu">
+                    <li ng-repeat="user in users">
+                        <a href ng-click="selectUser($event, user)">{{ user.full_name }}</a>
+                    </li>
+                </ul>
+            </span>
+        </div>
+        {% endverbatim %}
+        
         <!-- Logout -->
         <div class="top-menu">
             <ul class="nav pull-right top-menu">
@@ -169,18 +194,36 @@
                     </a>
                 </p>
 
-                <h5 class="centered">{% verbatim %}{{ currentUser.first_name }} {{ currentUser.last_name }}{% endverbatim %}</h5>
+                <h5 class="centered">{% verbatim %}{{ currentUser.full_name }}{% endverbatim %}</h5>
                   
                 <li class="mt">
-                    <a ui-sref="home">
+                    <a ui-sref="dashboard">
                         <i class="fa fa-dashboard"></i>
                         <span>Dashboard</span>
                     </a>
                 </li>
                 <li>
-                    <a ui-sref="Tasks">
-                        <i class="fa fa-dashboard"></i>
+                    <a ui-sref="tasks">
+                        <i class="fa fa-tasks"></i>
                         <span>Tasks</span>
+                    </a>
+                </li>
+                <li>
+                    <a ui-sref="not-found">
+                        <i class="fa fa-users"></i>
+                        <span>People</span>
+                    </a>
+                </li>
+                <li>
+                    <a ui-sref="events">
+                        <i class="fa fa-calendar"></i>
+                        <span>Events</span>
+                    </a>
+                </li>
+                <li>
+                    <a ui-sref="not-found">
+                        <i class="fa fa-folder"></i>
+                        <span>Files</span>
                     </a>
                 </li>
             </ul>
