@@ -1,0 +1,63 @@
+<h1>Files</h1>
+
+<div class="row">
+	<div class="col-lg-12">
+    	<div class="content-panel" ng-controller="FilesListCtrl">
+    	    <h4><span class="fa fa-angle-right"></span> Files</h4>
+    	    <div class="files-list-buttons">
+    	    	<button class="btn btn-default"><span class="fa fa-upload"></span> Upload</button>
+    	    	<button class="btn btn-default"><span class="fa fa-folder"></span> Create folder</button>
+    	    	<button class="btn btn-default"><span class="fa fa-times"></span> Delete</button>
+    	    </div>
+            <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Name</th>
+                        <th>Size</th>
+                        <th>Modified</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="file in files">
+                        <td><input type="checkbox"></td>
+                        <td>
+                        	<span class="fa fa-folder-o" ng-if="file.type == 'directory'"></span>
+                        	<span class="fa fa-file-{{ file.type }}-o" ng-if="file.type != 'directory'"></span>
+                        	<a href="#">{{ file.name }}</a>
+                        </td>
+                        <td>{{ file.size }}</td>
+                        <td>{{ file.modifiedTime }}</td>
+                    </tr>
+                	
+                	<!--
+                    <tr>
+                        <td><input type="checkbox"></td>
+                        <td><span class="fa fa-folder-o"></span> <a href="#">Folder of stuff</a></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox"></td>
+                        <td><span class="fa fa-file-pdf-o"></span> <a href="#">Some Document.pdf</a></td>
+                        <td>1.56 MB</td>
+                        <td>14/08/27 9:50AM</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox"></td>
+                        <td><span class="fa fa-file-image-o"></span> <a href="#">An image.jpeg</a></td>
+                        <td>100.42 KB</td>
+                        <td>14/08/27 9:50AM</td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox"></td>
+                        <td><span class="fa fa-file-powerpoint-o"></span> <a href="#">My Presentation.pptx</a></td>
+                        <td>10.21 MB</td>
+                        <td>14/08/27 9:50AM</td>
+                    </tr>
+                   -->
+                </tbody>
+            </table>
+        </div>
+     </div>
+</div>

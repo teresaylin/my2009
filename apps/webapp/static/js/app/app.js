@@ -116,6 +116,11 @@ app.config(function($stateProvider, $urlRouterProvider) {
             url: '/events',
             templateUrl: partial('events/events.html')
         })
+        // Files
+        .state('files', {
+            url: '/files',
+            templateUrl: partial('files/files.html')
+        })
         ;
 });
 
@@ -133,17 +138,17 @@ app.controller('NavFilterCtrl', function($scope, TeamRepository, UserRepository)
         .success(function(teams) {
             $scope.teams = teams;
             setTeam(teams[0]);
-        });	
+        });    
 
     var setTeam = function(team) {
         $scope.activeTeam = team;
 
-		// Update users list with only users in active team
-    	UserRepository.list({ teams: team.id })
+        // Update users list with only users in active team
+        UserRepository.list({ teams: team.id })
             .success(function(users) {
                 $scope.users = users;
                 setUser(users[0]);
-            });	
+            });    
     };
 
     var setUser = function(user) {
@@ -157,7 +162,7 @@ app.controller('NavFilterCtrl', function($scope, TeamRepository, UserRepository)
 
         $scope.teamSelectOpen = false;
 
-    	setTeam(team);
+        setTeam(team);
     };
 
     // Select user click handler
@@ -167,11 +172,40 @@ app.controller('NavFilterCtrl', function($scope, TeamRepository, UserRepository)
 
         $scope.userSelectOpen = false;
 
-    	setUser(user);
+        setUser(user);
     };
     
     $scope.activeTeam = null;
     $scope.activeUser = null;
     $scope.teamSelectOpen = false;
     $scope.userSelectOpen = false;
+});
+
+app.controller('FilesListCtrl', function($scope) {
+    $scope.files = [
+        {
+            type: 'directory',
+            name: 'Folder of stuff',
+            modifiedTime: (new Date()).toJSON(),
+            size: 0
+        },
+        {
+            type: 'pdf',
+            name: 'Some Document.pdf',
+            modifiedTime: (new Date()).toJSON(),
+            size: 124654
+        },
+        {
+            type: 'image',
+            name: 'An image.jpeg',
+            modifiedTime: (new Date()).toJSON(),
+            size: 124654
+        },
+        {
+            type: 'powerpoint',
+            name: 'My Presentation.pptx',
+            modifiedTime: (new Date()).toJSON(),
+            size: 124654
+        }
+    ];
 });
