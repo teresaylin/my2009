@@ -7,6 +7,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 from apps.webapp import urls as WebappUrls
+from apps.dropbox import urls as DropboxUrls
 
 # API router
 router = routers.DefaultRouter()
@@ -24,4 +25,5 @@ urlpatterns = patterns('',
     url(r'^webapp/', include(WebappUrls, namespace='webapp')),
     
     url(r'^api/', include(router.urls)),
+    url(r'^dropbox/', include(DropboxUrls, namespace='dropbox'))
 )
