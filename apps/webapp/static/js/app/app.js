@@ -3,6 +3,30 @@ var app = angular.module('app', [
     'ui.bootstrap'
 ]);
 
+// App configuration
+app.config(function($httpProvider) {
+    $httpProvider.defaults.xsrfCookieName = 'csrftoken';
+    $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
+});
+
+app.factory('DropboxService', function($http) {
+    var baseUrl = '/dropbox';
+    
+    return {
+        getStatus: function(id) {
+            return $http.get(baseUrl+'/status');
+        },
+        requestAuthorization: function(id) {
+            return $http.get(baseUrl+'/authorize');
+        },
+        finishAuthorization: function(authCode) {
+            return $http.post(baseUrl+'/authorize', {
+                'authorization_code': authCode
+            });
+        }
+    };
+});
+
 app.factory('TaskRepository', function($http) {
     var baseUrl = '/api/tasks';
     
@@ -45,11 +69,11 @@ app.factory('UserRepository', function($http) {
     };
 });
 
-app.config(function($stateProvider, $urlRouterProvider) {
-    var partial = function(partial) {
-        return '/static/partials/'+partial;
-    }
+var partial = function(partial) {
+    return '/static/partials/'+partial;
+}
 
+app.config(function($stateProvider, $urlRouterProvider) {
     $urlRouterProvider
         .when('', '/')
         .otherwise('/not-found');
@@ -69,6 +93,13 @@ app.config(function($stateProvider, $urlRouterProvider) {
                     .success(function(tasks) {
                         $scope.userTasks = tasks;
                     });
+            }
+        })
+        // Settings
+        .state('settings', {
+            url: '/settings',
+            templateUrl: partial('settings.html'),
+            controller: function($scope) {
             }
         })
         // Users
@@ -208,4 +239,57 @@ app.controller('FilesListCtrl', function($scope) {
             size: 124654
         }
     ];
+});
+
+app.controller('DropboxAuthCtrl', function($scope, $modal, DropboxService) {
+    // Get Dropbox status
+    DropboxService.getStatus()
+        .success(function(status) {
+            $scope.status = status;
+        });
+
+    $scope.openAuthDialog = function() {
+        var modal = $modal.open({
+            templateUrl: partial('dropbox/auth-dialog.html'),
+            controller: function($scope, $modalInstance, DropboxService) {
+                // Get authorization URL
+                DropboxService.requestAuthorization()
+                    .success(function(data) {
+                        $scope.authUrl = data.authorize_url;
+                    });
+                    
+                $scope.codeChanged = function(form) {
+                	// Reset invalidCode flag when code changes
+                	form.code.$setValidity('invalidCode', true);
+                };
+                
+                $scope.ok = function(form) {
+                    // Finish authorization
+                    DropboxService.finishAuthorization(form.authCode)
+                        .success(function(data) {
+                            // Auth successful
+                            $modalInstance.close(true);
+                        })
+                        .error(function(data, status) {
+                            // Invalid auth code
+                            if(status == 400) {
+                                form.code.$setValidity('invalidCode', false);
+                            }
+                        });
+                };
+
+                $scope.cancel = function() {
+                    $modalInstance.dismiss('cancel');
+                };
+            }
+        });
+        
+        modal.result.then(function(authorized) {
+            // Refresh Dropbox status
+            DropboxService.getStatus()
+                .success(function(status) {
+                    $scope.status = status;
+                });
+        });
+    };
 });

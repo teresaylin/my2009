@@ -1,0 +1,11 @@
+<h1>Settings</h1>
+
+<h2>Dropbox</h2>
+<div ng-controller="DropboxAuthCtrl">
+    <p ng-if="status.authorized">
+    	Linked to Dropbox account: {{ status.email }}
+    </p>
+    <p ng-if="!status.authorized">
+        You have not authorized Dropbox access. Click <a href ng-click="openAuthDialog()">here</a> to authorize. 
+    </p>
+</div>
