@@ -1,6 +1,7 @@
 var app = angular.module('app', [
     'ui.router',
-    'ui.bootstrap'
+    'ui.bootstrap',
+    'ui.calendar'
 ]);
 
 // App configuration
@@ -259,8 +260,8 @@ app.controller('DropboxAuthCtrl', function($scope, $modal, DropboxService) {
                     });
                     
                 $scope.codeChanged = function(form) {
-                	// Reset invalidCode flag when code changes
-                	form.code.$setValidity('invalidCode', true);
+                    // Reset invalidCode flag when code changes
+                    form.code.$setValidity('invalidCode', true);
                 };
                 
                 $scope.ok = function(form) {
@@ -292,4 +293,48 @@ app.controller('DropboxAuthCtrl', function($scope, $modal, DropboxService) {
                 });
         });
     };
+});
+
+app.controller('CalendarCtrl', function($scope) {
+    $scope.eventsSource = function(start, end, timezone, callback) {
+        var events = [];
+        
+        events.push({
+            title: 'Test event',
+            start: start,
+            end: start + 1000000,
+            editable: true,
+        });
+        
+        callback(events);
+    };
+
+    // Event click handler
+    var onEventClick = function(event, allDay, jsEvent, view){
+    };
+
+    // Event drag/drop handler
+    var onEventDrop = function(event, delta, revertFunc, jsEvent, ui, view) {
+    };
+
+    // Event resize handler
+    var onEventResize = function(event, delta, revertFunc, jsEvent, ui, view) {
+    };
+
+    // Calendar configuration
+    $scope.uiConfig = {
+        calendar: {
+            height: 600,
+            header: {
+                left: 'agendaDay agendaWeek month',
+                center: 'title',
+                right: 'today prev,next'
+            },
+            eventClick: onEventClick,
+            eventDrop: onEventDrop,
+            eventResize: onEventResize,
+        }
+    };
+
+    $scope.eventSources = [$scope.eventsSource];
 });

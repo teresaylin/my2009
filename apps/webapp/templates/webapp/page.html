@@ -9,7 +9,7 @@
         <title>App</title>
 
         <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
-        <link href="{% static 'font-awesome/css/font-awesome.css' %}" rel="stylesheet" />
+        <link href="{% static 'font-awesome/css/font-awesome.css' %}" rel="stylesheet">
 
         <link href="{% static 'css/style.css' %}" rel="stylesheet">
         <link href="{% static 'css/style-responsive.css' %}" rel="stylesheet">
@@ -25,11 +25,16 @@
         <script src="{% static 'js/jquery-1.11.1.min.js' %}"></script>
         <!--<script src="{% static 'js/bootstrap-3.2.0.min.js' %}"></script>-->
 
+        <script src="{% static 'js/fullcalendar-2.1.1/lib/moment.min.js' %}"></script>
+        <script src="{% static 'js/fullcalendar-2.1.1/fullcalendar.min.js' %}"></script>
+        <link href="{% static 'js/fullcalendar-2.1.1/fullcalendar.min.css' %}" rel="stylesheet">
+
         {% block pageScriptHead %}{% endblock %}
 
         <script src="{% static 'js/angular-1.2.19.min.js' %}"></script>
         <script src="{% static 'js/angular-ui-router-0.2.10.min.js' %}"></script>
         <script src="{% static 'js/ui-bootstrap-tpls-0.11.0.min.js' %}"></script>
+        <script src="{% static 'js/calendar.js' %}"></script>
 
         <script src="{% static 'js/app/app.js' %}"></script>
     </head>
