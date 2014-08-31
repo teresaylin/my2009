@@ -1,19 +1,21 @@
 from django.conf.urls import patterns, include, url
 from rest_framework import routers
 
-from apps.users import views
-
 from django.contrib import admin
 admin.autodiscover()
 
-from apps.webapp import urls as WebappUrls
-from apps.dropbox import urls as DropboxUrls
+from apps.users import views as userViews
+from apps.events import views as eventViews
+
+from apps.webapp import urls as webappUrls
+from apps.dropbox import urls as dropboxUrls
 
 # API router
 router = routers.DefaultRouter()
-router.register(r'tasks', views.TaskViewSet)
-router.register(r'teams', views.TeamViewSet)
-router.register(r'users', views.UserViewSet)
+router.register(r'tasks', userViews.TaskViewSet)
+router.register(r'teams', userViews.TeamViewSet)
+router.register(r'users', userViews.UserViewSet)
+router.register(r'events', eventViews.EventViewSet)
 
 urlpatterns = patterns('',
     # Examples:
@@ -22,8 +24,8 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
     
-    url(r'^webapp/', include(WebappUrls, namespace='webapp')),
+    url(r'^webapp/', include(webappUrls, namespace='webapp')),
     
     url(r'^api/', include(router.urls)),
-    url(r'^dropbox/', include(DropboxUrls, namespace='dropbox'))
+    url(r'^dropbox/', include(dropboxUrls, namespace='dropbox'))
 )

@@ -28,6 +28,19 @@ app.factory('DropboxService', function($http) {
     };
 });
 
+app.factory('EventRepository', function($http) {
+    var baseUrl = '/api/events';
+    
+    return {
+        get: function(id) {
+            return $http.get(baseUrl+'/'+id);
+        },
+        list: function(params) {
+            return $http.get(baseUrl, { params: params });
+        }
+    };
+});
+
 app.factory('TaskRepository', function($http) {
     var baseUrl = '/api/tasks';
     
@@ -295,18 +308,23 @@ app.controller('DropboxAuthCtrl', function($scope, $modal, DropboxService) {
     };
 });
 
-app.controller('CalendarCtrl', function($scope) {
+app.controller('CalendarCtrl', function($scope, EventRepository) {
     $scope.eventsSource = function(start, end, timezone, callback) {
-        var events = [];
-        
-        events.push({
-            title: 'Test event',
-            start: start,
-            end: start + 1000000,
-            editable: true,
-        });
-        
-        callback(events);
+        // Get events within date range
+        var query = {
+            start: start.toJSON(),
+            end: end.toJSON()
+        };
+        EventRepository.list(query)
+            .success(function(events) {
+                // Iterate events
+                angular.forEach(events, function(event) {
+                    delete event.url;
+                    //event.editable = true;
+                });
+                
+                callback(events);
+            });
     };
 
     // Event click handler
