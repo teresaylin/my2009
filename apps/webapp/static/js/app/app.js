@@ -83,6 +83,17 @@ app.factory('UserRepository', function($http) {
     };
 });
 
+app.factory('NavFilterService', function($rootScope) {
+    return {
+        team: null,
+
+        setTeam: function(team) {
+            this.team = team;
+            $rootScope.$broadcast('navFilterTeamChanged', team);
+        }
+    };
+});
+
 var partial = function(partial) {
     return '/static/partials/'+partial;
 }
@@ -117,15 +128,34 @@ app.config(function($stateProvider, $urlRouterProvider) {
             }
         })
         // Users
-        .state('user', {
-            abstract: true,
-            url: '/user'
+        .state('users', {
+            url: '/users',
+            templateUrl: partial('users/users.html'),
+            controller: function($scope, $stateParams, NavFilterService, UserRepository) {
+                var updateUsers = function() {
+                    // Get list of users in selected team
+                    if(NavFilterService.team) {
+                        UserRepository.list({ teams: NavFilterService.team.id })
+                            .success(function(users) {
+                                $scope.users = users;
+                            });
+                    }
+                };
+                
+                // Update users when team changes
+                $scope.$on('navFilterTeamChanged', function() {
+                    updateUsers();
+                });
+
+                // Get users
+                updateUsers();
+            }
         })
-        .state('user.detail', {
+        .state('users.detail', {
             url: '/:userId',
             views: {
                 '@': {
-                    templateUrl: partial('user/detail.html'),
+                    templateUrl: partial('users/detail.html'),
                     controller: function($scope, $stateParams, UserRepository) {
                         // Get user
                         UserRepository.get($stateParams.userId)
@@ -177,7 +207,7 @@ app.controller('AppCtrl', function($scope, UserRepository) {
         });
 });
 
-app.controller('NavFilterCtrl', function($scope, TeamRepository, UserRepository) {
+app.controller('NavFilterCtrl', function($scope, NavFilterService, TeamRepository, UserRepository) {
     // Get list of all teams
     TeamRepository.list()
         .success(function(teams) {
@@ -193,7 +223,10 @@ app.controller('NavFilterCtrl', function($scope, TeamRepository, UserRepository)
             .success(function(users) {
                 $scope.users = users;
                 setUser(users[0]);
-            });    
+            });
+
+        // Notify service of team change
+        NavFilterService.setTeam(team);
     };
 
     var setUser = function(user) {

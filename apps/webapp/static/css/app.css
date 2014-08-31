@@ -8,3 +8,22 @@
 .files-list-buttons {
 	padding: 8px;
 }
+
+.users-gallery .user {
+    margin-bottom: 20px;
+}
+
+.users-gallery .user > figure {
+    margin: 0 auto;
+    width: 130px;
+    height: 130px;
+    border: 1px solid #ccc;
+}
+
+.users-gallery .user > p {
+    text-align: center;
+}
+
+.users-gallery .user > p > .role {
+    font-weight: bold;
+}
