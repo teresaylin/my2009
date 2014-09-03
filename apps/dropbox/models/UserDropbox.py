@@ -8,11 +8,13 @@ import dropbox
 
 from my2009.settings.dropbox import DROPBOX_VALIDATE_INTERVAL
 
+from ..exceptions import DropboxUnauthorized
+
 class UserDropbox(models.Model):
     class Meta:
         app_label = 'dropbox'
 
-    user = models.ForeignKey(User, primary_key=True, related_name='user_dropbox')
+    user = models.OneToOneField(User, primary_key=True, related_name='user_dropbox')
     dropbox_uid = models.PositiveIntegerField()
     access_token = models.CharField(max_length=64)
     dropbox_email = models.CharField(max_length=255, default='')
@@ -40,3 +42,10 @@ class UserDropbox(models.Model):
             self.save()
             
         return self.valid
+    
+    def createDropboxClient(self):
+        """Create DropboxClient object for this user"""
+        if not self.isValid():
+            raise DropboxUnauthorized()
+        
+        return dropbox.client.DropboxClient(self.access_token)
