@@ -6,6 +6,7 @@ admin.autodiscover()
 
 from apps.users import views as userViews
 from apps.events import views as eventViews
+from apps.files import views as fileViews
 
 from apps.webapp import urls as webappUrls
 from apps.dropbox import urls as dropboxUrls
@@ -16,6 +17,7 @@ router.register(r'tasks', userViews.TaskViewSet)
 router.register(r'teams', userViews.TeamViewSet)
 router.register(r'users', userViews.UserViewSet)
 router.register(r'events', eventViews.EventViewSet)
+router.register(r'files', fileViews.FileViewSet)
 
 urlpatterns = patterns('',
     # Examples:

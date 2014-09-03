@@ -46,6 +46,7 @@ INSTALLED_APPS = (
 
     'apps.dropbox',
     'apps.events',
+    'apps.files',
     'apps.users',
     'apps.webapp',
 )
