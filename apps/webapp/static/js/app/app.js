@@ -1,31 +1,15 @@
 var app = angular.module('app', [
     'ui.router',
     'ui.bootstrap',
-    'ui.calendar'
+    'ui.calendar',
+    
+    'dropbox'
 ]);
 
 // App configuration
 app.config(function($httpProvider) {
     $httpProvider.defaults.xsrfCookieName = 'csrftoken';
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
-});
-
-app.factory('DropboxService', function($http) {
-    var baseUrl = '/dropbox';
-    
-    return {
-        getStatus: function(id) {
-            return $http.get(baseUrl+'/status');
-        },
-        requestAuthorization: function(id) {
-            return $http.get(baseUrl+'/authorize');
-        },
-        finishAuthorization: function(authCode) {
-            return $http.post(baseUrl+'/authorize', {
-                'authorization_code': authCode
-            });
-        }
-    };
 });
 
 app.factory('EventRepository', function($http) {
@@ -37,6 +21,16 @@ app.factory('EventRepository', function($http) {
         },
         list: function(params) {
             return $http.get(baseUrl, { params: params });
+        }
+    };
+});
+
+app.factory('FileRepository', function($http) {
+    var baseUrl = '/api/files';
+    
+    return {
+        get: function(id) {
+            return $http.get(baseUrl+'/'+id);
         }
     };
 });
@@ -96,7 +90,7 @@ app.factory('NavFilterService', function($rootScope) {
 
 var partial = function(partial) {
     return '/static/partials/'+partial;
-}
+};
 
 app.config(function($stateProvider, $urlRouterProvider) {
     $urlRouterProvider
@@ -259,84 +253,81 @@ app.controller('NavFilterCtrl', function($scope, NavFilterService, TeamRepositor
     $scope.userSelectOpen = false;
 });
 
-app.controller('FilesListCtrl', function($scope) {
-    $scope.files = [
-        {
-            type: 'directory',
-            name: 'Folder of stuff',
-            modifiedTime: (new Date()).toJSON(),
-            size: 0
-        },
-        {
-            type: 'pdf',
-            name: 'Some Document.pdf',
-            modifiedTime: (new Date()).toJSON(),
-            size: 124654
-        },
-        {
-            type: 'image',
-            name: 'An image.jpeg',
-            modifiedTime: (new Date()).toJSON(),
-            size: 124654
-        },
-        {
-            type: 'powerpoint',
-            name: 'My Presentation.pptx',
-            modifiedTime: (new Date()).toJSON(),
-            size: 124654
+app.controller('FilesListCtrl', function($scope, $modal, FileRepository) {
+
+    $scope.init = function(rootDirId) {
+        $scope.rootDirId = rootDirId;
+        $scope.setDirectory(rootDirId);
+    };
+
+    $scope.setDirectory = function(id) {
+        // Retrieve directory listing
+        FileRepository.get(id)
+            .success(function(dir) {
+                $scope.directory = dir;
+            });
+    };
+        
+    // Called when user clicks a file/directory
+    $scope.openFile = function(file) {
+        if(file.is_directory) {
+            $scope.setDirectory(file.id);
         }
-    ];
-});
-
-app.controller('DropboxAuthCtrl', function($scope, $modal, DropboxService) {
-    // Get Dropbox status
-    DropboxService.getStatus()
-        .success(function(status) {
-            $scope.status = status;
-        });
-
-    $scope.openAuthDialog = function() {
+    };
+    
+    $scope.openUploadDialog = function() {
         var modal = $modal.open({
-            templateUrl: partial('dropbox/auth-dialog.html'),
+            templateUrl: partial('dropbox/upload-dialog.html'),
             controller: function($scope, $modalInstance, DropboxService) {
-                // Get authorization URL
-                DropboxService.requestAuthorization()
-                    .success(function(data) {
-                        $scope.authUrl = data.authorize_url;
-                    });
-                    
-                $scope.codeChanged = function(form) {
-                    // Reset invalidCode flag when code changes
-                    form.code.$setValidity('invalidCode', true);
-                };
-                
-                $scope.ok = function(form) {
-                    // Finish authorization
-                    DropboxService.finishAuthorization(form.authCode)
+                // Set current path
+                $scope.setPath = function(path) {
+                    $scope.path = path;
+                    $scope.numFilesSelected = 0;
+
+                    // Retrieve metadata
+                    DropboxService.getMetadata($scope.path)
                         .success(function(data) {
-                            // Auth successful
-                            $modalInstance.close(true);
-                        })
-                        .error(function(data, status) {
-                            // Invalid auth code
-                            if(status == 400) {
-                                form.code.$setValidity('invalidCode', false);
-                            }
+                            $scope.metadata = data;
                         });
                 };
-
-                $scope.cancel = function() {
-                    $modalInstance.dismiss('cancel');
+                
+                // Move up a directory
+                $scope.upDir = function() {
+                    var path = $scope.path;
+                    path = path.substr(0, path.lastIndexOf('/'));
+                    if(path == '') path = '/';
+                    $scope.setPath(path);
                 };
+                
+                // Toggle file selected state
+                $scope.toggleSelect = function(file) {
+                    // Can't select directories
+                    if(file.is_dir) return;
+                    
+                    // Toggle selection
+                    var selected = 'selected' in file ? file.selected : false;
+                    if(selected) {
+                        file.selected = false;
+                        $scope.numFilesSelected--;
+                    } else {
+                        file.selected = true;
+                        $scope.numFilesSelected++;
+                    }
+                };
+                
+                $scope.upload = function() {
+                };
+
+                $scope.done = function() {
+                    $modalInstance.close();
+                };
+                
+                $scope.numFilesSelected = 0;
+                $scope.setPath('/');
             }
         });
         
-        modal.result.then(function(authorized) {
-            // Refresh Dropbox status
-            DropboxService.getStatus()
-                .success(function(status) {
-                    $scope.status = status;
-                });
+        modal.result.then(function() {
         });
     };
 });

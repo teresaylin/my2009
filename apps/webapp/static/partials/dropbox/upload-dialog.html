@@ -1,0 +1,44 @@
+<div class="modal-header">
+    <h3 class="modal-title">Upload files from your Dropbox account</h3>
+</div>
+<div class="modal-body">
+    <input type="text" readonly class="form-control" ng-model="path">
+    
+    <table class="table table-bordered table-striped table-hover" ng-if="metadata && metadata.is_dir">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Modified</th>
+                <th>Size</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr ng-if="path != '/'">
+                <td>
+                    <a href ng-click="upDir()">Up</a>
+                </td>
+            </tr>
+
+            <tr ng-repeat="file in metadata.contents" ng-class="{ success: file.selected }" ng-click="toggleSelect(file)">
+                <td>
+                    <a href ng-click="file.is_dir ? setPath(file.path) : null">
+                        <img ng-src="/static/img/dropbox/icons/16x16/{{ file.icon }}.gif">
+                        {{ file.path|basename }}
+                    </a>
+                </td>
+                <td>{{ file.modified }}</td>
+                <td>
+                    <span ng-if="!file.is_dir">{{ file.size }}</span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="upload()" ng-disabled="numFilesSelected <= 0">
+        Upload
+        <span ng-if="numFilesSelected > 0">{{ numFilesSelected }} files</span>
+    </button>
+    <button class="btn btn-warning" ng-click="done()">Done</button>
+</div>
