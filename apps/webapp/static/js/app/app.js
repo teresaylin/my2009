@@ -3,78 +3,15 @@ var app = angular.module('app', [
     'ui.bootstrap',
     'ui.calendar',
     
-    'dropbox'
+    'dropbox',
+    'files',
+    'repositories'
 ]);
 
 // App configuration
 app.config(function($httpProvider) {
     $httpProvider.defaults.xsrfCookieName = 'csrftoken';
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
-});
-
-app.factory('EventRepository', function($http) {
-    var baseUrl = '/api/events';
-    
-    return {
-        get: function(id) {
-            return $http.get(baseUrl+'/'+id);
-        },
-        list: function(params) {
-            return $http.get(baseUrl, { params: params });
-        }
-    };
-});
-
-app.factory('FileRepository', function($http) {
-    var baseUrl = '/api/files';
-    
-    return {
-        get: function(id) {
-            return $http.get(baseUrl+'/'+id);
-        }
-    };
-});
-
-app.factory('TaskRepository', function($http) {
-    var baseUrl = '/api/tasks';
-    
-    return {
-        get: function(id) {
-            return $http.get(baseUrl+'/'+id);
-        },
-        list: function() {
-            return $http.get(baseUrl);
-        }
-    };
-});
-
-app.factory('TeamRepository', function($http) {
-    var baseUrl = '/api/teams';
-    
-    return {
-        get: function(id) {
-            return $http.get(baseUrl+'/'+id);
-        },
-        list: function() {
-            return $http.get(baseUrl);
-        }
-    };
-});
-
-app.factory('UserRepository', function($http) {
-    var baseUrl = '/api/users';
-    
-    return {
-        get: function(id) {
-            return $http.get(baseUrl+'/'+id);
-        },
-        getCurrentUser: function() {
-            return $http.get(baseUrl+'/?current');
-        },
-        list: function(params) {
-            return $http.get(baseUrl, { params: params });
-        }
-    };
 });
 
 app.factory('NavFilterService', function($rootScope) {
@@ -251,85 +188,6 @@ app.controller('NavFilterCtrl', function($scope, NavFilterService, TeamRepositor
     $scope.activeUser = null;
     $scope.teamSelectOpen = false;
     $scope.userSelectOpen = false;
-});
-
-app.controller('FilesListCtrl', function($scope, $modal, FileRepository) {
-
-    $scope.init = function(rootDirId) {
-        $scope.rootDirId = rootDirId;
-        $scope.setDirectory(rootDirId);
-    };
-
-    $scope.setDirectory = function(id) {
-        // Retrieve directory listing
-        FileRepository.get(id)
-            .success(function(dir) {
-                $scope.directory = dir;
-            });
-    };
-        
-    // Called when user clicks a file/directory
-    $scope.openFile = function(file) {
-        if(file.is_directory) {
-            $scope.setDirectory(file.id);
-        }
-    };
-    
-    $scope.openUploadDialog = function() {
-        var modal = $modal.open({
-            templateUrl: partial('dropbox/upload-dialog.html'),
-            controller: function($scope, $modalInstance, DropboxService) {
-                // Set current path
-                $scope.setPath = function(path) {
-                    $scope.path = path;
-                    $scope.numFilesSelected = 0;
-
-                    // Retrieve metadata
-                    DropboxService.getMetadata($scope.path)
-                        .success(function(data) {
-                            $scope.metadata = data;
-                        });
-                };
-                
-                // Move up a directory
-                $scope.upDir = function() {
-                    var path = $scope.path;
-                    path = path.substr(0, path.lastIndexOf('/'));
-                    if(path == '') path = '/';
-                    $scope.setPath(path);
-                };
-                
-                // Toggle file selected state
-                $scope.toggleSelect = function(file) {
-                    // Can't select directories
-                    if(file.is_dir) return;
-                    
-                    // Toggle selection
-                    var selected = 'selected' in file ? file.selected : false;
-                    if(selected) {
-                        file.selected = false;
-                        $scope.numFilesSelected--;
-                    } else {
-                        file.selected = true;
-                        $scope.numFilesSelected++;
-                    }
-                };
-                
-                $scope.upload = function() {
-                };
-
-                $scope.done = function() {
-                    $modalInstance.close();
-                };
-                
-                $scope.numFilesSelected = 0;
-                $scope.setPath('/');
-            }
-        });
-        
-        modal.result.then(function() {
-        });
-    };
 });
 
 app.controller('CalendarCtrl', function($scope, $modal, EventRepository) {

@@ -1,20 +1,5 @@
 var dropbox = angular.module('dropbox', []);
 
-// 'filesize' filter: get human-friendly file size
-dropbox.filter('filesize', function() {
-    return function(sizeBytes) {
-        if(sizeBytes > 1024*1024*1024) {
-            return (sizeBytes / 1024*1024*1024) + ' GB';
-        } else if(sizeBytes > 1024*1024) {
-            return (sizeBytes / 1024*1024) + ' MB';
-        } else if(sizeBytes > 1024) {
-            return (sizeBytes / 1024) + ' KB';
-        } else {
-            return sizeBytes + ' bytes';
-        }
-    };
-});
-
 // 'basename' filter: get filename from full path
 dropbox.filter('basename', function() {
     return function(path) {
