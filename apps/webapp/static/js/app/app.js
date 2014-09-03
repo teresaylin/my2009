@@ -341,7 +341,7 @@ app.controller('DropboxAuthCtrl', function($scope, $modal, DropboxService) {
     };
 });
 
-app.controller('CalendarCtrl', function($scope, EventRepository) {
+app.controller('CalendarCtrl', function($scope, $modal, EventRepository) {
     $scope.eventsSource = function(start, end, timezone, callback) {
         // Get events within date range
         var query = {
@@ -388,4 +388,21 @@ app.controller('CalendarCtrl', function($scope, EventRepository) {
     };
 
     $scope.eventSources = [$scope.eventsSource];
+
+    $scope.openEditDialog = function() {
+        var modal = $modal.open({
+            templateUrl: partial('events/edit-dialog.html'),
+            controller: function($scope, $modalInstance) {
+                $scope.ok = function(form) {
+                };
+
+                $scope.cancel = function() {
+                    $modalInstance.dismiss('cancel');
+                };
+            }
+        });
+        
+        modal.result.then(function() {
+        });
+    };
 });

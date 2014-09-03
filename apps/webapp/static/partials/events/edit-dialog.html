@@ -1,0 +1,30 @@
+<div class="modal-header">
+    <h3 class="modal-title">Edit event</h3>
+</div>
+<div class="modal-body">
+    <form>
+        <fieldset>
+            <input type="text" class="form-control" placeholder="Name" maxlength="100" required ng-model="event.title">
+            <textarea class="form-control" placeholder="Description" ng-model="event.description"></textarea>
+        </fieldset>
+        <hr>
+        <fieldset>
+            <input class="form-control" type="text" placeholder="Location" ng-model="event.location">
+            <div class="row">
+                <div class="col-xs-5">
+                    <input class="form-control" type="datetime-local" required ng-model="event.start">
+                </div>
+                <div class="col-xs-2">
+                    to
+                </div>
+                <div class="col-xs-5">
+                    <input class="form-control" type="datetime-local" required ng-model="event.end">
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="ok(form)" ng-disabled="form.$invalid">OK</button>
+    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>

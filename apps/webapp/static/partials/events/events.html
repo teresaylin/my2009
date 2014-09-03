@@ -3,6 +3,9 @@
 <div class="row">
 	<div class="col-lg-8">
         <div class="content-panel" ng-controller="CalendarCtrl">
+            <div>
+                <button class="btn btn-default" ng-click="openEditDialog()">New event</button>
+            </div>
             <div ui-calendar="uiConfig.calendar" class="span8 calendar" ng-model="eventSources" calendar="calendar"></div> 
         </div>
    </div>
