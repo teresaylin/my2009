@@ -47,6 +47,19 @@ module.factory('TaskRepository', function($http) {
     };
 });
 
+module.factory('TaskForceRepository', function($http) {
+    var baseUrl = '/api/taskforces';
+    
+    return {
+        get: function(id) {
+            return $http.get(baseUrl+'/'+id);
+        },
+        list: function(params) {
+            return $http.get(baseUrl, { params: params });
+        }
+    };
+});
+
 module.factory('TeamRepository', function($http) {
     var baseUrl = '/api/teams';
     

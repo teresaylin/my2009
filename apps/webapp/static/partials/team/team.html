@@ -1,0 +1,23 @@
+<h1>{{ team.color }} team</h1>
+<hr>
+
+<h2>Task forces</h2>
+<script type="text/ng-template" id="taskforce-accordion.html">
+    <accordion-heading>
+        <span ng-click="getTaskForceChildren(taskForce)">
+            {{ taskForce.name }}
+        </span>
+    </accordion-heading>
+    <p>Milestone: {{ taskForce.milestone.name }}</p>
+    <h3>Sub task forces</h3>
+    <accordion>
+        <accordion-group ng-repeat="taskForce in taskForce.children">
+            <ng-include src="'taskforce-accordion.html'"></ng-include>
+        </accordion-group>
+    </accordion>
+</script>
+<accordion>
+    <accordion-group ng-repeat="taskForce in taskForces">
+        <ng-include src="'taskforce-accordion.html'"></ng-include>
+    </accordion-group>
+</accordion>

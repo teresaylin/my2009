@@ -66,7 +66,7 @@ class TaskForce(models.Model):
     name = models.CharField(max_length=50, blank = False)
     milestone = models.ForeignKey('Milestone')
     team = models.ForeignKey('Team')
-    parent_task_force = models.ForeignKey('TaskForce', blank = True, null = True)
+    parent_task_force = models.ForeignKey('TaskForce', blank = True, null = True, related_name='children')
     #URL
 
     def __str__(self):

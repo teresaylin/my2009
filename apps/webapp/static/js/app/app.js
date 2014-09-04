@@ -127,6 +127,45 @@ app.config(function($stateProvider, $urlRouterProvider) {
             url: '/files',
             templateUrl: partial('files/files.html')
         })
+        .state('team', {
+            url: '/team',
+            templateUrl: partial('team/team.html'),
+            controller: function($scope, NavFilterService, TeamRepository, TaskForceRepository) {
+                var update = function() {
+                    if(NavFilterService.team) {
+                        $scope.team = NavFilterService.team;
+                        
+                        // Get root task forces
+                        TaskForceRepository.list({
+                            team: NavFilterService.team.id,
+                            root: true
+                        })
+                            .success(function(data) {
+                                $scope.taskForces = data;
+                            });
+                    }
+                };
+                
+                // Called when user opens a task force in the accordion
+                $scope.getTaskForceChildren = function(taskForce) {
+                    // Get taskForce children if they don't exist
+                    if(!('children' in taskForce)) {
+                        TaskForceRepository.get(taskForce.id)
+                            .success(function(data) {
+                                taskForce.children = data.children;
+                            });
+                    }
+                };
+                
+                // Update users when team changes
+                $scope.$on('navFilterTeamChanged', function() {
+                    update();
+                });
+
+                // Get users
+                update();
+            }
+        })
         ;
 });
 
