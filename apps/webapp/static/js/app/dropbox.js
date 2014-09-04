@@ -1,12 +1,5 @@
 var dropbox = angular.module('dropbox', []);
 
-// 'basename' filter: get filename from full path
-dropbox.filter('basename', function() {
-    return function(path) {
-        return path.substr(path.lastIndexOf('/') + 1);
-    };
-});
-
 dropbox.factory('DropboxService', function($http) {
     var baseUrl = '/dropbox';
     
@@ -28,6 +21,86 @@ dropbox.factory('DropboxService', function($http) {
                     'path': path
                 }
             });
+        },
+        addDropboxFiles: function(dirFileId, files) {
+            return $http.post(baseUrl+'/add-dropbox-files', {
+                'dir_file_id': dirFileId,
+                'files': files
+            });
+        }
+    };
+});
+
+dropbox.factory('DropboxUploadService', function($modal, DropboxService) {
+    return {
+        openUploadDialog: function(dirFileId) {
+            var modal = $modal.open({
+                templateUrl: partial('dropbox/upload-dialog.html'),
+                controller: function($scope, $modalInstance, DropboxService) {
+                    // Set current path
+                    $scope.setPath = function(path) {
+                        $scope.path = path;
+                        $scope.numFilesSelected = 0;
+
+                        // Retrieve metadata
+                        DropboxService.getMetadata($scope.path)
+                            .success(function(data) {
+                                $scope.metadata = data;
+                            });
+                    };
+                    
+                    // Move up a directory
+                    $scope.upDir = function() {
+                        var path = $scope.path;
+                        path = path.substr(0, path.lastIndexOf('/'));
+                        if(path == '') path = '/';
+                        $scope.setPath(path);
+                    };
+                    
+                    // Toggle file selected state
+                    $scope.toggleSelect = function(file) {
+                        // Can't select directories
+                        if(file.is_dir) return;
+                        
+                        // Toggle selection
+                        var selected = 'selected' in file ? file.selected : false;
+                        if(selected) {
+                            file.selected = false;
+                            $scope.numFilesSelected--;
+                        } else {
+                            file.selected = true;
+                            $scope.numFilesSelected++;
+                        }
+                    };
+                    
+                    $scope.addFiles = function() {
+                        var files = [];
+                        
+                        // Add selected files to array
+                        angular.forEach($scope.metadata.contents, function(file, key) {
+                            if('selected' in file && file.selected) {
+                                files.push({
+                                    path: file.path
+                                });
+                                file.selected = false;
+                            }
+                        });
+                        $scope.numFilesSelected = 0;
+                        
+                        // Add files
+                        DropboxService.addDropboxFiles(dirFileId, files);
+                    };
+
+                    $scope.done = function() {
+                        $modalInstance.close();
+                    };
+                    
+                    $scope.numFilesSelected = 0;
+                    $scope.setPath('/');
+                }
+            });
+
+            return modal;
         }
     };
 });

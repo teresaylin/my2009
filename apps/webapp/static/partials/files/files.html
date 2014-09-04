@@ -7,7 +7,7 @@
     	    <div class="files-list-buttons">
     	    	<button class="btn btn-default" ng-click="openUploadDialog()"><span class="fa fa-upload"></span> Upload</button>
     	    	<button class="btn btn-default" ng-click="openCreateFolderDialog()"><span class="fa fa-folder"></span> Create folder</button>
-    	    	<button class="btn btn-default"><span class="fa fa-times"></span> Delete</button>
+    	    	<button class="btn btn-default" ng-click="delete()"><span class="fa fa-times"></span> Delete</button>
     	    </div>
             <table class="table table-bordered table-striped table-condensed">
                 <thead>
@@ -16,6 +16,7 @@
                         <th>Name</th>
                         <th>Size</th>
                         <th>Modified</th>
+                        <th>Owner</th>
                         <th>Comments</th>
                         <th>Tags</th>
                     </tr>
@@ -31,45 +32,20 @@
                         <td></td>
                         <td></td>
                         <td></td>
+                        <td></td>
                     </tr>
-                    <tr ng-repeat="file in directory.files">
-                        <td><input type="checkbox"></td>
+                    <tr ng-repeat="file in directory.files" ng-class="{ success: file.selected }">
+                        <td><input type="checkbox" ng-model="file.selected"></td>
                         <td>
                             <img ng-src="/static/img/dropbox/icons/16x16/{{ file.icon }}.gif">
                         	<a href ng-click="openFile(file)">{{ file.name }}</a>
                         </td>
                         <td>{{ file.size|filesize }}</td>
                         <td>{{ file.modified_time }}</td>
+                        <td><a ui-sref="users.detail({ userId: file.owner.id })">{{ file.owner.full_name }}</a></td>
                         <td></td>
                         <td></td>
                     </tr>
-                	
-                	<!--
-                    <tr>
-                        <td><input type="checkbox"></td>
-                        <td><span class="fa fa-folder-o"></span> <a href="#">Folder of stuff</a></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox"></td>
-                        <td><span class="fa fa-file-pdf-o"></span> <a href="#">Some Document.pdf</a></td>
-                        <td>1.56 MB</td>
-                        <td>14/08/27 9:50AM</td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox"></td>
-                        <td><span class="fa fa-file-image-o"></span> <a href="#">An image.jpeg</a></td>
-                        <td>100.42 KB</td>
-                        <td>14/08/27 9:50AM</td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox"></td>
-                        <td><span class="fa fa-file-powerpoint-o"></span> <a href="#">My Presentation.pptx</a></td>
-                        <td>10.21 MB</td>
-                        <td>14/08/27 9:50AM</td>
-                    </tr>
-                   -->
                 </tbody>
             </table>
         </div>

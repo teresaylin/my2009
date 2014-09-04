@@ -4,7 +4,7 @@ from django.db.models import Q
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.exceptions import ParseError
-from rest_framework.decorators import action
+from rest_framework.decorators import action, link
 
 from ..models import File
 from ..serializers import FileSerializer
@@ -31,4 +31,15 @@ class FileViewSet(viewsets.ModelViewSet):
         
         dirFile.createSubdirectory(name, request.user)
         
-        return Response({'test': 42}, status=201)
+        return Response({}, status=201)
+    
+    @link()
+    def share(self, request, pk=None):
+        file = self.get_object()
+        
+        if not file.file_dropbox:
+            raise ParseError()
+        
+        return Response({
+            'url': file.file_dropbox.getShareUrl()
+        })

@@ -20,22 +20,29 @@ module.directive('filename', function() {
     };
 });
 
+// 'basename' filter: get filename from full path
+dropbox.filter('basename', function() {
+    return function(path) {
+        return path.substr(path.lastIndexOf('/') + 1);
+    };
+});
+
 // 'filesize' filter: get human-friendly file size
 module.filter('filesize', function() {
     return function(sizeBytes) {
         if(sizeBytes > 1024*1024*1024) {
-            return (sizeBytes / 1024*1024*1024) + ' GB';
+            return (sizeBytes / 1024*1024*1024).toFixed(1) + ' GB';
         } else if(sizeBytes > 1024*1024) {
-            return (sizeBytes / 1024*1024) + ' MB';
+            return (sizeBytes / 1024*1024).toFixed(1) + ' MB';
         } else if(sizeBytes > 1024) {
-            return (sizeBytes / 1024) + ' KB';
+            return (sizeBytes / 1024).toFixed(1) + ' KB';
         } else {
             return sizeBytes + ' bytes';
         }
     };
 });
 
-module.controller('FilesListCtrl', function($scope, $modal, FileRepository) {
+module.controller('FilesListCtrl', function($scope, $modal, FileRepository, DropboxUploadService) {
 
     $scope.init = function(rootDirId) {
         $scope.rootDirId = rootDirId;
@@ -62,62 +69,45 @@ module.controller('FilesListCtrl', function($scope, $modal, FileRepository) {
     $scope.openFile = function(file) {
         if(file.is_directory) {
             $scope.setDirectory(file.id);
+        } else {
+            // TEMPORARY: open Dropbox share in new window
+            FileRepository.getFileShare(file.id)
+                .success(function(data) {
+                    window.open(data.url, 'ShareWindow', 'width=640,height=480');
+                });
+        }
+    };
+    
+    $scope.delete = function() {
+        // Queue files for deletion
+        var promise = null;
+        angular.forEach($scope.directory.files, function(file) {
+            if('selected' in file && file.selected) {
+                if(!promise) {
+                    promise = FileRepository.delete(file.id);
+                } else {
+                    promise.then(function() {
+                        FileRepository.delete(file.id);
+                    });
+                }
+            }
+        });
+
+        // Refresh directory listing when finished deleting
+        if(promise) {
+            promise.then(function() {
+                $scope.refresh();
+            });
         }
     };
     
     $scope.openUploadDialog = function() {
-        var modal = $modal.open({
-            templateUrl: partial('dropbox/upload-dialog.html'),
-            controller: function($scope, $modalInstance, DropboxService) {
-                // Set current path
-                $scope.setPath = function(path) {
-                    $scope.path = path;
-                    $scope.numFilesSelected = 0;
-
-                    // Retrieve metadata
-                    DropboxService.getMetadata($scope.path)
-                        .success(function(data) {
-                            $scope.metadata = data;
-                        });
-                };
-                
-                // Move up a directory
-                $scope.upDir = function() {
-                    var path = $scope.path;
-                    path = path.substr(0, path.lastIndexOf('/'));
-                    if(path == '') path = '/';
-                    $scope.setPath(path);
-                };
-                
-                // Toggle file selected state
-                $scope.toggleSelect = function(file) {
-                    // Can't select directories
-                    if(file.is_dir) return;
-                    
-                    // Toggle selection
-                    var selected = 'selected' in file ? file.selected : false;
-                    if(selected) {
-                        file.selected = false;
-                        $scope.numFilesSelected--;
-                    } else {
-                        file.selected = true;
-                        $scope.numFilesSelected++;
-                    }
-                };
-                
-                $scope.upload = function() {
-                };
-
-                $scope.done = function() {
-                    $modalInstance.close();
-                };
-                
-                $scope.numFilesSelected = 0;
-                $scope.setPath('/');
-            }
-        });
+        // Open upload dialog
+        var dlg = DropboxUploadService.openUploadDialog($scope.directory.id);
         
-        modal.result.then(function() {
+        dlg.result.then(function() {
+            // Refresh directory listing
+            $scope.refresh();
         });
     };
 
