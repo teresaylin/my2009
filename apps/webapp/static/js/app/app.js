@@ -26,7 +26,7 @@ app.factory('NavFilterService', function($rootScope) {
 });
 
 var partial = function(partial) {
-    return '/static/partials/'+partial;
+    return '/static/partials/'+partial+'?'+(new Date()).valueOf();
 };
 
 app.config(function($stateProvider, $urlRouterProvider) {
