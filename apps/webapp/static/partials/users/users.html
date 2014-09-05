@@ -4,15 +4,15 @@
 <div class="row users-gallery">
     <div class="col-lg-2 col-md-3 col-sm-3 col-xs-6" ng-repeat="user in users">
         <div class="user">
-            <figure>
+            <figure class="user-photo user-photo-med">
                 <a ui-sref="users.detail({ userId: user.id })">
-                    <img src="/static/img/ui-zac.jpg">
+                    <img src="/static/img/profile-photos/med/{{ user.profile.picture_filename ? user.profile.picture_filename+'.jpg' : '_unavailable.png' }}">
                 </a>
+                <figcaption>
+                    {{ user.full_name }}<br>
+                    <em ng-repeat="userRole in user.user_roles">{{ userRole.role.name }}</em>
+                </figcaption>
             </figure>
-            <p>
-                {{ user.full_name }}<br>
-                <span class="role" ng-repeat="userRole in user.user_roles">{{ userRole.role.name }}</span>
-            </p>
         </div>
     </div>
 </div>

@@ -1,5 +1,13 @@
-<h1>{{ user.first_name }} {{ user.last_name }}</h1>
+<h1>{{ user.full_name }}</h1>
 <hr>
+
+<figure class="user-photo user-photo-med">
+    <img src="/static/img/profile-photos/med/{{ user.profile.picture_filename ? user.profile.picture_filename+'.jpg' : '_unavailable.png' }}">
+    <figcaption>
+        {{ user.full_name }}<br>
+        <em ng-repeat="userRole in user.user_roles">{{ userRole.role.name }}</em>
+    </figcaption>
+</figure>
 
 <h2>Profile
     <a href ng-click="openEditProfileDialog()" ng-if="user.id == currentUser.id">

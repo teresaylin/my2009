@@ -8,7 +8,7 @@
                 <label class="control-label" for="user-edit-profile-phone">Phone number</label>
             </div>
             <div class="col-sm-9">
-                <input class="form-control" type="text" ng-model="profile.phone_number">
+                <input class="form-control" type="text" maxlength="12" ng-model="profile.phone_number">
             </div>
         </div>
         <div class="form-group">
@@ -16,7 +16,7 @@
                 <label class="control-label" for="user-edit-profile-phone">Car</label>
             </div>
             <div class="col-sm-9">
-                <select class="form-control" ng-model="profile.car">
+                <select class="form-control" ng-model="profile.car" required>
                     <option value="Y">Yes</option>
                     <option value="N">No</option>
                 </select>

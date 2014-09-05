@@ -143,18 +143,19 @@
 .files-list-buttons {
   padding: 8px; }
 
-/*---------- Users gallery ----------*/
+/*---------- Users ----------*/
+.user-photo {
+  text-align: center; }
+  .user-photo img {
+    border: 1px solid #ccc; }
+  .user-photo.user-photo-med img {
+    width: 106px;
+    height: 140px; }
+  .user-photo.user-photo-small img {
+    width: 54px;
+    height: 71px; }
+
 .users-gallery .user {
   margin-bottom: 20px; }
-
-.users-gallery .user > figure {
-  margin: 0 auto;
-  width: 130px;
-  height: 130px;
-  border: 1px solid #ccc; }
-
-.users-gallery .user > p {
-  text-align: center; }
-
-.users-gallery .user > p > .role {
-  font-weight: bold; }
+  .users-gallery .user > figure {
+    margin: 0 auto; }

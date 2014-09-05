@@ -117,24 +117,32 @@ $teamAccentColors: (
     padding: 8px;
 }
 
-/*---------- Users gallery ----------*/
+/*---------- Users ----------*/
 
-.users-gallery .user {
-    margin-bottom: 20px;
-}
-
-.users-gallery .user > figure {
-    margin: 0 auto;
-    width: 130px;
-    height: 130px;
-    border: 1px solid #ccc;
-}
-
-.users-gallery .user > p {
+.user-photo {
     text-align: center;
+
+    img {
+        border: 1px solid #ccc;
+    }
+    
+    &.user-photo-med img {
+        width: 104px + 2px;
+        height: 138px + 2px;
+    }
+    
+    &.user-photo-small img {
+        width: 52px + 2px;
+        height: 69px + 2px;
+    }
 }
 
-.users-gallery .user > p > .role {
-    font-weight: bold;
-}
+.users-gallery {
+    .user {
+        margin-bottom: 20px;
 
+        > figure {
+            margin: 0 auto;
+        }
+    }
+}
