@@ -1,0 +1,126 @@
+/*---------- Color definitions ----------*/
+
+$teamColors: (
+    red: #d32f2f,
+    green: #388e3c,
+    blue: #1976d2,
+    yellow: #f9ce1d,
+    pink: #e91e63,
+    orange: #ff5722,
+    purple: #9c27b0,
+    silver: #757575,
+    black: #212121
+);
+
+$teamAccentColors: (
+    red: #ff1744,
+    green: #4caf50,
+    blue: #03a9f4,
+    yellow: #ffeb3b,
+    pink: #ff4081,
+    orange: #ff9800,
+    purple: #d500f9,
+    silver: #9e9e9e,
+    black: #434343
+);
+
+/*---------- Header styling ----------*/
+
+@for $i from 1 to length($teamColors)+1 {
+    $name: nth(map-keys($teamColors), $i);
+    $col: nth(map-values($teamColors), $i);
+    $accentCol: nth(map-values($teamAccentColors), $i);
+
+    .header.team-#{$name} {
+        background-color: $col;
+        border-bottom: 1px solid darken($col, 5%);
+
+        ul.top-menu > li > .logout {
+            background-color: $accentCol;
+            border: 1px solid darken($accentCol, 5%);
+            &:hover {
+                background-color: lighten($accentCol, 5%);
+                border-color: $accentCol;
+                color: white;
+            }
+        }
+    }
+}
+
+.header {
+    color: white;
+    
+    a.dropdown-toggle {
+        color: #eee;
+        &:hover {
+            color: #ccc;
+        }
+    }
+    
+    a.logo {
+        margin-top: 0;
+        line-height: 60px;
+    }
+}
+
+/* Yellow team styling has black text */
+.header.team-yellow {
+    a.dropdown-toggle {
+        color: #212121;
+        &:hover {
+            color: #434343;
+        }
+    }
+
+    ul.top-menu > li > .logout {
+        color: #212121;
+        &:hover {
+            color: #212121;
+        }
+    }
+    
+    a.logo {
+        color: #212121;
+    }
+}
+
+.nav-filter {
+    float: left;
+    line-height: 60px;
+    font-size: 18px;
+    margin-left: 105px;
+}
+
+/*---------- Misc ----------*/
+
+#main-content.nomargin {
+    margin-left: 0;
+}
+
+/*---------- Files list ----------*/
+
+.files-list-buttons {
+    padding: 8px;
+}
+
+/*---------- Users gallery ----------*/
+
+.users-gallery .user {
+    margin-bottom: 20px;
+}
+
+.users-gallery .user > figure {
+    margin: 0 auto;
+    width: 130px;
+    height: 130px;
+    border: 1px solid #ccc;
+}
+
+.users-gallery .user > p {
+    text-align: center;
+}
+
+.users-gallery .user > p > .role {
+    font-weight: bold;
+}
+

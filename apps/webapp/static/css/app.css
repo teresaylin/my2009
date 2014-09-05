@@ -1,29 +1,152 @@
+/*---------- Color definitions ----------*/
+/*---------- Header styling ----------*/
+.header.team-red {
+  background-color: #d32f2f;
+  border-bottom: 1px solid #c02929; }
+  .header.team-red ul.top-menu > li > .logout {
+    background-color: #ff1744;
+    border: 1px solid #fc0031; }
+    .header.team-red ul.top-menu > li > .logout:hover {
+      background-color: #ff3159;
+      border-color: #ff1744;
+      color: white; }
+
+.header.team-green {
+  background-color: #388e3c;
+  border-bottom: 1px solid #317c34; }
+  .header.team-green ul.top-menu > li > .logout {
+    background-color: #4caf50;
+    border: 1px solid #449d48; }
+    .header.team-green ul.top-menu > li > .logout:hover {
+      background-color: #5cb860;
+      border-color: #4caf50;
+      color: white; }
+
+.header.team-blue {
+  background-color: #1976d2;
+  border-bottom: 1px solid #1669bb; }
+  .header.team-blue ul.top-menu > li > .logout {
+    background-color: #03a9f4;
+    border: 1px solid #0398db; }
+    .header.team-blue ul.top-menu > li > .logout:hover {
+      background-color: #14b4fc;
+      border-color: #03a9f4;
+      color: white; }
+
+.header.team-yellow {
+  background-color: #f9ce1d;
+  border-bottom: 1px solid #f6c707; }
+  .header.team-yellow ul.top-menu > li > .logout {
+    background-color: #ffeb3b;
+    border: 1px solid #ffe821; }
+    .header.team-yellow ul.top-menu > li > .logout:hover {
+      background-color: #ffee55;
+      border-color: #ffeb3b;
+      color: white; }
+
+.header.team-pink {
+  background-color: #e91e63;
+  border-bottom: 1px solid #d81557; }
+  .header.team-pink ul.top-menu > li > .logout {
+    background-color: #ff4081;
+    border: 1px solid #ff2670; }
+    .header.team-pink ul.top-menu > li > .logout:hover {
+      background-color: #ff5a92;
+      border-color: #ff4081;
+      color: white; }
+
+.header.team-orange {
+  background-color: #ff5722;
+  border-bottom: 1px solid #ff4408; }
+  .header.team-orange ul.top-menu > li > .logout {
+    background-color: #ff9800;
+    border: 1px solid #e68900; }
+    .header.team-orange ul.top-menu > li > .logout:hover {
+      background-color: #ffa21a;
+      border-color: #ff9800;
+      color: white; }
+
+.header.team-purple {
+  background-color: #9c27b0;
+  border-bottom: 1px solid #89229b; }
+  .header.team-purple ul.top-menu > li > .logout {
+    background-color: #d500f9;
+    border: 1px solid #bf00e0; }
+    .header.team-purple ul.top-menu > li > .logout:hover {
+      background-color: #dd14ff;
+      border-color: #d500f9;
+      color: white; }
+
+.header.team-silver {
+  background-color: #757575;
+  border-bottom: 1px solid #686868; }
+  .header.team-silver ul.top-menu > li > .logout {
+    background-color: #9e9e9e;
+    border: 1px solid #919191; }
+    .header.team-silver ul.top-menu > li > .logout:hover {
+      background-color: #ababab;
+      border-color: #9e9e9e;
+      color: white; }
+
+.header.team-black {
+  background-color: #212121;
+  border-bottom: 1px solid #141414; }
+  .header.team-black ul.top-menu > li > .logout {
+    background-color: #434343;
+    border: 1px solid #363636; }
+    .header.team-black ul.top-menu > li > .logout:hover {
+      background-color: #505050;
+      border-color: #434343;
+      color: white; }
+
+.header {
+  color: white; }
+  .header a.dropdown-toggle {
+    color: #eee; }
+    .header a.dropdown-toggle:hover {
+      color: #ccc; }
+  .header a.logo {
+    margin-top: 0;
+    line-height: 60px; }
+
+/* Yellow team styling has black text */
+.header.team-yellow a.dropdown-toggle {
+  color: #212121; }
+  .header.team-yellow a.dropdown-toggle:hover {
+    color: #434343; }
+.header.team-yellow ul.top-menu > li > .logout {
+  color: #212121; }
+  .header.team-yellow ul.top-menu > li > .logout:hover {
+    color: #212121; }
+.header.team-yellow a.logo {
+  color: #212121; }
+
 .nav-filter {
-    float: left;
-    line-height: 60px;
-    font-size: 18px;
-    margin-left: 16px;
-}
+  float: left;
+  line-height: 60px;
+  font-size: 18px;
+  margin-left: 105px; }
 
+/*---------- Misc ----------*/
+#main-content.nomargin {
+  margin-left: 0; }
+
+/*---------- Files list ----------*/
 .files-list-buttons {
-	padding: 8px;
-}
+  padding: 8px; }
 
+/*---------- Users gallery ----------*/
 .users-gallery .user {
-    margin-bottom: 20px;
-}
+  margin-bottom: 20px; }
 
 .users-gallery .user > figure {
-    margin: 0 auto;
-    width: 130px;
-    height: 130px;
-    border: 1px solid #ccc;
-}
+  margin: 0 auto;
+  width: 130px;
+  height: 130px;
+  border: 1px solid #ccc; }
 
 .users-gallery .user > p {
-    text-align: center;
-}
+  text-align: center; }
 
 .users-gallery .user > p > .role {
-    font-weight: bold;
-}
+  font-weight: bold; }

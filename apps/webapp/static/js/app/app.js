@@ -17,10 +17,15 @@ app.config(function($httpProvider) {
 app.factory('NavFilterService', function($rootScope) {
     return {
         team: null,
+        user: null,
 
         setTeam: function(team) {
             this.team = team;
             $rootScope.$broadcast('navFilterTeamChanged', team);
+        },
+        setUser: function(user) {
+            this.user = user;
+            $rootScope.$broadcast('navFilterUserChanged', user);
         }
     };
 });
@@ -184,12 +189,21 @@ app.config(function($stateProvider, $urlRouterProvider) {
         ;
 });
 
-app.controller('AppCtrl', function($scope, UserRepository) {
+app.controller('AppCtrl', function($scope, NavFilterService, UserRepository) {
     // Get current user
     UserRepository.getCurrentUser()
         .success(function(user) {
             $scope.currentUser = user[0];
+            
+            // Initialize NavFilter to show current user/team
+            NavFilterService.setTeam(user[0].teams[0]);
         });
+        
+    $scope.toggleSidebar = function() {
+        $scope.showSidebar = !$scope.showSidebar;
+    };
+        
+    $scope.showSidebar = true;
 });
 
 app.controller('NavFilterCtrl', function($scope, NavFilterService, TeamRepository, UserRepository) {
@@ -197,21 +211,31 @@ app.controller('NavFilterCtrl', function($scope, NavFilterService, TeamRepositor
     TeamRepository.list()
         .success(function(teams) {
             $scope.teams = teams;
-            setTeam(teams[0]);
         });    
 
     var setTeam = function(team) {
-        $scope.activeTeam = team;
-
+        // Check if the current user is in this team
+        var userInTeam = false;
+        angular.forEach($scope.currentUser.teams, function(userTeam) {
+            if(team.id == userTeam.id) {
+                userInTeam = true;
+            }
+        });
+                
         // Update users list with only users in active team
         UserRepository.list({ teams: team.id })
             .success(function(users) {
                 $scope.users = users;
-                setUser(users[0]);
+                
+                // Show current user if member of selected team, otherwise show the first member
+                if(userInTeam) {
+                    NavFilterService.setUser($scope.currentUser);
+                } else {
+                    NavFilterService.setUser(users[0]);
+                }
             });
 
-        // Notify service of team change
-        NavFilterService.setTeam(team);
+        $scope.activeTeam = team;
     };
 
     var setUser = function(user) {
@@ -220,28 +244,24 @@ app.controller('NavFilterCtrl', function($scope, NavFilterService, TeamRepositor
     
     // Select team click handler
     $scope.selectTeam = function($event, team) {
-        $event.preventDefault();
-        $event.stopPropagation();
-
-        $scope.teamSelectOpen = false;
-
-        setTeam(team);
+        NavFilterService.setTeam(team);
     };
 
     // Select user click handler
     $scope.selectUser = function($event, user) {
-        $event.preventDefault();
-        $event.stopPropagation();
-
-        $scope.userSelectOpen = false;
-
-        setUser(user);
+        NavFilterService.setUser(user);
     };
+    
+    // Listen to team/user changes from NavFilterService
+    $scope.$on('navFilterTeamChanged', function() {
+        setTeam(NavFilterService.team);
+    });
+    $scope.$on('navFilterUserChanged', function() {
+        setUser(NavFilterService.user);
+    });
     
     $scope.activeTeam = null;
     $scope.activeUser = null;
-    $scope.teamSelectOpen = false;
-    $scope.userSelectOpen = false;
 });
 
 app.controller('CalendarCtrl', function($scope, $modal, $state, EventRepository) {
