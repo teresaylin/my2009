@@ -3,8 +3,8 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import link
 
-from .models import Task, TaskForce, Team
-from .serializers import TaskSerializer, TaskForceSerializer, TeamSerializer, UserSerializer
+from .models import Task, TaskForce, Team, UserProfile
+from .serializers import TaskSerializer, TaskForceSerializer, TeamSerializer, UserSerializer, UserProfileSerializer
 
 class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
@@ -29,6 +29,11 @@ class UserViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(pk=self.request.user.id)
             
         return queryset
+
+class UserProfileViewSet(viewsets.ModelViewSet):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
+    filter_fields = ('user',)
     
 class TaskForceViewSet(viewsets.ModelViewSet):
     queryset = TaskForce.objects.all()

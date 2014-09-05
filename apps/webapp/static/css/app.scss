@@ -97,6 +97,20 @@ $teamAccentColors: (
     margin-left: 0;
 }
 
+.content-panel.item-summary {
+    padding: 0;
+    
+    table {
+        th {
+            text-align: right;
+            white-space: nowrap;
+        }
+        td {
+            width: 100%;
+        }
+    }
+}
+
 /*---------- Files list ----------*/
 
 .files-list-buttons {

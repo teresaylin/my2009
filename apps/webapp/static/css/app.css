@@ -131,6 +131,14 @@
 #main-content.nomargin {
   margin-left: 0; }
 
+.content-panel.item-summary {
+  padding: 0; }
+  .content-panel.item-summary table th {
+    text-align: right;
+    white-space: nowrap; }
+  .content-panel.item-summary table td {
+    width: 100%; }
+
 /*---------- Files list ----------*/
 .files-list-buttons {
   padding: 8px; }

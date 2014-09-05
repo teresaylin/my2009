@@ -40,7 +40,7 @@ class UserProfile(models.Model):
         ('N', 'No'),
         )
 
-    user = models.OneToOneField(User, related_name='profile', unique=True)
+    user = models.OneToOneField(User, related_name='profile', primary_key=True)
     phone_number = models.CharField(max_length=12)
 #    picture = models.FileField() -- how to initialize photo functionality?
     car = models.CharField(max_length=1, choices=CAR_CHOICES)

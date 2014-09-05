@@ -92,12 +92,43 @@ app.config(function($stateProvider, $urlRouterProvider) {
             views: {
                 '@': {
                     templateUrl: partial('users/detail.html'),
-                    controller: function($scope, $stateParams, UserRepository) {
+                    controller: function($scope, $stateParams, $modal, UserRepository) {
                         // Get user
                         UserRepository.get($stateParams.userId)
                             .success(function(user) {
                                 $scope.user = user;
                             });
+                            
+                        $scope.openEditProfileDialog = function() {
+                            var modal = $modal.open({
+                                templateUrl: partial('users/edit-profile-dialog.html'),
+                                controller: function($scope, $modalInstance, user) {
+                                    $scope.profile = angular.copy(user.profile);
+                                    
+                                    $scope.ok = function(form) {
+                                        // Update profile
+                                        UserRepository.updateProfile(user.id, $scope.profile)
+                                            .success(function() {
+                                                $modalInstance.close($scope.profile);
+                                            });
+                                    };
+                    
+                                    $scope.cancel = function() {
+                                        $modalInstance.dismiss('cancel');
+                                    };
+                                },
+                                resolve: {
+                                    user: function() {
+                                        return $scope.user;
+                                    }
+                                }
+                            });
+                            
+                            modal.result.then(function(profile) {
+                                // Add updated profile to user object
+                                $scope.user.profile = profile;
+                            });
+                        };
                     }
                 }
             }

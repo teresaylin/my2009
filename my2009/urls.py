@@ -17,6 +17,7 @@ router.register(r'tasks', userViews.TaskViewSet)
 router.register(r'taskforces', userViews.TaskForceViewSet)
 router.register(r'teams', userViews.TeamViewSet)
 router.register(r'users', userViews.UserViewSet)
+router.register(r'user-profiles', userViews.UserProfileViewSet)
 router.register(r'events', eventViews.EventViewSet)
 router.register(r'files', fileViews.FileViewSet)
 

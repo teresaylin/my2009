@@ -78,6 +78,7 @@ module.factory('TeamRepository', function($http) {
 
 module.factory('UserRepository', function($http) {
     var baseUrl = '/api/users';
+    var profilesUrl = '/api/user-profiles';
     
     return {
         get: function(id) {
@@ -88,6 +89,9 @@ module.factory('UserRepository', function($http) {
         },
         list: function(params) {
             return $http.get(baseUrl, { params: params });
+        },
+        updateProfile: function(id, data) {
+            return $http.put(profilesUrl+'/'+id, data);
         }
     };
 });
