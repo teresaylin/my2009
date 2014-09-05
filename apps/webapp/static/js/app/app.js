@@ -122,6 +122,21 @@ app.config(function($stateProvider, $urlRouterProvider) {
             url: '/events',
             templateUrl: partial('events/events.html')
         })
+        .state('events.detail', {
+            url: '/:eventId',
+            views: {
+                '@': {
+                    templateUrl: partial('events/detail.html'),
+                    controller: function($scope, $stateParams, EventRepository) {
+                        // Get task
+                        EventRepository.get($stateParams.eventId)
+                            .success(function(event) {
+                                $scope.event = event;
+                            });
+                    }
+                }
+            }
+        })
         // Files
         .state('files', {
             url: '/files',
@@ -229,7 +244,7 @@ app.controller('NavFilterCtrl', function($scope, NavFilterService, TeamRepositor
     $scope.userSelectOpen = false;
 });
 
-app.controller('CalendarCtrl', function($scope, $modal, EventRepository) {
+app.controller('CalendarCtrl', function($scope, $modal, $state, EventRepository) {
     $scope.eventsSource = function(start, end, timezone, callback) {
         // Get events within date range
         var query = {
@@ -238,10 +253,9 @@ app.controller('CalendarCtrl', function($scope, $modal, EventRepository) {
         };
         EventRepository.list(query)
             .success(function(events) {
-                // Iterate events
+                // Assign each event a URL
                 angular.forEach(events, function(event) {
-                    delete event.url;
-                    //event.editable = true;
+                    event.url = $state.href('events.detail', { eventId: event.id });
                 });
                 
                 callback(events);
@@ -269,6 +283,7 @@ app.controller('CalendarCtrl', function($scope, $modal, EventRepository) {
                 center: 'title',
                 right: 'today prev,next'
             },
+            timezone: 'local',
             eventClick: onEventClick,
             eventDrop: onEventDrop,
             eventResize: onEventResize,
@@ -281,7 +296,31 @@ app.controller('CalendarCtrl', function($scope, $modal, EventRepository) {
         var modal = $modal.open({
             templateUrl: partial('events/edit-dialog.html'),
             controller: function($scope, $modalInstance) {
+                $scope.event = {};
+                
                 $scope.ok = function(form) {
+                    var date = $scope.event.date;
+                    var start = $scope.event.start_time;
+                    var end = $scope.event.end_time;
+                    
+                    start.setDate(date.getDate());
+                    start.setMonth(date.getMonth());
+                    start.setFullYear(date.getFullYear());
+                    
+                    end.setDate(date.getDate());
+                    end.setMonth(date.getMonth());
+                    end.setFullYear(date.getFullYear());
+                    
+                    $scope.event.start = start;
+                    $scope.event.end = end;
+                    delete $scope.event.date;
+                    delete $scope.event.start_time;
+                    delete $scope.event.end_time;
+                    
+                    EventRepository.create($scope.event)
+                        .success(function() {
+                            $modalInstance.close();
+                        });
                 };
 
                 $scope.cancel = function() {

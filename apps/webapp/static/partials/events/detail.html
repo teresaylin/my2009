@@ -1,0 +1,25 @@
+<h1>{{ event.title }}</h1>
+<div class="content-panel">
+    <dl>
+        <dt>Owner</dt>
+        <dd>
+            <a ui-sref="users.detail({ userId: event.owner.id })">{{ event.owner.full_name }}</a>
+        </dd>
+        <dt>Starts</dt><dd>{{ event.start|date:'medium' }}</dd>
+        <dt>Ends</dt><dd>{{ event.end|date:'medium' }}</dd>
+        <dt>Location</dt><dd>{{ event.location }}</dd>
+    </dl>
+</div>
+
+<h2>Description</h2>
+<pre>{{ event.description }}</pre>
+
+<h2>Attendees</h2>
+<div class="content-panel">
+<p ng-if="event.attendees.length == 0">No-one is attending this event.</p>
+<ul>
+    <li ng-repeat="user in event.attendees">
+        <a ui-sref="users.detail({ userId: user.id })">{{ user.full_name }}</a>
+    </li>
+</ul>
+</div>

@@ -30,3 +30,6 @@ class EventViewSet(viewsets.ModelViewSet):
             raise ParseError('Invalid date')
             
         return queryset
+    
+    def pre_save(self, obj):
+        obj.owner = self.request.user

@@ -2,7 +2,7 @@
     <h3 class="modal-title">Edit event</h3>
 </div>
 <div class="modal-body">
-    <form>
+    <form name="form">
         <fieldset>
             <input type="text" class="form-control" placeholder="Name" maxlength="100" required ng-model="event.title">
             <textarea class="form-control" placeholder="Description" ng-model="event.description"></textarea>
@@ -10,21 +10,22 @@
         <hr>
         <fieldset>
             <input class="form-control" type="text" placeholder="Location" ng-model="event.location">
+            <input type="text" class="form-control" placeholder="Date" datepicker-popup ng-model="event.date" ng-required="true" />
             <div class="row">
                 <div class="col-xs-5">
-                    <input class="form-control" type="datetime-local" required ng-model="event.start">
+                    <timepicker ng-model="event.start_time" ng-required="true"></timepicker>
                 </div>
                 <div class="col-xs-2">
                     to
                 </div>
                 <div class="col-xs-5">
-                    <input class="form-control" type="datetime-local" required ng-model="event.end">
+                    <timepicker ng-model="event.end_time" ng-required="true"></timepicker>
                 </div>
             </div>
         </fieldset>
     </form>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-primary" ng-click="ok(form)" ng-disabled="form.$invalid">OK</button>
+    <button class="btn btn-primary" ng-click="ok(form)" ng-disabled="form.$invalid">Create</button>
     <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
 </div>
