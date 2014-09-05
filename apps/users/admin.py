@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
-from apps.users.models import Team, UserTeamMapping, Role, UserRoleMapping, UserProfile, Milestone, TaskForce, UserTaskForceMapping, Task
+from apps.users.models import Team, UserTeamMapping, Role, UserRoleMapping, UserProfile, Milestone, TaskForce, UserTaskForceMapping
 
 class TeamAdmin(admin.ModelAdmin):
     list_display = ('color', 'team_email')
@@ -54,7 +54,3 @@ class UserTaskForceMappingAdmin(admin.ModelAdmin):
     list_display = ('user', 'task_force')
 
 admin.site.register(UserTaskForceMapping, UserTaskForceMappingAdmin)
-
-class TaskAdmin(admin.ModelAdmin):
-    pass
-admin.site.register(Task, TaskAdmin)

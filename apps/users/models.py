@@ -38,15 +38,15 @@ class UserProfile(models.Model):
     CAR_CHOICES = (
         ('Y', 'Yes'),
         ('N', 'No'),
-        )
+    )
 
     user = models.OneToOneField(User, related_name='profile', primary_key=True)
+    picture_filename = models.CharField(max_length=20, blank=True)
     phone_number = models.CharField(max_length=12)
-#    picture = models.FileField() -- how to initialize photo functionality?
     car = models.CharField(max_length=1, choices=CAR_CHOICES)
 
     def __str__(self):
-        return str(self.user) + "- " + self.phone_number + " " + self.car
+        return str(self.user)
 
 #    def get_picture(self):
 #        return "http://"
@@ -78,29 +78,6 @@ class UserTaskForceMapping(models.Model):
 
     def __str__(self):
         return str(self.user) + "- " + str(self.task_force)
-
-class Task(models.Model):
-    name = models.CharField(max_length=50, blank=False)
-    parent = models.ForeignKey('Task', blank=True, null=True)
-    completed_by = models.DateField()
-    order = models.IntegerField()
-    description = models.TextField()
-    due_date = models.DateField()
-    # time_state = ?
-    # completion_state = ?
-
-    def __str__(self):
-        return str(self.name)
-
-class TaskAssigneeMap(models.Model):
-    task = models.ForeignKey('Task', related_name='assignee_map', unique=True)
-    task_forces = models.ManyToManyField('TaskForce')
-    users = models.ManyToManyField(User)
-    owner = models.ForeignKey(User, related_name='owned_task_assignee_maps')
-
-class TaskComment(models.Model):
-    task = models.ForeignKey('Task', related_name='task_comments')
-    comment = models.ForeignKey('Comment')
 
 class Comment(models.Model):
     user = models.ForeignKey(User)

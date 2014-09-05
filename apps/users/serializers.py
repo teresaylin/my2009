@@ -1,12 +1,13 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from .models import UserProfile, Role, UserRoleMapping, Task, TaskForce, Team, Milestone
+from .models import UserProfile, Role, UserRoleMapping, TaskForce, Team, Milestone
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
-        fields = ('phone_number', 'car')
+        fields = ('picture_filename', 'phone_number', 'car')
+        read_only_fields = ('picture_filename',)
         
 class RoleSerializer(serializers.ModelSerializer):
     class Meta:
@@ -57,8 +58,3 @@ class TaskForceSerializer(serializers.HyperlinkedModelSerializer):
         
     milestone = MilestoneSerializer()
     children = ChildTaskForceSerializer()
-    
-class TaskSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Task
-        fields = ('url', 'id', 'name', 'parent', 'completed_by', 'order', 'description', 'due_date')
