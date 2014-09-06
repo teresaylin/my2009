@@ -3,8 +3,8 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import link
 
-from .models import TaskForce, Team, UserProfile
-from .serializers import TaskForceSerializer, TeamSerializer, UserSerializer, UserProfileSerializer
+from .models import TaskForce, Team, UserProfile, Milestone
+from .serializers import TaskForceSerializer, TeamSerializer, UserSerializer, UserProfileSerializer, MilestoneSerializer
 
 class TeamViewSet(viewsets.ModelViewSet):
     queryset = Team.objects.all()
@@ -45,3 +45,8 @@ class TaskForceViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(parent_task_force=None)
             
         return queryset
+    
+class MilestoneViewSet(viewsets.ModelViewSet):
+    queryset = Milestone.objects.all()
+    serializer_class = MilestoneSerializer
+    ordering = ('end_date',)

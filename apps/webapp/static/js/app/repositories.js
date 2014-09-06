@@ -37,6 +37,19 @@ module.factory('FileRepository', function($http) {
     };
 });
 
+module.factory('MilestoneRepository', function($http) {
+    var baseUrl = '/api/milestones';
+    
+    return {
+        get: function(id) {
+            return $http.get(baseUrl+'/'+id);
+        },
+        list: function(params) {
+            return $http.get(baseUrl, { params: params });
+        }
+    };
+});
+
 module.factory('TaskRepository', function($http) {
     var baseUrl = '/api/tasks';
     
@@ -59,6 +72,15 @@ module.factory('TaskForceRepository', function($http) {
         },
         list: function(params) {
             return $http.get(baseUrl, { params: params });
+        },
+        create: function(data) {
+            return $http.post(baseUrl+'/', data);
+        },
+        update: function(id, data) {
+            return $http.put(baseUrl+'/'+id, data);
+        },
+        delete: function(id) {
+            return $http.delete(baseUrl+'/'+id);
         }
     };
 });

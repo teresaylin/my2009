@@ -181,7 +181,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
         .state('team', {
             url: '/team',
             templateUrl: partial('team/team.html'),
-            controller: function($scope, NavFilterService, TeamRepository, TaskForceRepository) {
+            controller: function($scope, $modal, NavFilterService, TeamRepository, TaskForceRepository) {
                 var update = function() {
                     if(NavFilterService.team) {
                         $scope.team = NavFilterService.team;
@@ -208,6 +208,114 @@ app.config(function($stateProvider, $urlRouterProvider) {
                     }
                 };
                 
+                // Create/update a task force
+                $scope.openEditTaskForceDialog = function(taskforce, parent) {
+                    var modal = $modal.open({
+                        templateUrl: partial('team/edit-taskforce-dialog.html'),
+                        controller: function($scope, $modalInstance, TaskForceRepository, MilestoneRepository, team) {
+                            
+                            if(taskforce) {
+                                // Editing existing taskforce
+                                $scope.creating = false;
+                                $scope.taskforce = angular.copy(taskforce);
+                            } else {
+                                // Creating new taskforce
+                                $scope.creating = true;
+                                $scope.taskforce = {
+                                    milestone: null,
+                                    team: team.id,
+                                    parent_task_force: parent ? parent.id : null
+                                };
+                            }
+                            
+                            // Get list of all milestones
+                            MilestoneRepository.list()
+                                .success(function(data) {
+                                    $scope.milestones = data;
+                                    
+                                    // Angular <select> detects the default selection by reference,
+                                    // so replace the existing milestone object with the copy in the list.
+                                    if($scope.taskforce.milestone) {
+                                        angular.forEach(data, function(milestone) {
+                                            if($scope.taskforce.milestone.id == milestone.id) {
+                                                $scope.taskforce.milestone = milestone;
+                                            }
+                                        });
+                                    }
+                                });
+                            
+                            $scope.create = function(form) {
+                                // Create task force
+                                $scope.taskforce.milestone_id = $scope.taskforce.milestone.id;
+                                TaskForceRepository.create($scope.taskforce)
+                                    .success(function() {
+                                        $modalInstance.close();
+                                    });
+                            };
+                            
+                            $scope.update = function(form) {
+                                // Update task force
+                                $scope.taskforce.milestone_id = $scope.taskforce.milestone.id;
+                                TaskForceRepository.update($scope.taskforce.id, $scope.taskforce)
+                                    .success(function() {
+                                        // Overwrite original object with updated object
+                                        angular.copy($scope.taskforce, taskforce);
+                                        $modalInstance.close();
+                                    });
+                            };
+            
+                            $scope.cancel = function() {
+                                $modalInstance.dismiss('cancel');
+                            };
+                        },
+                        resolve: {
+                            team: function() {
+                                return $scope.team;
+                            }
+                        }
+                    });
+                    
+                    modal.result.then(function(profile) {
+                        // If creating a new object
+                        if(!taskforce) {
+                            if(parent) {
+                                // Refresh parent task force's children
+                                TaskForceRepository.get(parent.id)
+                                    .success(function(data) {
+                                        parent.children = data.children;
+                                    });
+                            } else {
+                                // No parent, refresh root task force list
+                                update();
+                            }
+                        }
+                    });
+                };
+                
+                // Delete task force
+                $scope.openDeleteTaskForceDialog = function(taskforce) {
+                    var modal = $modal.open({
+                        templateUrl: partial('team/delete-taskforce-dialog.html'),
+                        controller: function($scope, $modalInstance, TaskForceRepository) {
+                            $scope.taskforce = taskforce;
+                            
+                            $scope.delete = function(form) {
+                                // Delete task force
+                                TaskForceRepository.delete(taskforce.id)
+                                    .success(function() {
+                                        $modalInstance.close();
+                                    });
+                            };
+            
+                            $scope.cancel = function() {
+                                $modalInstance.dismiss('cancel');
+                            };
+                        }
+                    });
+                    
+                    modal.result.then(function(profile) {
+                    });
+                };
                 // Update users when team changes
                 $scope.$on('navFilterTeamChanged', function() {
                     update();

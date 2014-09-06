@@ -139,6 +139,9 @@
   .content-panel.item-summary table td {
     width: 100%; }
 
+.accordion-toggle {
+  cursor: pointer; }
+
 /*---------- Files list ----------*/
 .files-list-buttons {
   padding: 8px; }

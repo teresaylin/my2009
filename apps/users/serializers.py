@@ -21,10 +21,10 @@ class UserRoleMappingSerializer(serializers.ModelSerializer):
         
     role = RoleSerializer()
     
-class TeamSerializer(serializers.HyperlinkedModelSerializer):
+class TeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = Team
-        fields = ('url', 'id', 'color', 'team_email')
+        fields = ('id', 'color', 'team_email')
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -42,19 +42,21 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 class MilestoneSerializer(serializers.ModelSerializer):
     class Meta:
         model = Milestone
-        fields = ('name', 'end_date')
+        fields = ('id', 'name', 'end_date')
 
-class ChildTaskForceSerializer(serializers.HyperlinkedModelSerializer):
+class ChildTaskForceSerializer(serializers.ModelSerializer):
     class Meta:
         model = TaskForce
-        fields = ('url', 'id', 'name', 'milestone', 'team')
+        fields = ('id', 'name', 'milestone', 'team')
         
     milestone = MilestoneSerializer()
 
-class TaskForceSerializer(serializers.HyperlinkedModelSerializer):
+class TaskForceSerializer(serializers.ModelSerializer):
     class Meta:
         model = TaskForce
-        fields = ('url', 'id', 'name', 'milestone', 'team', 'parent_task_force', 'children')
+        fields = ('id', 'name', 'milestone_id', 'milestone', 'team', 'parent_task_force', 'children')
         
-    milestone = MilestoneSerializer()
-    children = ChildTaskForceSerializer()
+    milestone_id = serializers.WritableField(source='milestone_id', write_only=True)
+
+    milestone = MilestoneSerializer(read_only=True)
+    children = ChildTaskForceSerializer(read_only=True)
