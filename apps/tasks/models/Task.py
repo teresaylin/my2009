@@ -13,11 +13,11 @@ class Task(models.Model):
     order = models.IntegerField()
     description = models.TextField(blank=True)
     due_time = models.DateTimeField()
-    state = models.CharField(max_length=50)
+    state = models.CharField(max_length=50, blank=True)
     completed_by = models.ForeignKey(User, related_name='completed_tasks', null=True, blank=True)
 
-    assigned_task_forces = models.ManyToManyField(TaskForce)
-    assigned_users = models.ManyToManyField(User)
+    assigned_taskforces = models.ManyToManyField(TaskForce, blank=True)
+    assigned_users = models.ManyToManyField(User, blank=True)
 
     def __str__(self):
         return str(self.name)

@@ -19,18 +19,22 @@
             <th>Location</th>
             <td>{{ event.location }}</td>
         </tr>
+        <tr>
+            <th>Description</th>
+            <td>
+                <pre>{{ event.description }}</pre>
+            </td>
+        </tr>
+        <tr>
+            <th>Attendees</th>
+            <td>
+                <p ng-if="event.attendees.length == 0">No-one is attending this event.</p>
+                <ul>
+                    <li ng-repeat="user in event.attendees">
+                        <a ui-sref="users.detail({ userId: user.id })">{{ user.full_name }}</a>
+                    </li>
+                </ul>
+            </td>
+        </tr>
     </tbody></table>
-</div>
-
-<h2>Description</h2>
-<pre>{{ event.description }}</pre>
-
-<h2>Attendees</h2>
-<div class="content-panel">
-<p ng-if="event.attendees.length == 0">No-one is attending this event.</p>
-<ul>
-    <li ng-repeat="user in event.attendees">
-        <a ui-sref="users.detail({ userId: user.id })">{{ user.full_name }}</a>
-    </li>
-</ul>
 </div>

@@ -1,3 +1,41 @@
 <h1>Tasks</h1>
+<hr>
 
-<p>Tasks go here</p>
+<div class="row mt">
+    <div class="col-md-12">
+        <section class="task-panel tasks-widget">
+            <div class="panel-heading">
+                <div class="pull-left">
+                    <h5><span class="fa fa-tasks"></span> Tasks</h5>
+                </div>
+                <br>
+            </div>
+            <div class="panel-body">
+                <div class="task-content">
+                    <ul class="task-list">
+                        <li ng-repeat="task in tasks">
+                            <div class="task-checkbox">
+                                <input type="checkbox" class="list-child" value="">
+                            </div>
+                            <div class="task-title">
+                                <span class="task-title-sp">
+                                    <a ui-sref="tasks.detail({ taskId: task.id })">{{ task.name }}</a>
+                                </span>
+                                <em>Due {{ task.due_time|date:'medium' }}</em>
+                                <div class="pull-right">
+                                    <button class="btn btn-success btn-xs"><span class="fa fa-check"></span></button>
+                                    <button class="btn btn-primary btn-xs"><span class="fa fa-pencil"></span></button>
+                                    <button class="btn btn-danger btn-xs"><span class="fa fa-trash-o "></span></button>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="add-task-row">
+                    <button class="btn btn-success btn-sm pull-left" ng-click="openEditTaskDialog(null)">New task</button>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>

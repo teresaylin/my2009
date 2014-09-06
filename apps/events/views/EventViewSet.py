@@ -32,4 +32,5 @@ class EventViewSet(viewsets.ModelViewSet):
         return queryset
     
     def pre_save(self, obj):
+        # Set owner
         obj.owner = self.request.user

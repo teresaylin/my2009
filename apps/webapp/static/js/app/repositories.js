@@ -59,7 +59,13 @@ module.factory('TaskRepository', function($http) {
         },
         list: function() {
             return $http.get(baseUrl);
-        }
+        },
+        create: function(data) {
+            return $http.post(baseUrl+'/', data);
+        },
+        update: function(id, data) {
+            return $http.put(baseUrl+'/'+id, data);
+        },
     };
 });
 

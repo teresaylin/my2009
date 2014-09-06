@@ -4,7 +4,7 @@
 <h2>Task forces</h2>
 <div class="content-panel">
     <script type="text/ng-template" id="taskforce-accordion.html">
-        <accordion-group is-open="isOpen">
+        <accordion-group is-open="isOpen" ng-init="isOpen = false">
             <accordion-heading>
                 <span ng-click="getTaskForceChildren(taskForce)">
                     <span class="glyphicon" ng-class="{'glyphicon-chevron-down': isOpen, 'glyphicon-chevron-right': !isOpen}"></span>
@@ -21,20 +21,22 @@
             </accordion-heading>
             <p>Milestone: {{ taskForce.milestone.name }} {{ taskForce.milestone.end_date }}</p>
             <h3>Sub task forces</h3>
-            <button class="btn btn-default" ng-click="openEditTaskForceDialog(null, taskForce)">New task force</button>
             <accordion>
                 <div ng-repeat="taskForce in taskForce.children">
                     <ng-include src="'taskforce-accordion.html'"></ng-include>
                 </div>
             </accordion>
+            <button class="btn btn-sm btn-success" ng-click="openEditTaskForceDialog(null, taskForce)">New task force</button>
         </accordion-group>
     </script>
-
-    <accordion>
-        <button class="btn btn-default" ng-click="openEditTaskForceDialog(null, null)">New task force</button>
-        <p ng-if="taskForces.length == 0">This team doesn't have any task forces.</p>
-        <div ng-repeat="taskForce in taskForces">
-            <ng-include src="'taskforce-accordion.html'"></ng-include>
-        </div>
-    </accordion>
+    
+    <div class="panel-body">
+        <accordion>
+            <p ng-if="taskForces.length == 0">This team doesn't have any task forces.</p>
+            <div ng-repeat="taskForce in taskForces">
+                <ng-include src="'taskforce-accordion.html'"></ng-include>
+            </div>
+        </accordion>
+        <button class="btn btn-sm btn-success" ng-click="openEditTaskForceDialog(null, null)">New task force</button>
+    </div>
 </div>

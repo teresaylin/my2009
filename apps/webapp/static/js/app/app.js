@@ -136,7 +136,77 @@ app.config(function($stateProvider, $urlRouterProvider) {
         // Tasks
         .state('tasks', {
             url: '/tasks',
-            templateUrl: partial('tasks/tasks.html')
+            templateUrl: partial('tasks/tasks.html'),
+            controller: function($scope, $modal, TaskRepository) {
+                // Get list of all tasks
+                TaskRepository.list()
+                    .success(function(tasks) {
+                        $scope.tasks = tasks;
+                    });
+
+                // Create/update a task
+                $scope.openEditTaskDialog = function(task) {
+                    var modal = $modal.open({
+                        templateUrl: partial('tasks/edit-dialog.html'),
+                        controller: function($scope, $modalInstance, TaskRepository) {
+                            if(task) {
+                                // Editing existing task
+                                $scope.creating = false;
+                                $scope.task = angular.copy(task);
+                            } else {
+                                // Creating new task
+                                $scope.creating = true;
+                                $scope.task = {
+                                    order: 0
+                                };
+                            }
+                            
+                            /*
+                            // Get list of all milestones
+                            MilestoneRepository.list()
+                                .success(function(data) {
+                                    $scope.milestones = data;
+                                    
+                                    // Angular <select> detects the default selection by reference,
+                                    // so replace the existing milestone object with the copy in the list.
+                                    if($scope.taskforce.milestone) {
+                                        angular.forEach(data, function(milestone) {
+                                            if($scope.taskforce.milestone.id == milestone.id) {
+                                                $scope.taskforce.milestone = milestone;
+                                            }
+                                        });
+                                    }
+                                });
+                                */
+                            
+                            $scope.create = function(form) {
+                                // Create task
+                                TaskRepository.create($scope.task)
+                                    .success(function() {
+                                        $modalInstance.close();
+                                    });
+                            };
+                            
+                            $scope.update = function(form) {
+                                // Update task
+                                TaskRepository.update($scope.task.id, $scope.task)
+                                    .success(function() {
+                                        // Overwrite original object with updated object
+                                        angular.copy($scope.task, task);
+                                        $modalInstance.close();
+                                    });
+                            };
+            
+                            $scope.cancel = function() {
+                                $modalInstance.dismiss('cancel');
+                            };
+                        }
+                    });
+                    
+                    modal.result.then(function(profile) {
+                    });
+                };
+            }
         })
         .state('tasks.detail', {
             url: '/:taskId',
