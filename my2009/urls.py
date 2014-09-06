@@ -14,6 +14,7 @@ from apps.dropbox import urls as dropboxUrls
 
 # API router
 router = routers.DefaultRouter()
+router.register(r'milestones', userViews.MilestoneViewSet)
 router.register(r'taskforces', userViews.TaskForceViewSet)
 router.register(r'teams', userViews.TeamViewSet)
 router.register(r'users', userViews.UserViewSet)

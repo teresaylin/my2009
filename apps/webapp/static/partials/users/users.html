@@ -6,7 +6,7 @@
         <div class="user">
             <figure class="user-photo user-photo-med">
                 <a ui-sref="users.detail({ userId: user.id })">
-                    <img src="/static/img/profile-photos/med/{{ user.profile.picture_filename ? user.profile.picture_filename+'.jpg' : '_unavailable.png' }}">
+                    <img ng-src="/static/img/profile-photos/med/{{ user.profile.picture_filename ? user.profile.picture_filename+'.jpg' : '_unavailable.png' }}">
                 </a>
                 <figcaption>
                     {{ user.full_name }}<br>
