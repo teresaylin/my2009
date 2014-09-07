@@ -594,6 +594,8 @@ app.controller('CalendarCtrl', function($scope, $modal, $state, EventRepository)
         });
         
         modal.result.then(function() {
+            // Reload events
+            $scope.calendar.fullCalendar('refetchEvents');
         });
     };
 });

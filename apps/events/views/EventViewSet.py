@@ -10,7 +10,7 @@ from rest_framework.response import Response
 
 from apps.users.exceptions import UserNotFound
 
-from ..exceptions import EventAlreadyHasAttendee
+from ..exceptions import EventAlreadyHasAttendee, EventEndPrecedesStart
 from ..models import Event, EventAttendee
 from ..serializers import EventSerializer
 
@@ -41,6 +41,10 @@ class EventViewSet(viewsets.ModelViewSet):
     def pre_save(self, obj):
         # Set owner
         obj.owner = self.request.user
+        
+        # Check start time precedes end time
+        if obj.end < obj.start:
+            raise EventEndPrecedesStart()
         
     @action()
     def add_attendee(self, request, pk=None):

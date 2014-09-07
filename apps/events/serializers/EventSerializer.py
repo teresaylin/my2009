@@ -10,4 +10,4 @@ class EventSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'id', 'title', 'owner', 'start', 'end', 'location', 'description', 'attendees')
     
     owner = UserSerializer(read_only=True)
-    attendees = UserSerializer()
+    attendees = UserSerializer(read_only=True)
