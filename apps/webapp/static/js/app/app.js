@@ -119,11 +119,14 @@ app.config(function($stateProvider, $urlRouterProvider) {
             url: '/tasks',
             templateUrl: partial('tasks/tasks.html'),
             controller: function($scope, $modal, TaskRepository) {
-                // Get list of all tasks
-                TaskRepository.list()
-                    .success(function(tasks) {
-                        $scope.tasks = tasks;
-                    });
+                var refreshTasks = function() {
+                    // Get list of all tasks
+                    TaskRepository.list()
+                        .success(function(tasks) {
+                            $scope.tasks = tasks;
+                        });
+                };
+                refreshTasks();
 
                 // Create/update a task
                 $scope.openEditTaskDialog = function(task) {
@@ -141,24 +144,6 @@ app.config(function($stateProvider, $urlRouterProvider) {
                                     order: 0
                                 };
                             }
-                            
-                            /*
-                            // Get list of all milestones
-                            MilestoneRepository.list()
-                                .success(function(data) {
-                                    $scope.milestones = data;
-                                    
-                                    // Angular <select> detects the default selection by reference,
-                                    // so replace the existing milestone object with the copy in the list.
-                                    if($scope.taskforce.milestone) {
-                                        angular.forEach(data, function(milestone) {
-                                            if($scope.taskforce.milestone.id == milestone.id) {
-                                                $scope.taskforce.milestone = milestone;
-                                            }
-                                        });
-                                    }
-                                });
-                                */
                             
                             $scope.create = function(form) {
                                 // Create task
@@ -184,7 +169,38 @@ app.config(function($stateProvider, $urlRouterProvider) {
                         }
                     });
                     
-                    modal.result.then(function(profile) {
+                    modal.result.then(function() {
+                        // Refresh tasks list if new task has been created
+                        if(!task) {
+                            refreshTasks();
+                        }
+                    });
+                };
+
+                // Delete task 
+                $scope.openDeleteTaskDialog = function(task) {
+                    var modal = $modal.open({
+                        templateUrl: partial('tasks/delete-task-dialog.html'),
+                        controller: function($scope, $modalInstance, TaskRepository) {
+                            $scope.task = task;
+                            
+                            $scope.delete = function(form) {
+                                // Delete task
+                                TaskRepository.delete(task.id)
+                                    .success(function() {
+                                        $modalInstance.close();
+                                    });
+                            };
+            
+                            $scope.cancel = function() {
+                                $modalInstance.dismiss('cancel');
+                            };
+                        }
+                    });
+                    
+                    modal.result.then(function() {
+                        // Refresh tasks after deletion
+                        refreshTasks();
                     });
                 };
             }
@@ -220,6 +236,13 @@ app.config(function($stateProvider, $urlRouterProvider) {
                             .success(function(event) {
                                 $scope.event = event;
                             });
+                            
+                        $scope.addAttendee = function(user) {
+                            EventRepository.addAttendee($scope.event.id, user.id)
+                                .success(function() {
+                                    $scope.event.attendees.push(user);
+                                });
+                        };
                     }
                 }
             }
@@ -332,7 +355,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
                         }
                     });
                     
-                    modal.result.then(function(profile) {
+                    modal.result.then(function() {
                         // If creating a new object
                         if(!taskforce) {
                             if(parent) {
@@ -370,9 +393,10 @@ app.config(function($stateProvider, $urlRouterProvider) {
                         }
                     });
                     
-                    modal.result.then(function(profile) {
+                    modal.result.then(function() {
                     });
                 };
+
                 // Update users when team changes
                 $scope.$on('navFilterTeamChanged', function() {
                     update();
@@ -549,3 +573,38 @@ app.controller('CalendarCtrl', function($scope, $modal, $state, EventRepository)
         });
     };
 });
+
+app.directive('userPicker', function(UserRepository) {
+    return {
+        restrict: 'E',
+        scope: {
+            user: '='
+        },
+        templateUrl: 'components/user-picker.html',
+        link: function(scope, element, attrs) {
+            scope.search = function(q) {
+                return UserRepository.list({
+                    search_name: q,
+                    page_size: 10
+                })
+                    .then(function(res){
+                        return res.data.results;
+                    });
+            };
+        }
+    };
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+

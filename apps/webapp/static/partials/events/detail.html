@@ -28,9 +28,17 @@
         <tr>
             <th>Attendees</th>
             <td>
+                <form class="form-inline">
+                    <user-picker user="newAttendeeUser"></user-picker>
+                    <button class="btn btn-sm btn-primary"
+                        ng-click="addAttendee(newAttendeeUser); newAttendeeUser = null"
+                        ng-disabled="!newAttendeeUser">
+                    Add</button>
+                </form> 
+                
                 <p ng-if="event.attendees.length == 0">No-one is attending this event.</p>
-                <ul>
-                    <li ng-repeat="user in event.attendees">
+                <ul class="list-group">
+                    <li class="list-group-item" ng-repeat="user in event.attendees">
                         <a ui-sref="users.detail({ userId: user.id })">{{ user.full_name }}</a>
                     </li>
                 </ul>

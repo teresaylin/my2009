@@ -12,6 +12,11 @@ module.factory('EventRepository', function($http) {
         },
         create: function(data) {
             return $http.post(baseUrl+'/', data);
+        },
+        addAttendee: function(id, userId) {
+            return $http.post(baseUrl+'/'+id+'/add_attendee/', {
+                'user_id': userId
+            });
         }
     };
 });
@@ -66,6 +71,9 @@ module.factory('TaskRepository', function($http) {
         update: function(id, data) {
             return $http.put(baseUrl+'/'+id, data);
         },
+        delete: function(id) {
+            return $http.delete(baseUrl+'/'+id);
+        }
     };
 });
 

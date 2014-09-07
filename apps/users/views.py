@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.contrib.auth.models import User
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -23,6 +24,17 @@ class UserViewSet(viewsets.ModelViewSet):
         current = self.request.QUERY_PARAMS.get('current', None)
         if current is not None:
             queryset = queryset.filter(pk=self.request.user.id)
+            
+        # Perform name search
+        searchName = self.request.QUERY_PARAMS.get('search_name', None)
+        if searchName is not None:
+            if ' ' in searchName:
+                # Search by partial full name (e.g. John Smi)
+                tok = searchName.split(' ', 1)
+                queryset = queryset.filter(first_name__iexact=tok[0], last_name__istartswith=tok[1])
+            else:
+                # Search first name or last name
+                queryset = queryset.filter(Q(first_name__icontains=searchName) | Q(last_name__icontains=searchName))
             
         return queryset
 

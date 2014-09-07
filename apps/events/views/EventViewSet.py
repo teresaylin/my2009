@@ -1,10 +1,16 @@
 from django.core.exceptions import ValidationError
+from django.db import IntegrityError
 from django.db.models import Q
+from django.contrib.auth.models import User
 
 from rest_framework import viewsets
+from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError
+from rest_framework.response import Response
 
-from ..models import Event
+from apps.users.exceptions import UserNotFound
+
+from ..models import Event, EventAttendee
 from ..serializers import EventSerializer
 
 class EventViewSet(viewsets.ModelViewSet):
@@ -34,3 +40,26 @@ class EventViewSet(viewsets.ModelViewSet):
     def pre_save(self, obj):
         # Set owner
         obj.owner = self.request.user
+        
+    @action()
+    def add_attendee(self, request, pk=None):
+        event = self.get_object()
+        
+        # Get attendee User object
+        try:
+            userId = request.DATA.get('user_id', None)
+            user = User.objects.get(id=userId)
+        except User.DoesNotExist:
+            raise UserNotFound()
+        
+        # Create EventAttendee object
+        try:
+            EventAttendee.objects.create(
+                event=event,
+                user=user
+            )
+        except IntegrityError:
+            # User is already an attendee, ignore
+            pass
+        
+        return Response({})

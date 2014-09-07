@@ -111,4 +111,17 @@
         </div>
     </footer>
 </section>
+
+<!-- Misc templates -->
+
+<script type="text/ng-template" id="components/user-picker.html">
+    <div class="form-group" ng-class="{ 'has-success': user }">
+        <input type="text" ng-model="user"
+            typeahead="user as user.full_name for user in search($viewValue) | filter:{full_name:$viewValue}"
+            typeahead-min-length="2"
+            typeahead-editable="false" 
+            class="form-control">
+    </div>
+</script>
+
 {% endblock %}
