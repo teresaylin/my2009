@@ -1,6 +1,25 @@
 <h1>{{ team.color }} team</h1>
 <hr>
 
+<h2>Members</h2>
+<div class="content-panel">
+    <div class="row users-gallery">
+        <div class="col-lg-2 col-md-3 col-sm-3 col-xs-6" ng-repeat="user in users">
+            <div class="user">
+                <figure class="user-photo user-photo-med">
+                    <a ui-sref="users.detail({ userId: user.id })">
+                        <img ng-src="/static/img/profile-photos/med/{{ user.profile.picture_filename ? user.profile.picture_filename+'.jpg' : '_unavailable.png' }}">
+                    </a>
+                    <figcaption>
+                        {{ user.full_name }}<br>
+                        <em ng-repeat="userRole in user.user_roles">{{ userRole.role.name }}</em>
+                    </figcaption>
+                </figure>
+            </div>
+        </div>
+    </div>
+</div>
+
 <h2>Task forces</h2>
 <div class="content-panel">
     <script type="text/ng-template" id="taskforce-accordion.html">

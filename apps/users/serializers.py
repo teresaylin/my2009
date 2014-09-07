@@ -47,7 +47,7 @@ class MilestoneSerializer(serializers.ModelSerializer):
 class ChildTaskForceSerializer(serializers.ModelSerializer):
     class Meta:
         model = TaskForce
-        fields = ('id', 'name', 'milestone', 'team')
+        fields = ('id', 'name', 'milestone', 'team', 'parent_task_force')
         
     milestone = MilestoneSerializer()
 

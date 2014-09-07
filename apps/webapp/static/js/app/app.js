@@ -66,26 +66,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
         // Users
         .state('users', {
             url: '/users',
-            templateUrl: partial('users/users.html'),
-            controller: function($scope, $stateParams, NavFilterService, UserRepository) {
-                var updateUsers = function() {
-                    // Get list of users in selected team
-                    if(NavFilterService.team) {
-                        UserRepository.list({ teams: NavFilterService.team.id })
-                            .success(function(users) {
-                                $scope.users = users;
-                            });
-                    }
-                };
-                
-                // Update users when team changes
-                $scope.$on('navFilterTeamChanged', function() {
-                    updateUsers();
-                });
-
-                // Get users
-                updateUsers();
-            }
+            abstract: true
         })
         .state('users.detail', {
             url: '/:userId',
@@ -251,10 +232,16 @@ app.config(function($stateProvider, $urlRouterProvider) {
         .state('team', {
             url: '/team',
             templateUrl: partial('team/team.html'),
-            controller: function($scope, $modal, NavFilterService, TeamRepository, TaskForceRepository) {
+            controller: function($scope, $modal, NavFilterService, TeamRepository, UserRepository, TaskForceRepository) {
                 var update = function() {
                     if(NavFilterService.team) {
                         $scope.team = NavFilterService.team;
+
+                        // Get list of users in selected team
+                        UserRepository.list({ teams: NavFilterService.team.id })
+                            .success(function(users) {
+                                $scope.users = users;
+                            });
                         
                         // Get root task forces
                         TaskForceRepository.list({

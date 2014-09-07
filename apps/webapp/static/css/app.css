@@ -159,6 +159,7 @@
     height: 71px; }
 
 .users-gallery .user {
-  margin-bottom: 20px; }
+  margin-bottom: 20px;
+  min-height: 196px; }
   .users-gallery .user > figure {
     margin: 0 auto; }
