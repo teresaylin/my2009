@@ -17,6 +17,11 @@ module.factory('EventRepository', function($http) {
             return $http.post(baseUrl+id+'/add_attendee/', {
                 'user_id': userId
             });
+        },
+        removeAttendee: function(id, userId) {
+            return $http.post(baseUrl+id+'/remove_attendee/', {
+                'user_id': userId
+            });
         }
     };
 });
@@ -73,6 +78,16 @@ module.factory('TaskRepository', function($http) {
         },
         delete: function(id) {
             return $http.delete(baseUrl+id+'/');
+        },
+        addAssignedUser: function(id, userId) {
+            return $http.post(baseUrl+id+'/add_assigned_user/', {
+                'user_id': userId
+            });
+        },
+        removeAssignedUser: function(id, userId) {
+            return $http.post(baseUrl+id+'/remove_assigned_user/', {
+                'user_id': userId
+            });
         }
     };
 });

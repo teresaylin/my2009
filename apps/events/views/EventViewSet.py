@@ -10,6 +10,7 @@ from rest_framework.response import Response
 
 from apps.users.exceptions import UserNotFound
 
+from ..exceptions import EventAlreadyHasAttendee
 from ..models import Event, EventAttendee
 from ..serializers import EventSerializer
 
@@ -34,7 +35,7 @@ class EventViewSet(viewsets.ModelViewSet):
                 queryset = queryset.filter(start__lt=end)
         except ValidationError:
             raise ParseError('Invalid date')
-            
+        
         return queryset
     
     def pre_save(self, obj):
@@ -59,7 +60,22 @@ class EventViewSet(viewsets.ModelViewSet):
                 user=user
             )
         except IntegrityError:
-            # User is already an attendee, ignore
-            pass
+            raise EventAlreadyHasAttendee()
+        
+        return Response({})
+
+    @action()
+    def remove_attendee(self, request, pk=None):
+        event = self.get_object()
+        
+        # Get attendee User object
+        try:
+            userId = request.DATA.get('user_id', None)
+            eventAttendee = EventAttendee.objects.get(event=event, user__id=userId)
+        except EventAttendee.DoesNotExist:
+            raise UserNotFound()
+        
+        # Remove EventAttendee object
+        eventAttendee.delete()
         
         return Response({})

@@ -216,6 +216,21 @@ app.config(function($stateProvider, $urlRouterProvider) {
                             .success(function(task) {
                                 $scope.task = task;
                             });
+                            
+                        $scope.addAssignedUser = function(user) {
+                            TaskRepository.addAssignedUser($scope.task.id, user.id)
+                                .success(function() {
+                                    $scope.task.assigned_users.push(user);
+                                });
+                        };
+
+                        $scope.removeAssignedUser = function(user) {
+                            TaskRepository.removeAssignedUser($scope.task.id, user.id)
+                                .success(function() {
+                                    var assignedUsers = $scope.task.assigned_users;
+                                    assignedUsers.splice(assignedUsers.indexOf(user), 1);
+                                });
+                        };
                     }
                 }
             }
@@ -241,6 +256,15 @@ app.config(function($stateProvider, $urlRouterProvider) {
                             EventRepository.addAttendee($scope.event.id, user.id)
                                 .success(function() {
                                     $scope.event.attendees.push(user);
+                                });
+                        };
+
+                        $scope.removeAttendee = function(user) {
+                            EventRepository.removeAttendee($scope.event.id, user.id)
+                                .success(function() {
+                                    console.log(user);
+                                    var attendees = $scope.event.attendees;
+                                    attendees.splice(attendees.indexOf(user), 1);
                                 });
                         };
                     }

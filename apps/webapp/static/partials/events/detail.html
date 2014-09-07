@@ -39,6 +39,9 @@
                 <p ng-if="event.attendees.length == 0">No-one is attending this event.</p>
                 <ul class="list-group">
                     <li class="list-group-item" ng-repeat="user in event.attendees">
+                        <a href ng-click="removeAttendee(user)">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </a>
                         <a ui-sref="users.detail({ userId: user.id })">{{ user.full_name }}</a>
                     </li>
                 </ul>

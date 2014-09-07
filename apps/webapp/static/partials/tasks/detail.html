@@ -38,9 +38,20 @@
         <tr>
             <th>Assigned users</th>
             <td>
+                <form class="form-inline">
+                    <user-picker user="newAssignedUser"></user-picker>
+                    <button class="btn btn-sm btn-primary"
+                        ng-click="addAssignedUser(newAssignedUser); newAssignedUser = null"
+                        ng-disabled="!newAssignedUser">
+                    Add</button>
+                </form> 
+
                 <p ng-if="task.assigned_users.length == 0">No-one is assigned to this task.</p>
-                <ul>
-                    <li ng-repeat="user in task.assigned_users">
+                <ul class="list-group">
+                    <li class="list-group-item" ng-repeat="user in task.assigned_users">
+                        <a href ng-click="removeAssignedUser(user)">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </a>
                         <a ui-sref="users.detail({ userId: user.id })">{{ user.full_name }}</a>
                     </li>
                 </ul>
