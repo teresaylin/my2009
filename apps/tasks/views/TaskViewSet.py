@@ -3,9 +3,10 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from apps.users.exceptions import UserNotFound
+from apps.users.exceptions import UserNotFound, TaskForceNotFound
+from apps.users.models import TaskForce
 
-from ..exceptions import TaskAlreadyAssignedToUser
+from ..exceptions import TaskAlreadyAssignedToUser, TaskAlreadyAssignedToTaskForce
 from ..models import Task
 from ..serializers import TaskSerializer
 
@@ -50,5 +51,40 @@ class TaskViewSet(viewsets.ModelViewSet):
         
         # Remove user assignation
         task.assigned_users.remove(user)
+        
+        return Response({})
+
+    @action()
+    def add_assigned_taskforce(self, request, pk=None):
+        task = self.get_object()
+        
+        # Get TaskForce object
+        try:
+            taskforceId = request.DATA.get('taskforce_id', None)
+            taskforce = TaskForce.objects.get(id=taskforceId)
+        except TaskForce.DoesNotExist:
+            raise TaskForceNotFound()
+        
+        # Assign task force to task
+        if taskforce in task.assigned_taskforces.all():
+            raise TaskAlreadyAssignedToTaskForce()
+        else:
+            task.assigned_taskforces.add(taskforce)
+        
+        return Response({})
+
+    @action()
+    def remove_assigned_taskforce(self, request, pk=None):
+        task = self.get_object()
+        
+        # Get TaskForce object
+        try:
+            taskforceId = request.DATA.get('taskforce_id', None)
+            taskforce = TaskForce.objects.get(id=taskforceId)
+        except TaskForce.DoesNotExist:
+            raise TaskForceNotFound()
+        
+        # Remove task force assignation
+        task.assigned_taskforces.remove(taskforce)
         
         return Response({})

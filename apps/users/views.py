@@ -55,6 +55,11 @@ class TaskForceViewSet(viewsets.ModelViewSet):
         root = self.request.QUERY_PARAMS.get('root', None)
         if root is not None:
             queryset = queryset.filter(parent_task_force=None)
+
+        # Perform name search
+        searchName = self.request.QUERY_PARAMS.get('search_name', None)
+        if searchName is not None:
+            queryset = queryset.filter(name__icontains=searchName)
             
         return queryset
     

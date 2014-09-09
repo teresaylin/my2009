@@ -27,9 +27,20 @@
         <tr>
             <th>Assigned task forces</th>
             <td>
+                <form class="form-inline">
+                    <taskforce-picker taskforce="newAssignedTaskforce"></taskforce-picker>
+                    <button class="btn btn-sm btn-primary"
+                        ng-click="addAssignedTaskforce(newAssignedTaskforce); newAssignedTaskforce = null"
+                        ng-disabled="!newAssignedTaskforce">
+                    Add</button>
+                </form> 
+
                 <p ng-if="task.assigned_taskforces.length == 0">There are no task forces assigned to this task.</p>
-                <ul>
-                    <li ng-repeat="taskforce in task.assigned_taskforces">
+                <ul class="list-group">
+                    <li class="list-group-item" ng-repeat="taskforce in task.assigned_taskforces">
+                        <a href ng-click="removeAssignedTaskforce(taskforce)">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </a>
                         {{ taskforce.name }}
                     </li>
                 </ul>

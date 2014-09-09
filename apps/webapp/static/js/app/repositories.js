@@ -88,6 +88,16 @@ module.factory('TaskRepository', function($http) {
             return $http.post(baseUrl+id+'/remove_assigned_user/', {
                 'user_id': userId
             });
+        },
+        addAssignedTaskforce: function(id, taskforceId) {
+            return $http.post(baseUrl+id+'/add_assigned_taskforce/', {
+                'taskforce_id': taskforceId
+            });
+        },
+        removeAssignedTaskforce: function(id, taskforceId) {
+            return $http.post(baseUrl+id+'/remove_assigned_taskforce/', {
+                'taskforce_id': taskforceId
+            });
         }
     };
 });

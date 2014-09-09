@@ -231,6 +231,21 @@ app.config(function($stateProvider, $urlRouterProvider) {
                                     assignedUsers.splice(assignedUsers.indexOf(user), 1);
                                 });
                         };
+
+                        $scope.addAssignedTaskforce = function(taskforce) {
+                            TaskRepository.addAssignedTaskforce($scope.task.id, taskforce.id)
+                                .success(function() {
+                                    $scope.task.assigned_taskforces.push(taskforce);
+                                });
+                        };
+
+                        $scope.removeAssignedTaskforce = function(taskforce) {
+                            TaskRepository.removeAssignedTaskforce($scope.task.id, taskforce.id)
+                                .success(function() {
+                                    var assignedTaskforces = $scope.task.assigned_taskforces;
+                                    assignedTaskforces.splice(assignedTaskforces.indexOf(taskforce), 1);
+                                });
+                        };
                     }
                 }
             }
@@ -621,7 +636,26 @@ app.directive('userPicker', function(UserRepository) {
     };
 });
 
-
+app.directive('taskforcePicker', function(TaskForceRepository) {
+    return {
+        restrict: 'E',
+        scope: {
+            taskforce: '='
+        },
+        templateUrl: 'components/taskforce-picker.html',
+        link: function(scope, element, attrs) {
+            scope.search = function(q) {
+                return TaskForceRepository.list({
+                    search_name: q,
+                    page_size: 10
+                })
+                    .then(function(res){
+                        return res.data.results;
+                    });
+            };
+        }
+    };
+});
 
 
 

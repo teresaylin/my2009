@@ -124,4 +124,14 @@
     </div>
 </script>
 
+<script type="text/ng-template" id="components/taskforce-picker.html">
+    <div class="form-group" ng-class="{ 'has-success': taskforce }">
+        <input type="text" ng-model="taskforce"
+            typeahead="taskforce as taskforce.name for taskforce in search($viewValue) | filter:{name:$viewValue}"
+            typeahead-min-length="2"
+            typeahead-editable="false" 
+            class="form-control">
+    </div>
+</script>
+
 {% endblock %}
