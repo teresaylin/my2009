@@ -210,11 +210,17 @@ app.config(function($stateProvider, $urlRouterProvider) {
             views: {
                 '@': {
                     templateUrl: partial('tasks/detail.html'),
-                    controller: function($scope, $stateParams, TaskRepository) {
+                    controller: function($scope, $stateParams, TaskRepository, CommentRepository) {
                         // Get task
                         TaskRepository.get($stateParams.taskId)
                             .success(function(task) {
                                 $scope.task = task;
+
+                                // Get comments
+                                CommentRepository.list({ thread: task.comment_thread })
+                                    .success(function(comments) {
+                                        $scope.comments = comments;
+                                    });
                             });
                             
                         $scope.addAssignedUser = function(user) {
@@ -244,6 +250,18 @@ app.config(function($stateProvider, $urlRouterProvider) {
                                 .success(function() {
                                     var assignedTaskforces = $scope.task.assigned_taskforces;
                                     assignedTaskforces.splice(assignedTaskforces.indexOf(taskforce), 1);
+                                });
+                        };
+                        
+                        $scope.postComment = function(body) {
+                            var comment = {
+                                'thread': $scope.task.comment_thread,
+                                'body': body
+                            };
+
+                            CommentRepository.create(comment)
+                                .success(function(newComment) {
+                                    $scope.comments.unshift(newComment);
                                 });
                         };
                     }
@@ -612,6 +630,43 @@ app.controller('CalendarCtrl', function($scope, $modal, $state, EventRepository)
             // Reload events
             $scope.calendar.fullCalendar('refetchEvents');
         });
+    };
+});
+
+app.directive('timeFromNow', function($interval) {
+    return {
+        restrict: 'E',
+        scope: {
+            time: '='
+        },
+        templateUrl: 'components/time-from-now.html',
+        link: function(scope, element, attrs) {
+            var mTime = moment(scope.time);
+            scope.isoTime = mTime.toISOString();
+            
+            var update = function() {
+                scope.fromNow = mTime.fromNow();
+            };
+
+            // Update every minute
+            var timeoutId = $interval(update, 60*1000);
+            update();
+
+            element.on('$destroy', function() {
+                $interval.cancel(timeoutId);
+            });
+        }
+    };
+});
+
+app.directive('userPicture', function() {
+    return {
+        restrict: 'E',
+        scope: {
+            user: '=',
+            size: '='
+        },
+        templateUrl: 'components/user-picture.html'
     };
 });
 

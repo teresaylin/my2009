@@ -114,6 +114,7 @@
 
 <!-- Misc templates -->
 
+{% verbatim %}
 <script type="text/ng-template" id="components/user-picker.html">
     <div class="form-group" ng-class="{ 'has-success': user }">
         <input type="text" ng-model="user"
@@ -133,5 +134,15 @@
             class="form-control">
     </div>
 </script>
+
+<script type="text/ng-template" id="components/user-picture.html">
+    <img ng-src="/static/img/profile-photos/{{ size }}/{{ user.profile.picture_filename ? user.profile.picture_filename+'.jpg' : '_unavailable.png' }}">
+</script>
+
+<script type="text/ng-template" id="components/time-from-now.html">
+    <time datetime="{{ isoTime }}" title="{{ time|date:'medium' }}">{{ fromNow }}</time>
+</script>
+
+{% endverbatim %}
 
 {% endblock %}

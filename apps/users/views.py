@@ -1,11 +1,14 @@
+from datetime import datetime
+
+from django.utils.timezone import utc
 from django.db.models import Q
 from django.contrib.auth.models import User
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import link
 
-from .models import TaskForce, Team, UserProfile, Milestone
-from .serializers import TaskForceSerializer, TeamSerializer, UserSerializer, UserProfileSerializer, MilestoneSerializer
+from .models import TaskForce, Team, UserProfile, Milestone, Comment
+from .serializers import TaskForceSerializer, TeamSerializer, UserSerializer, UserProfileSerializer, MilestoneSerializer, CommentSerializer
 
 class TeamViewSet(viewsets.ModelViewSet):
     queryset = Team.objects.all()
@@ -67,3 +70,16 @@ class MilestoneViewSet(viewsets.ModelViewSet):
     queryset = Milestone.objects.all()
     serializer_class = MilestoneSerializer
     ordering = ('end_date',)
+    
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    filter_fields = ('thread',)
+    ordering = ('-time',)
+
+    def pre_save(self, obj):
+        # Set user
+        obj.user = self.request.user
+
+        # Set time to now
+        obj.time = datetime.utcnow().replace(tzinfo=utc)

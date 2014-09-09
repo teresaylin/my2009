@@ -1,5 +1,21 @@
 var module = angular.module('repositories', []);
 
+module.factory('CommentRepository', function($http) {
+    var baseUrl = '/api/comments/';
+    
+    return {
+        get: function(id) {
+            return $http.get(baseUrl+id+'/');
+        },
+        list: function(params) {
+            return $http.get(baseUrl, { params: params });
+        },
+        create: function(data) {
+            return $http.post(baseUrl, data);
+        }
+    };
+});
+
 module.factory('EventRepository', function($http) {
     var baseUrl = '/api/events/';
     

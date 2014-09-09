@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from .models import UserProfile, Role, UserRoleMapping, TaskForce, Team, Milestone
+from .models import UserProfile, Role, UserRoleMapping, TaskForce, Team, Milestone, Comment
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -60,3 +60,11 @@ class TaskForceSerializer(serializers.ModelSerializer):
 
     milestone = MilestoneSerializer(read_only=True)
     children = ChildTaskForceSerializer(read_only=True)
+    
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ('thread', 'time', 'user', 'body')
+        read_only_fields = ('time',)
+        
+    user = UserSerializer(read_only=True)

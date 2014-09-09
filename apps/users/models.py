@@ -79,6 +79,11 @@ class UserTaskForceMapping(models.Model):
     def __str__(self):
         return str(self.user) + "- " + str(self.task_force)
 
+class CommentThread(models.Model):
+    pass
+    
 class Comment(models.Model):
+    thread = models.ForeignKey(CommentThread, related_name='comments')
+    time = models.DateTimeField()
     user = models.ForeignKey(User)
     body = models.TextField()

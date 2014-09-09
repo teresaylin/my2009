@@ -163,3 +163,13 @@
   min-height: 196px; }
   .users-gallery .user > figure {
     margin: 0 auto; }
+
+/*---------- Comments ----------*/
+.comment {
+  margin-bottom: 24px; }
+  .comment figure {
+    float: left;
+    margin-right: 12px; }
+  .comment .body {
+    overflow: hidden;
+    white-space: pre-wrap; }

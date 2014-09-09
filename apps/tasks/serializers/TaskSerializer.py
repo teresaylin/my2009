@@ -7,7 +7,8 @@ from ..models import Task
 class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
-        fields = ('id', 'name', 'parent', 'owner', 'order', 'completed_by', 'description', 'due_time', 'assigned_taskforces', 'assigned_users')
+        fields = ('id', 'name', 'parent', 'owner', 'order', 'completed_by', 'description', 'due_time', 'comment_thread', 'assigned_taskforces', 'assigned_users')
+        read_only_fields = ('comment_thread',)
         
     owner = UserSerializer(read_only=True)
     completed_by = UserSerializer(read_only=True)
