@@ -433,6 +433,22 @@ app.config(function($stateProvider, $urlRouterProvider) {
                     });
                     
                     modal.result.then(function() {
+                        var deletedId = taskforce.id;
+                        
+                        // Recursively scan task force tree and remove the deleted task force (urgh...)
+                        var scan = function(taskforces) {
+                            angular.forEach(taskforces, function(taskforce, idx) {
+                                if(taskforce.id == deletedId) {
+                                    taskforces.splice(idx, 1);
+                                    return;
+                                }
+                                
+                                if('children' in taskforce) {
+                                    scan(taskforce.children);
+                                }
+                            });
+                        };
+                        scan($scope.taskForces);
                     });
                 };
 
