@@ -66,6 +66,18 @@ class TaskForceViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(name__icontains=searchName)
             
         return queryset
+    
+    def pre_save(self, obj):
+        # Ensure sub-tasks inherit their parent's milestone
+        if obj.parent_task_force:
+            obj.milestone = obj.parent_task_force.milestone
+            
+    def update(self, request, pk=None):
+        # Ensure milestone cannot be changed after the task force has been created
+        taskforce = self.get_object()
+        request.DATA['milestone_id'] = taskforce.milestone.id;
+        
+        return super().update(request, pk=pk)
 
     @action()
     def add_member(self, request, pk=None):

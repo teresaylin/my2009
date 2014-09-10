@@ -337,6 +337,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
                     var modal = $modal.open({
                         templateUrl: partial('team/edit-taskforce-dialog.html'),
                         controller: function($scope, $modalInstance, TaskForceRepository, MilestoneRepository, team) {
+                            $scope.hasParent = parent ? true : false;
                             
                             if(taskforce) {
                                 // Editing existing taskforce
@@ -346,7 +347,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
                                 // Creating new taskforce
                                 $scope.creating = true;
                                 $scope.taskforce = {
-                                    milestone: null,
+                                    milestone: parent ? parent.milestone : null,
                                     team: team.id,
                                     parent_task_force: parent ? parent.id : null
                                 };
