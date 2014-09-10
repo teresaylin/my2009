@@ -18,6 +18,11 @@ class TaskViewSet(viewsets.ModelViewSet):
     def pre_save(self, obj):
         # Set owner
         obj.owner = self.request.user
+        
+    def post_save(self, obj, created=False):
+        # Assign task to owner when object is created
+        if created:
+            obj.assigned_users.add(obj.owner)
 
     @action()
     def add_assigned_user(self, request, pk=None):

@@ -11,13 +11,14 @@
         <fieldset>
             <div class="row">
                 <div class="col-xs-5">
-                    <input type="text" class="form-control" placeholder="Due date" datepicker-popup ng-model="task.due_time" ng-required="true" />
+                    <input type="text" class="form-control" placeholder="Due date" datepicker-popup ng-model="task.due_time" />
                 </div>
                 <div class="col-xs-2"></div>
                 <div class="col-xs-5">
-                    <timepicker ng-model="task.due_time" ng-required="true"></timepicker>
+                    <timepicker ng-model="task.due_time"></timepicker>
                 </div>
             </div>
+            <button class="btn btn-sm btn-danger" ng-click="task.due_time = null" ng-disabled="!task.due_time">Remove due time</button>
         </fieldset>
     </form>
 </div>

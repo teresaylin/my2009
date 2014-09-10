@@ -12,7 +12,7 @@ class Task(models.Model):
     owner = models.ForeignKey(User, related_name='owned_tasks')
     order = models.IntegerField()
     description = models.TextField(blank=True)
-    due_time = models.DateTimeField()
+    due_time = models.DateTimeField(null=True, blank=True)
     state = models.CharField(max_length=50, blank=True)
     completed_by = models.ForeignKey(User, related_name='completed_tasks', null=True, blank=True)
     comment_thread = models.OneToOneField(CommentThread)
@@ -29,9 +29,9 @@ class Task(models.Model):
             thread = CommentThread.objects.create()
             self.comment_thread = thread
             
-        super().save(*args, **kwargs)
+        return super().save(*args, **kwargs)
         
     def delete(self, *args, **kwargs):
         # Delete comment thread
         self.comment_thread.delete()
-        super().delete(*args, **kwargs)
+        return super().delete(*args, **kwargs)

@@ -29,9 +29,9 @@ class Event(models.Model):
             thread = CommentThread.objects.create()
             self.comment_thread = thread
             
-        super().save(*args, **kwargs)
+        return super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         # Delete comment thread
         self.comment_thread.delete()
-        super().delete(*args, **kwargs)
+        return super().delete(*args, **kwargs)
