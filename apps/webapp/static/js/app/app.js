@@ -84,7 +84,13 @@ app.config(function($stateProvider, $urlRouterProvider) {
                             var modal = $modal.open({
                                 templateUrl: partial('users/edit-profile-dialog.html'),
                                 controller: function($scope, $modalInstance, user) {
-                                    $scope.profile = angular.copy(user.profile);
+                                    if(user.profile) {
+                                        // Copy existing profile
+                                        $scope.profile = angular.copy(user.profile);
+                                    } else {
+                                        // Create new profile
+                                        $scope.profile = {};
+                                    }
                                     
                                     $scope.ok = function(form) {
                                         // Update profile
