@@ -597,12 +597,19 @@ app.controller('CalendarCtrl', function($scope, $modal, $state, EventRepository)
         var modal = $modal.open({
             templateUrl: partial('events/edit-dialog.html'),
             controller: function($scope, $modalInstance) {
-                $scope.event = {};
+
+                // Create new event, default to now
+                var defaultDate = moment();
+                $scope.event = {
+                    date: defaultDate.toISOString(),
+                    start_time: defaultDate.clone(),
+                    end_time: defaultDate.clone().add(1, 'hours')
+                };
                 
                 $scope.ok = function(form) {
-                    var date = $scope.event.date;
-                    var start = $scope.event.start_time;
-                    var end = $scope.event.end_time;
+                    var date = new Date($scope.event.date);
+                    var start = new Date($scope.event.start_time);
+                    var end = new Date($scope.event.end_time);
                     
                     start.setDate(date.getDate());
                     start.setMonth(date.getMonth());
