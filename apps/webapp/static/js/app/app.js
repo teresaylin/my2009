@@ -283,7 +283,6 @@ app.config(function($stateProvider, $urlRouterProvider) {
                         $scope.removeAttendee = function(user) {
                             EventRepository.removeAttendee($scope.event.id, user.id)
                                 .success(function() {
-                                    console.log(user);
                                     var attendees = $scope.event.attendees;
                                     attendees.splice(attendees.indexOf(user), 1);
                                 });
@@ -456,6 +455,20 @@ app.config(function($stateProvider, $urlRouterProvider) {
                         };
                         scan($scope.taskForces);
                     });
+                };
+                
+                $scope.addTaskForceMember = function(taskforce, user) {
+                    TaskForceRepository.addMember(taskforce.id, user.id)
+                        .success(function() {
+                            taskforce.members.push(user);
+                        });
+                };
+
+                $scope.removeTaskForceMember = function(taskforce, user) {
+                    TaskForceRepository.removeMember(taskforce.id, user.id)
+                        .success(function() {
+                            taskforce.members.splice(taskforce.members.indexOf(user), 1);
+                        });
                 };
 
                 // Update users when team changes
@@ -685,15 +698,21 @@ app.directive('userPicker', function(UserRepository) {
     return {
         restrict: 'E',
         scope: {
-            user: '='
+            user: '=',
+            restrictTeam: '='
         },
         templateUrl: 'components/user-picker.html',
         link: function(scope, element, attrs) {
             scope.search = function(q) {
-                return UserRepository.list({
+                var params = {
                     search_name: q,
-                    page_size: 10
-                })
+                    page_size: 10,
+                };
+                if(scope.restrictTeam) {
+                    params.teams = scope.restrictTeam.id;
+                }
+
+                return UserRepository.list(params)
                     .then(function(res){
                         return res.data.results;
                     });

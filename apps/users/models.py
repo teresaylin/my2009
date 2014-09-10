@@ -67,6 +67,7 @@ class TaskForce(models.Model):
     milestone = models.ForeignKey('Milestone')
     team = models.ForeignKey('Team')
     parent_task_force = models.ForeignKey('TaskForce', blank = True, null = True, related_name='children')
+    members = models.ManyToManyField(User, related_name='taskforces')
     #URL
 
     def __str__(self):

@@ -47,19 +47,21 @@ class MilestoneSerializer(serializers.ModelSerializer):
 class ChildTaskForceSerializer(serializers.ModelSerializer):
     class Meta:
         model = TaskForce
-        fields = ('id', 'name', 'milestone', 'team', 'parent_task_force')
+        fields = ('id', 'name', 'milestone', 'team', 'parent_task_force', 'members')
         
-    milestone = MilestoneSerializer()
+    milestone = MilestoneSerializer(read_only=True)
+    members = UserSerializer(read_only=True)
 
 class TaskForceSerializer(serializers.ModelSerializer):
     class Meta:
         model = TaskForce
-        fields = ('id', 'name', 'milestone_id', 'milestone', 'team', 'parent_task_force', 'children')
+        fields = ('id', 'name', 'milestone_id', 'milestone', 'team', 'parent_task_force', 'children', 'members')
         
     milestone_id = serializers.WritableField(source='milestone_id', write_only=True)
 
     milestone = MilestoneSerializer(read_only=True)
     children = ChildTaskForceSerializer(read_only=True)
+    members = UserSerializer(read_only=True)
     
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:

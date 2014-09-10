@@ -136,6 +136,16 @@ module.factory('TaskForceRepository', function($http) {
         },
         delete: function(id) {
             return $http.delete(baseUrl+id+'/');
+        },
+        addMember: function(id, userId) {
+            return $http.post(baseUrl+id+'/add_member/', {
+                'user_id': userId
+            });
+        },
+        removeMember: function(id, userId) {
+            return $http.post(baseUrl+id+'/remove_member/', {
+                'user_id': userId
+            });
         }
     };
 });

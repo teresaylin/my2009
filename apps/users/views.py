@@ -5,10 +5,11 @@ from django.db.models import Q
 from django.contrib.auth.models import User
 from rest_framework import viewsets
 from rest_framework.response import Response
-from rest_framework.decorators import link
+from rest_framework.decorators import action
 
 from .models import TaskForce, Team, UserProfile, Milestone, Comment
 from .serializers import TaskForceSerializer, TeamSerializer, UserSerializer, UserProfileSerializer, MilestoneSerializer, CommentSerializer
+from .exceptions import UserNotFound
 
 class TeamViewSet(viewsets.ModelViewSet):
     queryset = Team.objects.all()
@@ -65,6 +66,38 @@ class TaskForceViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(name__icontains=searchName)
             
         return queryset
+
+    @action()
+    def add_member(self, request, pk=None):
+        taskforce = self.get_object()
+        
+        # Get User object from task force's team members; prevents non team members from being added
+        try:
+            userId = request.DATA.get('user_id', None)
+            user = taskforce.team.users.all().get(id=userId)
+        except User.DoesNotExist:
+            raise UserNotFound()
+        
+        # Add user to members
+        taskforce.members.add(user)
+        
+        return Response({})
+
+    @action()
+    def remove_member(self, request, pk=None):
+        taskforce = self.get_object()
+        
+        # Get User object
+        try:
+            userId = request.DATA.get('user_id', None)
+            user = taskforce.members.all().get(id=userId)
+        except User.DoesNotExist:
+            raise UserNotFound()
+        
+        # Remove user from members
+        taskforce.members.remove(user)
+        
+        return Response({})
     
 class MilestoneViewSet(viewsets.ModelViewSet):
     queryset = Milestone.objects.all()

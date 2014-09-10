@@ -39,6 +39,7 @@
                 </div>
             </accordion-heading>
             <p>Milestone: {{ taskForce.milestone.name }} {{ taskForce.milestone.end_date }}</p>
+
             <h3>Sub task forces</h3>
             <accordion>
                 <div ng-repeat="taskForce in taskForce.children">
@@ -46,6 +47,25 @@
                 </div>
             </accordion>
             <button class="btn btn-sm btn-success" ng-click="openEditTaskForceDialog(null, taskForce)">New task force</button>
+            
+            <h3>Members</h3>
+            <form class="form-inline">
+                <user-picker user="newMember" restrict-team="team"></user-picker>
+                <button class="btn btn-sm btn-primary"
+                    ng-click="addTaskForceMember(taskForce, newMember); newMember = null"
+                    ng-disabled="!newMember">
+                Add</button>
+            </form> 
+
+            <p ng-if="!taskForce.members">This task force has no members.</p>
+            <ul class="list-group">
+                <li class="list-group-item" ng-repeat="user in taskForce.members">
+                    <a href ng-click="removeTaskForceMember(taskForce, user)">
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </a>
+                    <a ui-sref="users.detail({ userId: user.id })">{{ user.full_name }}</a>
+                </li>
+            </ul>
         </accordion-group>
     </script>
     
