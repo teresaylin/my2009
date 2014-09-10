@@ -30,3 +30,8 @@ class Task(models.Model):
             self.comment_thread = thread
             
         super().save(*args, **kwargs)
+        
+    def delete(self, *args, **kwargs):
+        # Delete comment thread
+        self.comment_thread.delete()
+        super().delete(*args, **kwargs)

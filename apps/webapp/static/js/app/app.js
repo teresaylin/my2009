@@ -210,17 +210,11 @@ app.config(function($stateProvider, $urlRouterProvider) {
             views: {
                 '@': {
                     templateUrl: partial('tasks/detail.html'),
-                    controller: function($scope, $stateParams, TaskRepository, CommentRepository) {
+                    controller: function($scope, $stateParams, TaskRepository) {
                         // Get task
                         TaskRepository.get($stateParams.taskId)
                             .success(function(task) {
                                 $scope.task = task;
-
-                                // Get comments
-                                CommentRepository.list({ thread: task.comment_thread })
-                                    .success(function(comments) {
-                                        $scope.comments = comments;
-                                    });
                             });
                             
                         $scope.addAssignedUser = function(user) {
@@ -250,18 +244,6 @@ app.config(function($stateProvider, $urlRouterProvider) {
                                 .success(function() {
                                     var assignedTaskforces = $scope.task.assigned_taskforces;
                                     assignedTaskforces.splice(assignedTaskforces.indexOf(taskforce), 1);
-                                });
-                        };
-                        
-                        $scope.postComment = function(body) {
-                            var comment = {
-                                'thread': $scope.task.comment_thread,
-                                'body': body
-                            };
-
-                            CommentRepository.create(comment)
-                                .success(function(newComment) {
-                                    $scope.comments.unshift(newComment);
                                 });
                         };
                     }
@@ -712,8 +694,60 @@ app.directive('taskforcePicker', function(TaskForceRepository) {
     };
 });
 
+app.directive('commentsSection', function($http, CommentRepository) {
+    return {
+        restrict: 'E',
+        scope: {
+        },
+        templateUrl: 'components/comments-section.html',
+        link: function(scope, element, attrs) {
+            var threadId = null;
 
+            scope.nextPageUrl = null;
+            
+            scope.$parent.$watch(attrs.threadId, function(val) {
+                if(val) {
+                    threadId = val;
 
+                    // Get most recent comments
+                    CommentRepository.list({
+                        'thread': threadId,
+                        'page_size': 10
+                    })
+                        .success(function(data) {
+                            scope.comments = data.results;
+                            scope.nextPageUrl = data.next;
+                        });
+                }
+            });
+            
+            // Load older comments
+            scope.more = function() {
+                if(!scope.nextPageUrl) return;
+                
+                // Retrieve next page of comments and add to scope.comments
+                $http.get(scope.nextPageUrl)
+                    .success(function(data) {
+                        Array.prototype.push.apply(scope.comments, data.results);
+                        scope.nextPageUrl = data.next;
+                    });
+            };
+            
+            // Post comment from this user 
+            scope.postComment = function(body) {
+                var comment = {
+                    'thread': threadId,
+                    'body': body
+                };
+
+                CommentRepository.create(comment)
+                    .success(function(newComment) {
+                        scope.comments.unshift(newComment);
+                    });
+            };
+        }
+    };
+});
 
 
 

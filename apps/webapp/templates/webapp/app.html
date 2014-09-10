@@ -143,6 +143,33 @@
     <time datetime="{{ isoTime }}" title="{{ time|date:'medium' }}">{{ fromNow }}</time>
 </script>
 
+<script type="text/ng-template" id="components/comments-section.html">
+    <form>
+        <textarea class="form-control" type="text" ng-model="newCommentBody"></textarea>
+        <button class="btn btn-sm btn-primary"
+            ng-click="postComment(newCommentBody); newCommentBody = ''"
+            ng-disabled="!newCommentBody">
+        Post</button>
+    </form>
+
+    <div class="comment clearfix" ng-repeat="comment in comments">
+        <figure>
+            <user-picture user="comment.user" size="'small'"></user-picture>
+        </figure>
+        <div>
+            <div>
+                <a ui-sref="users.detail({ userId: comment.user.id })">{{ comment.user.full_name }}</a>
+                <span class="text-muted">&bull;
+                    <time-from-now time="comment.time"></time-from-now>
+                </span>
+            </div>
+            <div class="body">{{ comment.body }}</div>
+        </div>
+    </div>
+
+    <a href ng-click="more()" ng-hide="!nextPageUrl">More...</a>
+</div>
+
 {% endverbatim %}
 
 {% endblock %}

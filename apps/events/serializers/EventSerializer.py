@@ -4,10 +4,11 @@ from apps.users.serializers import UserSerializer
 
 from ..models import Event
 
-class EventSerializer(serializers.HyperlinkedModelSerializer):
+class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
-        fields = ('url', 'id', 'title', 'owner', 'start', 'end', 'location', 'description', 'attendees')
+        fields = ('id', 'title', 'owner', 'start', 'end', 'location', 'description', 'comment_thread', 'attendees')
+        read_only_fields = ('comment_thread',)
     
     owner = UserSerializer(read_only=True)
     attendees = UserSerializer(read_only=True)
