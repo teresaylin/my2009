@@ -126,6 +126,10 @@ $teamAccentColors: (
     }
 }
 
+.nav-tabs > li > a {
+    cursor: pointer;
+}
+
 /*---------- Files list ----------*/
 
 .files-list-buttons {
@@ -177,4 +181,10 @@ $teamAccentColors: (
         overflow: hidden;
         white-space: pre-wrap;
     }
+}
+
+/*---------- Calendar ----------*/
+
+.fc-event {
+    cursor: pointer;
 }

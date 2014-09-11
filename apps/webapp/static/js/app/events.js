@@ -23,7 +23,160 @@ module.controller('EventDetailStateCtrl', function($scope, $stateParams, EventRe
     };
 });
 
-module.controller('CalendarCtrl', function($scope, $modal, $state, EventRepository) {
+module.controller('EventDialogCtrl', function($scope, $modalInstance, EventRepository, EventDialogService, event) {
+    var changesMade = false; // This is set when an event is created/edited
+    
+    var loadEvent = function(eventData) {
+        $scope.event = eventData;
+        $scope.creating = false;
+        $scope.editing = true;
+        
+        $scope.event.date = new Date($scope.event.start).toISOString();
+    };
+    
+    var newEvent = function() {
+        var now = moment();
+        $scope.event = {
+            // Initialize start and end times
+            date: now.toISOString(),
+            start: now.clone(),
+            end: now.clone().add(1, 'hours')
+        };
+        $scope.creating = true;
+        $scope.editing = true;
+    };
+    
+    if(event) {
+        // Opening existing event
+        loadEvent(angular.copy(event));
+    } else {
+        // Creating new event
+        newEvent();
+    }
+    
+    // Updates the 'start' and 'end' fields with the date
+    var setStartEndDate = function() {
+        var date = new Date($scope.event.date);
+        var start = new Date($scope.event.start);
+        var end = new Date($scope.event.end);
+        
+        start.setDate(date.getDate());
+        start.setMonth(date.getMonth());
+        start.setFullYear(date.getFullYear());
+        
+        end.setDate(date.getDate());
+        end.setMonth(date.getMonth());
+        end.setFullYear(date.getFullYear());
+        
+        $scope.event.start = start;
+        $scope.event.end = end;
+    };
+    
+    $scope.create = function() {
+        setStartEndDate();
+        
+        // Create event
+        EventRepository.create($scope.event)
+            .success(function(data) {
+                changesMade = true;
+                // Refresh event with returned data
+                loadEvent(data);
+                form.$setPristine();
+            });
+    };
+
+    $scope.update = function(form) {
+        setStartEndDate();
+        
+        // Update event
+        EventRepository.update($scope.event.id, $scope.event)
+            .success(function(data) {
+                changesMade = true;
+                // Refresh event with returned data
+                loadEvent(data);
+                form.$setPristine();
+            });
+    };
+    
+    $scope.delete = function() {
+        // Open delete event dialog
+        EventDialogService.deleteEvent(event).result
+            .then(function(deleted) {
+                if(deleted) {
+                    $modalInstance.close(true);
+                }
+            });
+    };
+
+    $scope.cancel = function() {
+        $modalInstance.close(changesMade);
+    };
+        
+    $scope.addAttendee = function(user) {
+        EventRepository.addAttendee($scope.event.id, user.id)
+            .success(function() {
+                $scope.event.attendees.push(user);
+            });
+    };
+
+    $scope.removeAttendee = function(user) {
+        EventRepository.removeAttendee($scope.event.id, user.id)
+            .success(function() {
+                var attendees = $scope.event.attendees;
+                attendees.splice(attendees.indexOf(user), 1);
+            });
+    };
+});
+
+module.factory('EventDialogService', function($modal) {
+    return {
+        openEvent: function(event) {
+            var modal = $modal.open({
+                templateUrl: partial('events/event-dialog.html'),
+                controller: 'EventDialogCtrl',
+                resolve: {
+                    event: function() {
+                        return event;
+                    }
+                }
+            });
+            
+            return modal;
+        },
+        newEvent: function() {
+            return this.openEvent(null);
+        },
+        deleteEvent: function(event) {
+            var modal = $modal.open({
+                templateUrl: partial('events/delete-dialog.html'),
+                controller: function($scope, $modalInstance, EventRepository, event) {
+                    $scope.event = event;
+                    
+                    $scope.delete = function() {
+                        // Delete event
+                        EventRepository.delete($scope.event.id)
+                            .success(function() {
+                                $modalInstance.close(true);
+                            });
+                    };
+                    
+                    $scope.cancel = function() {
+                        $modalInstance.dismiss('cancel');
+                    };
+                },
+                resolve: {
+                    event: function() {
+                        return event;
+                    }
+                }
+            });
+            
+            return modal;
+        }
+    };
+});
+
+module.controller('CalendarCtrl', function($scope, $modal, $state, EventRepository, EventDialogService) {
     $scope.eventsSource = function(start, end, timezone, callback) {
         // Get events within date range
         var query = {
@@ -32,17 +185,20 @@ module.controller('CalendarCtrl', function($scope, $modal, $state, EventReposito
         };
         EventRepository.list(query)
             .success(function(events) {
-                // Assign each event a URL
-                angular.forEach(events, function(event) {
-                    event.url = $state.href('events.detail', { eventId: event.id });
-                });
-                
                 callback(events);
             });
     };
 
     // Event click handler
     var onEventClick = function(event, allDay, jsEvent, view){
+        var dlg = EventDialogService.openEvent(event);
+
+        dlg.result.then(function(changesMade) {
+            if(changesMade) {
+                // Reload events
+                $scope.calendar.fullCalendar('refetchEvents');
+            }
+        });
     };
 
     // Event drag/drop handler
@@ -70,54 +226,16 @@ module.controller('CalendarCtrl', function($scope, $modal, $state, EventReposito
     };
 
     $scope.eventSources = [$scope.eventsSource];
+    
+    $scope.newEvent = function() {
+        var dlg = EventDialogService.newEvent();
 
-    $scope.openEditDialog = function() {
-        var modal = $modal.open({
-            templateUrl: partial('events/edit-dialog.html'),
-            controller: function($scope, $modalInstance) {
-
-                // Create new event, default to now
-                var defaultDate = moment();
-                $scope.event = {
-                    date: defaultDate.toISOString(),
-                    start_time: defaultDate.clone(),
-                    end_time: defaultDate.clone().add(1, 'hours')
-                };
-                
-                $scope.ok = function(form) {
-                    var date = new Date($scope.event.date);
-                    var start = new Date($scope.event.start_time);
-                    var end = new Date($scope.event.end_time);
-                    
-                    start.setDate(date.getDate());
-                    start.setMonth(date.getMonth());
-                    start.setFullYear(date.getFullYear());
-                    
-                    end.setDate(date.getDate());
-                    end.setMonth(date.getMonth());
-                    end.setFullYear(date.getFullYear());
-                    
-                    $scope.event.start = start;
-                    $scope.event.end = end;
-                    delete $scope.event.date;
-                    delete $scope.event.start_time;
-                    delete $scope.event.end_time;
-                    
-                    EventRepository.create($scope.event)
-                        .success(function() {
-                            $modalInstance.close();
-                        });
-                };
-
-                $scope.cancel = function() {
-                    $modalInstance.dismiss('cancel');
-                };
+        dlg.result.then(function(changesMade) {
+            console.log(changesMade);
+            if(changesMade) {
+                // Reload events
+                $scope.calendar.fullCalendar('refetchEvents');
             }
-        });
-        
-        modal.result.then(function() {
-            // Reload events
-            $scope.calendar.fullCalendar('refetchEvents');
         });
     };
 });

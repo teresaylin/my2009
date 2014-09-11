@@ -148,6 +148,9 @@
   width: 100%;
   height: 350px; }
 
+.nav-tabs > li > a {
+  cursor: pointer; }
+
 /*---------- Files list ----------*/
 .files-list-buttons {
   padding: 8px; }
@@ -179,3 +182,7 @@
   .comment .body {
     overflow: hidden;
     white-space: pre-wrap; }
+
+/*---------- Calendar ----------*/
+.fc-event {
+  cursor: pointer; }
