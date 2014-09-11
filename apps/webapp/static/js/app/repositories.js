@@ -95,6 +95,9 @@ module.factory('TaskRepository', function($http) {
         delete: function(id) {
             return $http.delete(baseUrl+id+'/');
         },
+        complete: function(id) {
+            return $http.post(baseUrl+id+'/complete/');
+        },
         addAssignedUser: function(id, userId) {
             return $http.post(baseUrl+id+'/add_assigned_user/', {
                 'user_id': userId

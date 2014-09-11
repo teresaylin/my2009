@@ -133,6 +133,35 @@ app.config(function($stateProvider, $urlRouterProvider) {
                         });
                 };
                 refreshTasks();
+                
+                $scope.onCompletedChange = function(task, completed) {
+                    if(completed) {
+                        // Show confirm dialog
+                        var modal = $modal.open({
+                            templateUrl: partial('tasks/complete-dialog.html'),
+                            controller: function($scope, $modalInstance, TaskRepository) {
+                                $scope.task = task;
+                                
+                                $scope.ok = function(form) {
+                                    $modalInstance.close();
+                                };
+                
+                                $scope.cancel = function() {
+                                    $modalInstance.dismiss('cancel');
+                                };
+                            }
+                        });
+                        
+                        modal.result.then(function() {
+                            // Mark task as completed
+                            TaskRepository.complete(task.id)
+                                .success(function(data) {
+                                    // Update task
+                                    angular.copy(data, task);
+                                });
+                        });
+                    }
+                };
 
                 // Create/update a task
                 $scope.openEditTaskDialog = function(task) {

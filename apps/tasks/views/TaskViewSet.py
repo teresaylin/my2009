@@ -11,7 +11,7 @@ from ..models import Task
 from ..serializers import TaskSerializer
 
 class TaskViewSet(viewsets.ModelViewSet):
-    queryset = Task.objects.all()
+    queryset = Task.objects.all().exclude(state='completed')
     serializer_class = TaskSerializer
     ordering = ('due_time',)
     
@@ -23,6 +23,18 @@ class TaskViewSet(viewsets.ModelViewSet):
         # Assign task to owner when object is created
         if created:
             obj.assigned_users.add(obj.owner)
+            
+    @action()
+    def complete(self, request, pk=None):
+        task = self.get_object()
+        
+        # Mark task as completed
+        task.state = task.COMPLETED
+        task.completed_by = self.request.user
+        task.save()
+        
+        # Return updated task
+        return Response(TaskSerializer(task).data)
 
     @action()
     def add_assigned_user(self, request, pk=None):
