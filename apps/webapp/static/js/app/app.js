@@ -11,11 +11,26 @@ var app = angular.module('app', [
     'users'
 ]);
 
+app.factory('HttpErrorInterceptor', function($q, $rootScope) {
+    return {
+        'responseError': function(response) {
+            if(response.status >= 500) {
+                $rootScope.$broadcast('serverError', response);
+            }
+
+            return $q.reject(response);
+        }
+    };
+});
+
 // App configuration
 app.config(function($httpProvider) {
     $httpProvider.defaults.xsrfCookieName = 'csrftoken';
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
+        
+    $httpProvider.interceptors.push('HttpErrorInterceptor');
 });
+
 
 app.factory('NavFilterService', function($rootScope) {
     return {
@@ -117,7 +132,21 @@ app.config(function($stateProvider, $urlRouterProvider) {
         ;
 });
 
-app.controller('AppCtrl', function($scope, NavFilterService, UserRepository) {
+app.controller('AppCtrl', function($scope, $modal, NavFilterService, UserRepository) {
+    $scope.$on('serverError', function(ev, response) {
+        var modal = $modal.open({
+            templateUrl: 'error-dialog.html',
+            controller: function($scope, $modalInstance) {
+                $scope.errorText = 'Received '+response.status+' HTTP error';
+                $scope.errorDetailHtml = response.data;
+                
+                $scope.close = function() {
+                    $modalInstance.close();
+                };
+            }
+        });
+    });
+
     // Get current user
     UserRepository.getCurrentUser()
         .success(function(user) {
@@ -213,6 +242,20 @@ app.directive('timeFromNow', function($interval) {
 
             element.on('$destroy', function() {
                 $interval.cancel(timeoutId);
+            });
+        }
+    };
+});
+
+app.directive('ngSrcdoc', function() {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            scope.$parent.$watch(attrs.ngSrcdoc, function(val) {
+                var doc = element[0].contentWindow.document;
+                doc.open('text/html', 'replace');
+                doc.write(val);
+                doc.close();
             });
         }
     };

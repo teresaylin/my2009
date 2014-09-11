@@ -115,6 +115,21 @@
 <!-- Misc templates -->
 
 {% verbatim %}
+<script type="text/ng-template" id="error-dialog.html">
+    <div class="error-dialog">
+        <div class="modal-header">
+            <h3 class="modal-title">Error</h3>
+        </div>
+        <div class="modal-body">
+            <p class="alert alert-danger">{{ errorText }}</p>
+            <iframe ng-srcdoc="errorDetailHtml"></iframe>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="close()">Close</button>
+        </div>
+    </div>
+</script>
+
 <script type="text/ng-template" id="components/user-picker.html">
     <div class="form-group" ng-class="{ 'has-success': user }">
         <input type="text" ng-model="user"
