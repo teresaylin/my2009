@@ -5,22 +5,36 @@
 <div class="modal-body">
     <form name="form">
         <fieldset>
-            <input type="text" class="form-control" placeholder="Name" maxlength="100" required ng-model="event.title">
-            <textarea class="form-control" placeholder="Description" ng-model="event.description"></textarea>
+            <div>
+                <p ng-if="!editing">{{ event.title }}</p>
+                <input ng-if="editing" type="text" class="form-control" placeholder="Name" maxlength="100" required ng-model="event.title">
+            </div>
+            <div>
+                <pre ng-if="!editing && event.description">{{ event.description }}</pre>
+                <textarea ng-if="editing" class="form-control" placeholder="Description" ng-model="event.description"></textarea>
+            </div>
         </fieldset>
         <hr>
         <fieldset>
-            <input class="form-control" type="text" placeholder="Location" ng-model="event.location">
-            <input type="text" class="form-control" placeholder="Date" datepicker-popup ng-model="event.date" ng-required="true" />
+            <div>
+                <p ng-if="!editing && event.location">{{ event.location }}</p>
+                <input ng-if="editing" class="form-control" type="text" placeholder="Location" maxlength="100" ng-model="event.location">
+            </div>
+            <div>
+                <span ng-if="!editing">{{ event.date|date:'fullDate' }}</span>
+                <input ng-if="editing" type="text" class="form-control" placeholder="Date" datepicker-popup ng-model="event.date" ng-required="true" />
+            </div>
             <div class="row">
                 <div class="col-xs-5">
-                    <timepicker ng-model="event.start" ng-required="true"></timepicker>
+                    <span ng-if="!editing">{{ event.start|date:'shortTime' }}</span>
+                    <timepicker ng-if="editing" ng-model="event.start" ng-required="true"></timepicker>
                 </div>
                 <div class="col-xs-2">
-                    to
+                    <p ng-style="{ 'line-height': editing ? '102px' : null }">to</p>
                 </div>
                 <div class="col-xs-5">
-                    <timepicker ng-model="event.end" ng-required="true"></timepicker>
+                    <span ng-if="!editing">{{ event.end|date:'shortTime' }}</span>
+                    <timepicker ng-if="editing" ng-model="event.end" ng-required="true"></timepicker>
                 </div>
             </div>
         </fieldset>
@@ -57,6 +71,7 @@
     </tabset>
 </div>
 <div class="modal-footer">
+    <button class="btn btn-primary" ng-click="edit()" ng-if="!editing">Edit</button>
     <button class="btn btn-danger" ng-click="delete()" ng-if="editing && !creating">Delete</button>
     <button class="btn btn-primary" ng-click="update(form)" ng-disabled="form.$invalid || !form.$dirty" ng-if="editing && !creating">Save</button>
     <button class="btn btn-primary" ng-click="create(form)" ng-disabled="form.$invalid" ng-if="creating">Create</button>

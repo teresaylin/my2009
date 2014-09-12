@@ -29,9 +29,11 @@ module.controller('EventDialogCtrl', function($scope, $modalInstance, EventRepos
     var loadEvent = function(eventData) {
         $scope.event = eventData;
         $scope.creating = false;
-        $scope.editing = true;
+        $scope.editing = false;
         
         $scope.event.date = new Date($scope.event.start).toISOString();
+        $scope.event.start = new Date($scope.event.start).toISOString();
+        $scope.event.end = new Date($scope.event.end).toISOString();
     };
     
     var newEvent = function() {
@@ -72,7 +74,11 @@ module.controller('EventDialogCtrl', function($scope, $modalInstance, EventRepos
         $scope.event.end = end;
     };
     
-    $scope.create = function() {
+    $scope.edit = function() {
+        $scope.editing = true;
+    };
+    
+    $scope.create = function(form) {
         setStartEndDate();
         
         // Create event
@@ -231,7 +237,6 @@ module.controller('CalendarCtrl', function($scope, $modal, $state, EventReposito
         var dlg = EventDialogService.newEvent();
 
         dlg.result.then(function(changesMade) {
-            console.log(changesMade);
             if(changesMade) {
                 // Reload events
                 $scope.calendar.fullCalendar('refetchEvents');

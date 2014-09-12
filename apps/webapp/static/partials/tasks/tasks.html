@@ -21,7 +21,10 @@
                                 <span class="task-title-sp">
                                     <a ui-sref="tasks.detail({ taskId: task.id })">{{ task.name }}</a>
                                 </span>
-                                <em ng-if="task.due_time">Due {{ task.due_time|date:'medium' }}</em>
+                                <em ng-if="task.assigned_taskforces">
+                                    Assigned to
+                                    <span ng-repeat="taskforce in task.assigned_taskforces">{{ taskforce.name }}<span ng-if="!$last">, </span></span>
+                                </em>
                                 <div class="pull-right">
                                     <button class="btn btn-primary btn-xs" ng-click="openEditTaskDialog(task)"><span class="fa fa-pencil"></span></button>
                                     <button class="btn btn-danger btn-xs" ng-click="openDeleteTaskDialog(task)"><span class="fa fa-trash-o "></span></button>
