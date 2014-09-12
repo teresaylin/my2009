@@ -17,7 +17,6 @@ class Task(models.Model):
     name = models.CharField(max_length=50, blank=False)
     parent = models.ForeignKey('Task', blank=True, null=True)
     owner = models.ForeignKey(User, related_name='owned_tasks')
-    order = models.IntegerField()
     description = models.TextField(blank=True)
     due_time = models.DateTimeField(null=True, blank=True)
     state = models.CharField(max_length=50, choices=STATES, blank=True)

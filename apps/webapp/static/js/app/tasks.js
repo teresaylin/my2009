@@ -51,9 +51,7 @@ module.controller('TasksStateCtrl', function($scope, $modal, TaskRepository) {
                 } else {
                     // Creating new task
                     $scope.creating = true;
-                    $scope.task = {
-                        order: 0
-                    };
+                    $scope.task = {};
                 }
                 
                 $scope.create = function(form) {
