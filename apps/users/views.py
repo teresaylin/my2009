@@ -2,14 +2,15 @@ from datetime import datetime
 
 from django.utils.timezone import utc
 from django.db.models import Q
+from django.db import IntegrityError
 from django.contrib.auth.models import User
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
-from .models import TaskForce, Team, UserProfile, Milestone, Comment
-from .serializers import TaskForceSerializer, TeamSerializer, UserSerializer, UserProfileSerializer, MilestoneSerializer, CommentSerializer
-from .exceptions import UserNotFound
+from .models import TaskForce, Team, UserProfile, Milestone, Comment, Role, UserRoleMapping
+from .serializers import TaskForceSerializer, TeamSerializer, UserSerializer, UserProfileSerializer, MilestoneSerializer, CommentSerializer, RoleSerializer, UserRoleMappingSerializer
+from .exceptions import UserNotFound, UserAlreadyHasRole
 
 class TeamViewSet(viewsets.ModelViewSet):
     queryset = Team.objects.all()
@@ -41,6 +42,45 @@ class UserViewSet(viewsets.ModelViewSet):
                 queryset = queryset.filter(Q(first_name__icontains=searchName) | Q(last_name__icontains=searchName))
             
         return queryset
+
+    @action()
+    def add_role(self, request, pk=None):
+        user = self.get_object()
+        
+        # Get Role object
+        try:
+            roleId = request.DATA.get('role_id', None)
+            role = Role.objects.get(id=roleId)
+        except Role.DoesNotExist:
+            raise RoleNotFound()
+        
+        # Create UserRoleMapping object
+        try:
+            userRole = UserRoleMapping.objects.create(
+                user=user,
+                role=role,
+                status=''
+            )
+        except IntegrityError:
+            raise UserAlreadyHasRole()
+            
+        return Response(UserRoleMappingSerializer(userRole).data)
+
+    @action()
+    def remove_role(self, request, pk=None):
+        user = self.get_object()
+        
+        # Find UserRole object
+        try:
+            roleId = request.DATA.get('role_id', None)
+            userRole = user.user_roles.all().get(role__id=roleId)
+        except UserRoleMapping.DoesNotExist:
+            raise RoleNotFound()
+        
+        # Delete UserRole object
+        userRole.delete()
+        
+        return Response({})
 
 class UserProfileViewSet(viewsets.ModelViewSet):
     queryset = UserProfile.objects.all()
@@ -128,3 +168,7 @@ class CommentViewSet(viewsets.ModelViewSet):
 
         # Set time to now
         obj.time = datetime.utcnow().replace(tzinfo=utc)
+        
+class RoleViewSet(viewsets.ModelViewSet):
+    queryset = Role.objects.all()
+    serializer_class = RoleSerializer

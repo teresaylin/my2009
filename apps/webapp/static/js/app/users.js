@@ -1,10 +1,16 @@
 var module = angular.module('users', []);
 
-module.controller('UserDetailStateCtrl', function($scope, $stateParams, $modal, UserRepository) {
+module.controller('UserDetailStateCtrl', function($scope, $stateParams, $modal, UserRepository, RoleRepository) {
     // Get user
     UserRepository.get($stateParams.userId)
         .success(function(user) {
             $scope.user = user;
+        });
+        
+    // Get list of all roles
+    RoleRepository.list()
+        .success(function(roles) {
+            $scope.roles = roles;
         });
         
     $scope.openEditProfileDialog = function() {
@@ -42,6 +48,21 @@ module.controller('UserDetailStateCtrl', function($scope, $stateParams, $modal, 
             // Add updated profile to user object
             $scope.user.profile = profile;
         });
+    };
+
+    $scope.addRole = function(role) {
+        UserRepository.addRole($scope.user.id, role.id)
+            .success(function(userRole) {
+                $scope.user.user_roles.push(userRole);
+            });
+    };
+    
+    $scope.removeRole = function(userRole) {
+        UserRepository.removeRole($scope.user.id, userRole.role.id)
+            .success(function() {
+                var a = $scope.user.user_roles;
+                a.splice(a.indexOf(userRole), 1);
+            });
     };
 });
 
@@ -229,12 +250,17 @@ module.controller('TeamStateCtrl', function($scope, $modal, NavFilterService, Te
 
 module.directive('userPicture', function() {
     return {
-        restrict: 'E',
-        scope: {
-            user: '=',
-            size: '='
-        },
-        templateUrl: 'components/user-picture.html'
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            scope.$watch(attrs.userPicture, function(user) {
+                if(user && 'profile' in user) {
+                    var size = attrs.size;
+                    var imgFile = '/static/img/profile-photos/'+size+'/'+
+                        (user.profile.picture_filename ? user.profile.picture_filename+'.jpg' : '_unavailable.png');
+                    element.attr('src', imgFile);
+                }
+            });
+        }
     };
 });
 

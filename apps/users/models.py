@@ -27,6 +27,9 @@ class Role(models.Model):
         return self.name
 
 class UserRoleMapping(models.Model):
+    class Meta:
+        unique_together = ('user', 'role')
+
     user = models.ForeignKey(User, related_name="user_roles")
     role = models.ForeignKey('Role')
     status = models.CharField(max_length=50, blank = True)

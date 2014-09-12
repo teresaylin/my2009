@@ -82,6 +82,19 @@ module.factory('MilestoneRepository', function($http) {
     };
 });
 
+module.factory('RoleRepository', function($http) {
+    var baseUrl = '/api/roles/';
+    
+    return {
+        get: function(id) {
+            return $http.get(baseUrl+id+'/');
+        },
+        list: function(params) {
+            return $http.get(baseUrl, { params: params });
+        }
+    };
+});
+
 module.factory('TaskRepository', function($http) {
     var baseUrl = '/api/tasks/';
     
@@ -188,6 +201,16 @@ module.factory('UserRepository', function($http) {
         },
         updateProfile: function(id, data) {
             return $http.put(profilesUrl+id+'/', data);
+        },
+        addRole: function(id, roleId) {
+            return $http.post(baseUrl+id+'/add_role/', {
+                'role_id': roleId
+            });
+        },
+        removeRole: function(id, roleId) {
+            return $http.post(baseUrl+id+'/remove_role/', {
+                'role_id': roleId
+            });
         }
     };
 });

@@ -55,7 +55,7 @@
             <ul class="sidebar-menu" id="nav-accordion">
                 <p class="centered">
                     <a ui-sref="users.detail({userId:currentUser.id})">
-                        <img src="{% static 'img/ui-sam.jpg' %}" class="img-circle" width="60">
+                        <img class="img-circle" user-picture="currentUser" size="small">
                     </a>
                 </p>
 
@@ -150,10 +150,6 @@
     </div>
 </script>
 
-<script type="text/ng-template" id="components/user-picture.html">
-    <img ng-src="/static/img/profile-photos/{{ size }}/{{ user.profile.picture_filename ? user.profile.picture_filename+'.jpg' : '_unavailable.png' }}">
-</script>
-
 <script type="text/ng-template" id="components/time-from-now.html">
     <time datetime="{{ isoTime }}" title="{{ time|date:'medium' }}">{{ fromNow }}</time>
 </script>
@@ -169,7 +165,7 @@
 
     <div class="comment clearfix" ng-repeat="comment in comments">
         <figure>
-            <user-picture user="comment.user" size="'small'"></user-picture>
+            <img user-picture="comment.user" size="small">
         </figure>
         <div>
             <div>
