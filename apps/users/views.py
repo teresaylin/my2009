@@ -90,7 +90,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 class TaskForceViewSet(viewsets.ModelViewSet):
     queryset = TaskForce.objects.all()
     serializer_class = TaskForceSerializer
-    filter_fields = ('team',)
+    filter_fields = ('team', 'parent_task_force')
     
     def get_queryset(self):
         queryset = super().get_queryset()

@@ -22,18 +22,41 @@
                 <a href class="dropdown-toggle">{{ activeTeam.color }}</a>
                 <ul class="dropdown-menu" ng-visible="teamSelectOpen">
                     <li ng-repeat="team in teams">
-                        <a href ng-click="selectTeam($event, team)">{{ team.color }}</a>
+                        <a href ng-click="selectTeam(team)">{{ team.color }}</a>
                     </li>
                 </ul>
             </span>
             &raquo;
             <span class="dropdown">
-                <a href class="dropdown-toggle">{{ activeUser.full_name }}</a>
+                <a href class="dropdown-toggle">
+                    <span ng-if="activeUser">{{ activeUser.full_name }}</span>
+                    <span ng-if="taskforces.length > 1">{{ taskforces[0].active.name }}</span>
+                </a>
                 <ul class="dropdown-menu">
+                    <li class="dropdown-header">Users</li>
                     <li ng-repeat="user in users">
-                        <a href ng-click="selectUser($event, user)">{{ user.full_name }}</a>
+                        <a href ng-click="selectUser(user)">{{ user.full_name }}</a>
+                    </li>
+                    <li class="divider"></li>
+                    <li class="dropdown-header">Task forces</li>
+                    <li ng-repeat="taskforce in taskforces[0].list">
+                        <a href ng-click="selectTaskforce(taskforce, 0)">{{ taskforce.name }}</a>
                     </li>
                 </ul>
+            </span>
+            <span ng-repeat="level in taskforces" ng-if="!$first && level.list.length > 0">
+                &raquo;
+                <span class="dropdown">
+                    <a href class="dropdown-toggle">
+                        <span ng-if="level.active">{{ level.active.name }}</span>
+                        <span ng-if="!level.active">...</span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li ng-repeat="taskforce in level.list">
+                            <a href ng-click="selectTaskforce(taskforce, level.idx)">{{ taskforce.name }}</a>
+                        </li>
+                    </ul>
+                </span>
             </span>
         </div>
         {% endverbatim %}

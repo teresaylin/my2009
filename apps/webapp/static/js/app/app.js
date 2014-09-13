@@ -6,6 +6,7 @@ var app = angular.module('app', [
     'dropbox',
     'events',
     'files',
+    'navfilter',
     'repositories',
     'tasks',
     'users'
@@ -29,23 +30,6 @@ app.config(function($httpProvider) {
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
         
     $httpProvider.interceptors.push('HttpErrorInterceptor');
-});
-
-
-app.factory('NavFilterService', function($rootScope) {
-    return {
-        team: null,
-        user: null,
-
-        setTeam: function(team) {
-            this.team = team;
-            $rootScope.$broadcast('navFilterTeamChanged', team);
-        },
-        setUser: function(user) {
-            this.user = user;
-            $rootScope.$broadcast('navFilterUserChanged', user);
-        }
-    };
 });
 
 var partial = function(partial) {
@@ -161,64 +145,6 @@ app.controller('AppCtrl', function($scope, $modal, NavFilterService, UserReposit
     };
         
     $scope.showSidebar = true;
-});
-
-app.controller('NavFilterCtrl', function($scope, NavFilterService, TeamRepository, UserRepository) {
-    // Get list of all teams
-    TeamRepository.list()
-        .success(function(teams) {
-            $scope.teams = teams;
-        });    
-
-    var setTeam = function(team) {
-        // Check if the current user is in this team
-        var userInTeam = false;
-        angular.forEach($scope.currentUser.teams, function(userTeam) {
-            if(team.id == userTeam.id) {
-                userInTeam = true;
-            }
-        });
-                
-        // Update users list with only users in active team
-        UserRepository.list({ teams: team.id })
-            .success(function(users) {
-                $scope.users = users;
-                
-                // Show current user if member of selected team, otherwise show the first member
-                if(userInTeam) {
-                    NavFilterService.setUser($scope.currentUser);
-                } else {
-                    NavFilterService.setUser(users[0]);
-                }
-            });
-
-        $scope.activeTeam = team;
-    };
-
-    var setUser = function(user) {
-        $scope.activeUser = user;
-    };
-    
-    // Select team click handler
-    $scope.selectTeam = function($event, team) {
-        NavFilterService.setTeam(team);
-    };
-
-    // Select user click handler
-    $scope.selectUser = function($event, user) {
-        NavFilterService.setUser(user);
-    };
-    
-    // Listen to team/user changes from NavFilterService
-    $scope.$on('navFilterTeamChanged', function() {
-        setTeam(NavFilterService.team);
-    });
-    $scope.$on('navFilterUserChanged', function() {
-        setUser(NavFilterService.user);
-    });
-    
-    $scope.activeTeam = null;
-    $scope.activeUser = null;
 });
 
 app.directive('timeFromNow', function($interval) {
