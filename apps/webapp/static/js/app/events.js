@@ -182,18 +182,30 @@ module.factory('EventDialogService', function($modal) {
     };
 });
 
-module.controller('CalendarCtrl', function($scope, $modal, $state, EventRepository, EventDialogService) {
+module.controller('CalendarCtrl', function($scope, $modal, $state, EventRepository, EventDialogService, NavFilterService) {
     $scope.eventsSource = function(start, end, timezone, callback) {
         // Get events within date range
         var query = {
             start: start.toJSON(),
-            end: end.toJSON()
+            end: end.toJSON(),
         };
+
+        if(NavFilterService.team) {
+            query.team = NavFilterService.team.id;
+        }
+
         EventRepository.list(query)
             .success(function(events) {
                 callback(events);
             });
     };
+    
+    $scope.$on('navFilterChanged', function(event, changed) {
+        if('team' in changed) {
+            // Reload events
+            $scope.calendar.fullCalendar('refetchEvents');
+        }
+    });
 
     // Event click handler
     var onEventClick = function(event, allDay, jsEvent, view){
