@@ -253,11 +253,15 @@ module.directive('userPicture', function() {
         restrict: 'A',
         link: function(scope, element, attrs) {
             scope.$watch(attrs.userPicture, function(user) {
-                if(user && 'profile' in user) {
+                if(user) {
                     var size = attrs.size;
-                    var imgFile = '/static/img/profile-photos/'+size+'/'+
-                        (user.profile.picture_filename ? user.profile.picture_filename+'.jpg' : '_unavailable.png');
-                    element.attr('src', imgFile);
+                    if('profile' in user && user.profile && user.profile.picture_filename) {
+                        var imgFile = user.profile.picture_filename+'.jpg';
+                    } else {
+                        var imgFile = '_unavailable.png';
+                    }
+                    var imgPath = '/static/img/profile-photos/'+size+'/'+imgFile;
+                    element.attr('src', imgPath);
                 }
             });
         }

@@ -8,11 +8,11 @@
             <div class="user">
                 <figure class="user-photo user-photo-med">
                     <a ui-sref="users.detail({ userId: user.id })">
-                        <img ng-src="/static/img/profile-photos/med/{{ user.profile.picture_filename ? user.profile.picture_filename+'.jpg' : '_unavailable.png' }}">
+                        <img user-picture="user" size="med">
                     </a>
                     <figcaption>
                         {{ user.full_name }}<br>
-                        <em ng-repeat="userRole in user.user_roles">{{ userRole.role.name }}</em>
+                        <em ng-repeat="userRole in user.user_roles">{{ userRole.role.name }}<span ng-if="!$last">, </span></em>
                     </figcaption>
                 </figure>
             </div>
