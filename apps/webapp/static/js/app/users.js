@@ -239,9 +239,11 @@ module.controller('TeamStateCtrl', function($scope, $modal, NavFilterService, Te
             });
     };
 
-    // Update users when team changes
-    $scope.$on('navFilterTeamChanged', function() {
-        update();
+    // Update when team changes
+    $scope.$on('navFilterChanged', function(event, changed) {
+        if('team' in changed) {
+            update();
+        }
     });
 
     // Get users
