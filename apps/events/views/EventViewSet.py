@@ -8,7 +8,8 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError
 from rest_framework.response import Response
 
-from apps.users.exceptions import UserNotFound
+from apps.users.exceptions import UserNotFound, TeamNotFound
+from apps.users.models import Team
 
 from ..exceptions import EventAlreadyHasAttendee, EventEndPrecedesStart
 from ..models import Event, EventAttendee
@@ -23,7 +24,7 @@ class EventViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = super().get_queryset()
         
-        # Get filter parameters
+        # Get time filter parameters
         start = self.request.QUERY_PARAMS.get('start', None)
         end = self.request.QUERY_PARAMS.get('end', None)
 
@@ -35,6 +36,17 @@ class EventViewSet(viewsets.ModelViewSet):
                 queryset = queryset.filter(start__lt=end)
         except ValidationError:
             raise ParseError('Invalid date')
+        
+        # Filter by team
+        teamId = self.request.QUERY_PARAMS.get('team', None)
+        if teamId:
+            try:
+                team = Team.objects.get(id=teamId)
+            except ValueError:
+                raise ParseError('Invalid team ID')
+            except Team.DoesNotExist:
+                raise TeamNotFound()
+            queryset = queryset.filter(owner__teams__in=[team])
         
         return queryset
     

@@ -15,3 +15,7 @@ class TaskForceNotFound(APIException):
 class RoleNotFound(APIException):
     status_code = 404
     default_detail = 'Role not found'
+
+class TeamNotFound(APIException):
+    status_code = 404
+    default_detail = 'Team not found'
