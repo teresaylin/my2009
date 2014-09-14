@@ -25,6 +25,8 @@ class ObjectPermissions(BasePermission):
             return True
         elif request.method == 'PUT' and perms['update']:
             return True
+        elif request.method == 'DELETE' and perms['delete']:
+            return True
         else:
             return False
 
@@ -41,6 +43,8 @@ class ObjectPermissions(BasePermission):
         if request.method == 'GET' and perms['read']:
             return True
         elif request.method == 'PUT' and perms['update']:
+            return True
+        elif request.method == 'DELETE' and perms['delete']:
             return True
         else:
             return False
