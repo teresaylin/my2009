@@ -43,7 +43,7 @@ class UserViewSet(viewsets.ModelViewSet):
             
         return queryset
 
-    @action()
+    @action(methods=['PUT'])
     def add_role(self, request, pk=None):
         user = self.get_object()
         
@@ -66,7 +66,7 @@ class UserViewSet(viewsets.ModelViewSet):
             
         return Response(UserRoleMappingSerializer(userRole).data)
 
-    @action()
+    @action(methods=['PUT'])
     def remove_role(self, request, pk=None):
         user = self.get_object()
         
@@ -119,7 +119,7 @@ class TaskForceViewSet(viewsets.ModelViewSet):
         
         return super().update(request, pk=pk)
 
-    @action()
+    @action(methods=['PUT'])
     def add_member(self, request, pk=None):
         taskforce = self.get_object()
         
@@ -135,7 +135,7 @@ class TaskForceViewSet(viewsets.ModelViewSet):
         
         return Response({})
 
-    @action()
+    @action(methods=['PUT'])
     def remove_member(self, request, pk=None):
         taskforce = self.get_object()
         

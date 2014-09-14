@@ -1,10 +1,11 @@
 from rest_framework import serializers
+from libs.permissions.serializers import ObjectPermissionsSerializerMixin
 
 from apps.users.serializers import TaskForceSerializer, UserSerializer
 
 from ..models import Task
 
-class TaskSerializer(serializers.ModelSerializer):
+class TaskSerializer(ObjectPermissionsSerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = Task
         fields = ('id', 'name', 'parent', 'owner', 'completed_by', 'description', 'due_time', 'state', 'comment_thread', 'assigned_taskforces', 'assigned_users')

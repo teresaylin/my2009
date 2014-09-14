@@ -36,12 +36,12 @@ module.factory('EventRepository', function($http) {
             return $http.delete(baseUrl+id+'/');
         },
         addAttendee: function(id, userId) {
-            return $http.post(baseUrl+id+'/add_attendee/', {
+            return $http.put(baseUrl+id+'/add_attendee/', {
                 'user_id': userId
             });
         },
         removeAttendee: function(id, userId) {
-            return $http.post(baseUrl+id+'/remove_attendee/', {
+            return $http.put(baseUrl+id+'/remove_attendee/', {
                 'user_id': userId
             });
         }
@@ -115,25 +115,25 @@ module.factory('TaskRepository', function($http) {
             return $http.delete(baseUrl+id+'/');
         },
         complete: function(id) {
-            return $http.post(baseUrl+id+'/complete/');
+            return $http.put(baseUrl+id+'/complete/');
         },
         addAssignedUser: function(id, userId) {
-            return $http.post(baseUrl+id+'/add_assigned_user/', {
+            return $http.put(baseUrl+id+'/add_assigned_user/', {
                 'user_id': userId
             });
         },
         removeAssignedUser: function(id, userId) {
-            return $http.post(baseUrl+id+'/remove_assigned_user/', {
+            return $http.put(baseUrl+id+'/remove_assigned_user/', {
                 'user_id': userId
             });
         },
         addAssignedTaskforce: function(id, taskforceId) {
-            return $http.post(baseUrl+id+'/add_assigned_taskforce/', {
+            return $http.put(baseUrl+id+'/add_assigned_taskforce/', {
                 'taskforce_id': taskforceId
             });
         },
         removeAssignedTaskforce: function(id, taskforceId) {
-            return $http.post(baseUrl+id+'/remove_assigned_taskforce/', {
+            return $http.put(baseUrl+id+'/remove_assigned_taskforce/', {
                 'taskforce_id': taskforceId
             });
         }
@@ -160,12 +160,12 @@ module.factory('TaskForceRepository', function($http) {
             return $http.delete(baseUrl+id+'/');
         },
         addMember: function(id, userId) {
-            return $http.post(baseUrl+id+'/add_member/', {
+            return $http.put(baseUrl+id+'/add_member/', {
                 'user_id': userId
             });
         },
         removeMember: function(id, userId) {
-            return $http.post(baseUrl+id+'/remove_member/', {
+            return $http.put(baseUrl+id+'/remove_member/', {
                 'user_id': userId
             });
         }
@@ -203,12 +203,12 @@ module.factory('UserRepository', function($http) {
             return $http.put(profilesUrl+id+'/', data);
         },
         addRole: function(id, roleId) {
-            return $http.post(baseUrl+id+'/add_role/', {
+            return $http.put(baseUrl+id+'/add_role/', {
                 'role_id': roleId
             });
         },
         removeRole: function(id, roleId) {
-            return $http.post(baseUrl+id+'/remove_role/', {
+            return $http.put(baseUrl+id+'/remove_role/', {
                 'role_id': roleId
             });
         }

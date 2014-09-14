@@ -58,7 +58,7 @@ class EventViewSet(viewsets.ModelViewSet):
         if obj.end < obj.start:
             raise EventEndPrecedesStart()
         
-    @action()
+    @action(methods=['PUT'])
     def add_attendee(self, request, pk=None):
         event = self.get_object()
         
@@ -80,7 +80,7 @@ class EventViewSet(viewsets.ModelViewSet):
         
         return Response({})
 
-    @action()
+    @action(methods=['PUT'])
     def remove_attendee(self, request, pk=None):
         event = self.get_object()
         

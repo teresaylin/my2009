@@ -24,7 +24,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         if created:
             obj.assigned_users.add(obj.owner)
             
-    @action()
+    @action(methods=['PUT'])
     def complete(self, request, pk=None):
         task = self.get_object()
         
@@ -36,7 +36,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         # Return updated task
         return Response(TaskSerializer(task).data)
 
-    @action()
+    @action(methods=['PUT'])
     def add_assigned_user(self, request, pk=None):
         task = self.get_object()
         
@@ -55,7 +55,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         
         return Response({})
 
-    @action()
+    @action(methods=['PUT'])
     def remove_assigned_user(self, request, pk=None):
         task = self.get_object()
         
@@ -71,7 +71,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         
         return Response({})
 
-    @action()
+    @action(methods=['PUT'])
     def add_assigned_taskforce(self, request, pk=None):
         task = self.get_object()
         
@@ -90,7 +90,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         
         return Response({})
 
-    @action()
+    @action(methods=['PUT'])
     def remove_assigned_taskforce(self, request, pk=None):
         task = self.get_object()
         
