@@ -24,28 +24,17 @@
         <![endif]-->
         
         <script src="{% static 'js/jquery-1.11.1.min.js' %}"></script>
-        <!--<script src="{% static 'js/bootstrap-3.2.0.min.js' %}"></script>-->
 
         <script src="{% static 'js/fullcalendar-2.1.1/lib/moment.min.js' %}"></script>
         <script src="{% static 'js/fullcalendar-2.1.1/fullcalendar.min.js' %}"></script>
         <link href="{% static 'js/fullcalendar-2.1.1/fullcalendar.min.css' %}" rel="stylesheet">
-
-        {% block pageScriptHead %}{% endblock %}
 
         <script src="{% static 'js/angular-1.2.19.min.js' %}"></script>
         <script src="{% static 'js/angular-ui-router-0.2.10.min.js' %}"></script>
         <script src="{% static 'js/ui-bootstrap-tpls-0.10.0.min.js' %}"></script>
         <script src="{% static 'js/calendar.js' %}"></script>
 
-        <script src="{% static 'js/app/dropbox.js' %}"></script>
-        <script src="{% static 'js/app/events.js' %}"></script>
-        <script src="{% static 'js/app/files.js' %}"></script>
-        <script src="{% static 'js/app/navfilter.js' %}"></script>
-        <script src="{% static 'js/app/repositories.js' %}"></script>
-        <script src="{% static 'js/app/tasks.js' %}"></script>
-        <script src="{% static 'js/app/users.js' %}"></script>
-
-        <script src="{% static 'js/app/app.js' %}"></script>
+        {% block pageScriptHead %}{% endblock %}
     </head>
 
     <body{% block bodyAttr %}{% endblock %}>

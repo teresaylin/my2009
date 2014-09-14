@@ -230,7 +230,7 @@ module.controller('CalendarCtrl', function($scope, $modal, $state, EventReposito
     // Calendar configuration
     $scope.uiConfig = {
         calendar: {
-            height: 600,
+            aspectRatio: 2,
             header: {
                 left: 'agendaDay agendaWeek month',
                 center: 'title',
@@ -239,7 +239,7 @@ module.controller('CalendarCtrl', function($scope, $modal, $state, EventReposito
             timezone: 'local',
             eventClick: onEventClick,
             eventDrop: onEventDrop,
-            eventResize: onEventResize,
+            eventResize: onEventResize
         }
     };
 
