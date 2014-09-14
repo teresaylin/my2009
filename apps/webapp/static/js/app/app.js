@@ -15,7 +15,7 @@ var app = angular.module('app', [
 app.factory('HttpErrorInterceptor', function($q, $rootScope) {
     return {
         'responseError': function(response) {
-            if(response.status >= 500) {
+            if(response.status >= 400) {
                 $rootScope.$broadcast('serverError', response);
             }
 
@@ -122,7 +122,13 @@ app.controller('AppCtrl', function($scope, $modal, NavFilterService, UserReposit
             templateUrl: 'error-dialog.html',
             controller: function($scope, $modalInstance) {
                 $scope.errorText = 'Received '+response.status+' HTTP error';
-                $scope.errorDetailHtml = response.data;
+                
+                var cType = response.headers('Content-Type');
+                if(cType == 'text/html') {
+                    $scope.errorDetailHtml = response.data;
+                } else if(cType == 'application/json' && 'detail' in response.data) {
+                    $scope.errorDetail = response.data.detail;
+                }
                 
                 $scope.close = function() {
                     $modalInstance.close();
