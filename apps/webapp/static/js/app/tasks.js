@@ -1,14 +1,46 @@
 var module = angular.module('tasks', []);
 
-module.controller('TasksStateCtrl', function($scope, $modal, TaskRepository, TaskDialogService) {
-    var refreshTasks = function() {
-        // Get list of all tasks
-        TaskRepository.list()
-            .success(function(tasks) {
-                $scope.tasks = tasks;
-            });
+module.controller('TasksStateCtrl', function($scope, $modal, NavFilterService, TaskDialogService) {
+    $scope.$on('navFilterChanged', function(event, changed) {
+        if('user' in changed || 'taskforce' in changed) {
+            $scope.navUser = NavFilterService.user;
+            $scope.navTaskforce = NavFilterService.taskforce;
+        }
+    });
+    $scope.navUser = NavFilterService.user;
+    $scope.navTaskforce = NavFilterService.taskforce;
+
+    $scope.newTask = function() {
+        var dlg = TaskDialogService.newTask();
     };
-    refreshTasks();
+});
+
+module.controller('TaskListCtrl', function($scope, $modal, TaskRepository, TaskDialogService) {
+    var refreshTasks = function() {
+        // Get list of tasks
+        var query = {};
+        
+        if($scope.filterUser) {
+            query.user = $scope.filterUser.id;
+        }
+        if($scope.filterTaskforce) {
+            query.taskforce = $scope.filterTaskforce.id;
+        }
+        
+        if(!jQuery.isEmptyObject(query)) {
+            TaskRepository.list(query)
+                .success(function(tasks) {
+                    $scope.tasks = tasks;
+                });
+        }
+    };
+
+    // Refresh tasks if filterUser or filterTaskforce attribute changes
+    $scope.$watchCollection('[filterUser, filterTaskforce]', function(val) {
+        if(val) {
+            refreshTasks();
+        }
+    });
     
     $scope.onCompletedChange = function(task, completed) {
         if(completed) {
@@ -39,16 +71,6 @@ module.controller('TasksStateCtrl', function($scope, $modal, TaskRepository, Tas
         }
     };
 
-    $scope.newTask = function() {
-        var dlg = TaskDialogService.newTask();
-        
-        dlg.result.then(function(changesMade) {
-            if(changesMade) {
-                refreshTasks();
-            }
-        });
-    };
-
     $scope.openTask = function(task) {
         var dlg = TaskDialogService.openTask(task);
         
@@ -67,6 +89,18 @@ module.controller('TasksStateCtrl', function($scope, $modal, TaskRepository, Tas
                 refreshTasks();
             }
         });
+    };
+});
+
+module.directive('taskList', function() {
+    return {
+        restrict: 'E',
+        scope: {
+            'filterUser': '=',
+            'filterTaskforce': '='
+        },
+        templateUrl: partial('tasks/task-list.html'),
+        controller: 'TaskListCtrl'
     };
 });
 

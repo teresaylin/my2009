@@ -1,0 +1,36 @@
+<section class="task-panel tasks-widget">
+    <div class="panel-heading">
+        <div class="pull-left">
+            <h5>
+                <span class="fa fa-tasks"></span> Tasks assigned to
+                <span ng-if="filterUser && filterUser.id != $parent.currentUser.id">{{ filterUser.full_name }}</span>
+                <span ng-if="filterUser && filterUser.id == $parent.currentUser.id">me</span>
+                <span ng-if="filterTaskforce">{{ filterTaskforce.name }}</span>
+            </h5>
+        </div>
+        <br>
+    </div>
+    <div class="panel-body">
+        <div class="task-content">
+            <p class="text-info" ng-if="tasks.length == 0">
+                No tasks assigned.
+            </p>
+            <ul class="task-list">
+                <li ng-repeat="task in tasks" ng-class="{ 'task-done': task.state == 'completed' }" ng-init="completed = task.state == 'completed'">
+                    <div class="task-checkbox">
+                        <input type="checkbox" class="list-child" ng-model="completed" ng-change="onCompletedChange(task, completed)" ng-if="task.state != 'completed'">
+                    </div>
+                    <div class="task-title">
+                        <span class="task-title-sp">
+                            <a href ng-click="openTask(task)">{{ task.name }}</a>
+                        </span>
+                        <em ng-if="task.assigned_taskforces">
+                            Assigned to
+                            <span ng-repeat="taskforce in task.assigned_taskforces">{{ taskforce.name }}<span ng-if="!$last">, </span></span>
+                        </em>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>

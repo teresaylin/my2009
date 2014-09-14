@@ -15,6 +15,33 @@ class TaskViewSet(viewsets.ModelViewSet):
     serializer_class = TaskSerializer
     ordering = ('due_time',)
     
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        
+        # Filter by user
+        userId = self.request.QUERY_PARAMS.get('user', None)
+        if userId:
+            # Get User object
+            try:
+                user = User.objects.get(id=userId)
+            except User.DoesNotExist:
+                raise UserNotFound()
+            
+            queryset = queryset.filter(assigned_users__in=[user])
+
+        # Filter by taskforce
+        taskforceId = self.request.QUERY_PARAMS.get('taskforce', None)
+        if taskforceId:
+            # Get TaskForce object
+            try:
+                taskforce = TaskForce.objects.get(id=taskforceId)
+            except TaskForce.DoesNotExist:
+                raise TaskForceNotFound()
+            
+            queryset = queryset.filter(assigned_taskforces__in=[taskforce])
+        
+        return queryset
+    
     def pre_save(self, obj):
         # Set owner
         obj.owner = self.request.user
@@ -34,7 +61,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         task.save()
         
         # Return updated task
-        return Response(TaskSerializer(task).data)
+        return Response(TaskSerializer(task, context={'request': request}).data)
 
     @action(methods=['PUT'])
     def add_assigned_user(self, request, pk=None):
