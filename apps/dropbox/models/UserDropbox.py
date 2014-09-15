@@ -14,12 +14,16 @@ class UserDropbox(models.Model):
     class Meta:
         app_label = 'dropbox'
 
+    MIN_TIME = datetime.min.replace(tzinfo=timezone.utc)
+    def getMinTime():
+        return UserDropbox.MIN_TIME
+
     user = models.OneToOneField(User, primary_key=True, related_name='user_dropbox')
     dropbox_uid = models.PositiveIntegerField()
     access_token = models.CharField(max_length=64)
     dropbox_email = models.CharField(max_length=255, default='')
     valid = models.BooleanField(default=False)
-    last_validated = models.DateTimeField(default=datetime.min.replace(tzinfo=timezone.utc))
+    last_validated = models.DateTimeField(default=getMinTime)
     
     def isValid(self):
         """Check Dropbox access token is valid"""

@@ -14,7 +14,7 @@ class File(models.Model):
 
     parent = models.ForeignKey('File', related_name='files', null=True, blank=True)
     name = models.CharField(max_length=255)
-    is_directory = models.BooleanField()
+    is_directory = models.BooleanField(default=False)
     owner = models.ForeignKey(User)
     size = models.PositiveIntegerField()
     modified_time = models.DateTimeField(auto_now_add=True)
