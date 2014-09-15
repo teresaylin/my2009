@@ -19,10 +19,6 @@ body {
     font-size:13px;
 }
 
-ul li {
-    list-style: none;
-}
-
 a, a:hover, a:focus {
     text-decoration: none;
     outline: none;
