@@ -21,16 +21,27 @@ urlpatterns = patterns('',
             'current_app': 'webapp'
         }, name='change-password'
     ),
-    url(r'^change-password-done$', authViews.password_change_done, {
+    url(r'^change-password/done$', authViews.password_change_done, {
             'template_name': 'webapp/change-password-done.html',
         }, name='change-password-done'
     ),
-    url(r'reset-password$', authViews.password_reset, {
+    url(r'forgot-password$', authViews.password_reset, {
+            'template_name': 'webapp/forgot-password.html',
+            'post_reset_redirect': 'webapp:forgot-password-done',
+            'email_template_name': 'webapp/email/reset-password-email.txt',
+            'subject_template_name': 'webapp/email/reset-password-subject.txt'
+        }, name='forgot-password'
+    ),
+    url(r'^forgot-password/done$', authViews.password_reset_done, {
+            'template_name': 'webapp/forgot-password-done.html',
+        }, name='forgot-password-done'
+    ),
+    url(r'^reset-password/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', authViews.password_reset_confirm, {
             'template_name': 'webapp/reset-password.html',
-            'post_reset_redirect': 'webapp:reset-password-done',
+            'post_reset_redirect': 'webapp:reset-password-done'
         }, name='reset-password'
     ),
-    url(r'^reset-password-done$', authViews.password_reset_done, {
+    url(r'^reset-password/done$', authViews.password_reset_complete, {
             'template_name': 'webapp/reset-password-done.html',
         }, name='reset-password-done'
     ),
