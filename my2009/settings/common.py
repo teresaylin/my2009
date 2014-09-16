@@ -10,19 +10,7 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '_=-e4r)kiwe7vbif+64_bi$%$w1@jhwuz7+ac+ccn&2+tjvi=r'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-TEMPLATE_DEBUG = True
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
 ALLOWED_HOSTS = []
 
@@ -64,20 +52,6 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'my2009.urls'
 
 WSGI_APPLICATION = 'my2009.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/1.6/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'mysql.connector.django',
-        'NAME': 'ael1qaz$default',
-        'USER': 'ael1qaz',
-        'PASSWORD': 'asdf',
-        'HOST': 'mysql.server',
-    }
-}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
