@@ -99,8 +99,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # Authentication URLs
-LOGIN_URL = '/webapp/login'
-LOGIN_REDIRECT_URL = '/webapp'
+LOGIN_URL = '/app/login'
+LOGIN_REDIRECT_URL = '/app'
 
 # REST framework setup
 REST_FRAMEWORK = {

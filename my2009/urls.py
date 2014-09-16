@@ -1,4 +1,5 @@
 from django.conf.urls import patterns, include, url
+from django.views.generic.base import RedirectView
 from rest_framework import routers
 
 from django.contrib import admin
@@ -29,11 +30,17 @@ urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'my2009.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
+    
+    # Main page (redirect to web app)
+    url(r'^$', RedirectView.as_view(pattern_name='webapp:app', permanent=False)),
 
+    # Admin
     url(r'^admin/', include(admin.site.urls)),
     
-    url(r'^webapp/', include(webappUrls, namespace='webapp')),
+    # Web app
+    url(r'^app/', include(webappUrls, namespace='webapp')),
     
+    # API
     url(r'^api/', include(router.urls)),
     url(r'^dropbox/', include(dropboxUrls, namespace='dropbox'))
 )
