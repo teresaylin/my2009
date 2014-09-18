@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from rest_framework.exceptions import PermissionDenied
 
 from .models import TaskForce, Team, UserProfile, Milestone, Comment, Role, UserRoleMapping
 from .serializers import TaskForceSerializer, TeamSerializer, UserSerializer, UserProfileSerializer, MilestoneSerializer, CommentSerializer, RoleSerializer, UserRoleMappingSerializer
@@ -15,6 +16,16 @@ from .exceptions import UserNotFound, UserAlreadyHasRole
 class TeamViewSet(viewsets.ModelViewSet):
     queryset = Team.objects.all()
     serializer_class = TeamSerializer
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        
+        # Return only teams logged-in user belongs to if 'current' parameter is given
+        current = self.request.QUERY_PARAMS.get('current', None)
+        if current is not None:
+            queryset = queryset.filter(users__in=[self.request.user])
+        
+        return queryset
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -111,6 +122,19 @@ class TaskForceViewSet(viewsets.ModelViewSet):
         # Ensure sub-tasks inherit their parent's milestone
         if obj.parent_task_force:
             obj.milestone = obj.parent_task_force.milestone
+
+        if obj.parent_task_force:
+            # Only allow sub-taskforce creation if user has update permission on parent
+            perm = getUserObjectPermissions(self.request.user, obj.parent_task_force)
+            if not perm['update']:
+                raise PermissionDenied()
+            
+            # Ensure sub-taskforces have same team as parent
+            obj.team = obj.parent_task_force.team
+
+        # Ensure user can only create taskforces for teams they belong to
+        if not obj.team in self.request.user.teams.all():
+            raise PermissionDenied()
             
     def update(self, request, pk=None):
         # Ensure milestone cannot be changed after the task force has been created

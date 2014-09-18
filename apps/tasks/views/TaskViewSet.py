@@ -2,6 +2,9 @@ from django.contrib.auth.models import User
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.exceptions import PermissionDenied
+
+from libs.permissions.user_permissions import getUserObjectPermissions
 
 from apps.users.exceptions import UserNotFound, TaskForceNotFound
 from apps.users.models import TaskForce
@@ -86,6 +89,12 @@ class TaskViewSet(viewsets.ModelViewSet):
         # Set owner when object is created
         if not obj.pk:
             obj.owner = self.request.user
+            
+        # Only allow subtask creation if user has update permission on parent
+        if obj.parent:
+            perm = getUserObjectPermissions(self.request.user, obj.parent)
+            if not perm['update']:
+                raise PermissionDenied()
         
     def post_save(self, obj, created=False):
         # Assign task to owner when object is created

@@ -52,8 +52,8 @@ module.factory('NavFilterService', function($rootScope) {
 });
 
 module.controller('NavFilterCtrl', function($scope, NavFilterService, TeamRepository, UserRepository, TaskForceRepository) {
-    // Get list of all teams
-    TeamRepository.list()
+    // Get list of all teams user belongs to
+    TeamRepository.list({ current: true })
         .success(function(teams) {
             $scope.teams = teams;
         });

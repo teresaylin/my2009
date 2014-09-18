@@ -179,8 +179,8 @@ module.factory('TeamRepository', function($http) {
         get: function(id) {
             return $http.get(baseUrl+id+'/');
         },
-        list: function() {
-            return $http.get(baseUrl);
+        list: function(params) {
+            return $http.get(baseUrl, { params: params });
         }
     };
 });

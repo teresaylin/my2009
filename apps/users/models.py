@@ -1,7 +1,6 @@
 from django.db import models
-
+from django.db.models.signals import post_save
 from django.contrib.auth.models import User
-
 
 class Team(models.Model):
     color = models.CharField(max_length=10, blank = False)
@@ -50,13 +49,19 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return str(self.user)
-
-#    def get_picture(self):
-#        return "http://"
-
-##broke it when syncdb UserProfile: IntegrityError at /admin/users/userprofile/
-
-##new, missing some column inputs, did not syncdb
+    
+    @staticmethod
+    def onUserSave(sender, **kwargs):
+        # Create UserProfile object when a User is created
+        user = kwargs['instance']
+        if kwargs['created']:
+            UserProfile.objects.create(
+                user=user,
+                picture_filename='',
+                phone_number='',
+                car='N'
+            )
+post_save.connect(UserProfile.onUserSave, sender=User)
 
 class Milestone(models.Model):
     name = models.CharField(max_length=50)
