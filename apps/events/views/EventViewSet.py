@@ -51,8 +51,9 @@ class EventViewSet(viewsets.ModelViewSet):
         return queryset
     
     def pre_save(self, obj):
-        # Set owner
-        obj.owner = self.request.user
+        # Set owner when object is created
+        if not obj.pk:
+            obj.owner = self.request.user
         
         # Check start time precedes end time
         if obj.end < obj.start:

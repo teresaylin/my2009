@@ -83,8 +83,9 @@ class TaskViewSet(viewsets.ModelViewSet):
         return Response(rootTasks)
     
     def pre_save(self, obj):
-        # Set owner
-        obj.owner = self.request.user
+        # Set owner when object is created
+        if not obj.pk:
+            obj.owner = self.request.user
         
     def post_save(self, obj, created=False):
         # Assign task to owner when object is created
