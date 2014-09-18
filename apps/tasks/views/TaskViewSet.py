@@ -104,11 +104,20 @@ class TaskViewSet(viewsets.ModelViewSet):
     @action(methods=['PUT'])
     def complete(self, request, pk=None):
         task = self.get_object()
-        
-        # Mark task as completed
-        task.state = task.COMPLETED
-        task.completed_by = self.request.user
-        task.save()
+
+        def completeTask(task):
+            # Mark subtasks as completed
+            for subtask in task.subtasks.all():
+                completeTask(subtask)
+
+            # Mark task as completed
+            if task.state != task.COMPLETED:
+                task.state = task.COMPLETED
+                task.completed_by = self.request.user
+                task.save()
+                
+        # Complete task and all subtasks
+        completeTask(task)
         
         # Return updated task
         return Response(TaskSerializer(task, context={'request': request}).data)
