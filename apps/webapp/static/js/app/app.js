@@ -119,6 +119,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
 app.controller('AppCtrl', function($scope, $modal, NavFilterService, UserRepository) {
     $scope.$on('serverError', function(ev, response) {
         var modal = $modal.open({
+            backdrop: 'static',
             templateUrl: 'error-dialog.html',
             controller: function($scope, $modalInstance) {
                 $scope.errorText = 'Received '+response.status+' HTTP error';

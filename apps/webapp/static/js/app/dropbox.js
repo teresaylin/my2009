@@ -35,6 +35,7 @@ dropbox.factory('DropboxUploadService', function($modal, DropboxService) {
     return {
         openUploadDialog: function(dirFileId) {
             var modal = $modal.open({
+                backdrop: 'static',
                 templateUrl: partial('dropbox/upload-dialog.html'),
                 controller: function($scope, $modalInstance, DropboxService) {
                     // Set current path
@@ -114,6 +115,7 @@ dropbox.controller('DropboxAuthCtrl', function($scope, $modal, DropboxService) {
 
     $scope.openAuthDialog = function() {
         var modal = $modal.open({
+            backdrop: 'static',
             templateUrl: partial('dropbox/auth-dialog.html'),
             controller: function($scope, $modalInstance, DropboxService) {
                 // Get authorization URL

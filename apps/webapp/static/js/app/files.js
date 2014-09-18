@@ -113,6 +113,7 @@ module.controller('FilesListCtrl', function($scope, $modal, FileRepository, Drop
 
     $scope.openCreateFolderDialog = function() {
         var modal = $modal.open({
+            backdrop: 'static',
             templateUrl: partial('files/create-folder-dialog.html'),
             controller: function($scope, $modalInstance, DropboxService) {
                 $scope.nameChanged = function(form) {

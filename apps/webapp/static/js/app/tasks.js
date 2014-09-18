@@ -90,6 +90,7 @@ module.controller('TaskListCtrl', function($rootScope, $scope, $modal, TaskRepos
     $scope.completeTask = function(task) {
         // Show confirm dialog
         var modal = $modal.open({
+            backdrop: 'static',
             templateUrl: partial('tasks/complete-dialog.html'),
             controller: function($scope, $modalInstance, TaskRepository) {
                 $scope.task = task;
@@ -257,7 +258,7 @@ module.controller('TaskDialogCtrl', function($rootScope, $scope, $modalInstance,
             });
     };
 
-    $scope.cancel = function() {
+    $scope.close = function() {
         if(taskCreated) {
             $rootScope.$broadcast('taskCreated', $scope.task);
         } else if(changesMade) {
@@ -301,6 +302,7 @@ module.factory('TaskDialogService', function($modal) {
     return {
         openTask: function(task, parent) {
             var modal = $modal.open({
+                backdrop: 'static',
                 templateUrl: partial('tasks/task-dialog.html'),
                 controller: 'TaskDialogCtrl',
                 resolve: {
@@ -320,6 +322,7 @@ module.factory('TaskDialogService', function($modal) {
         },
         deleteTask: function(task) {
             var modal = $modal.open({
+                backdrop: 'static',
                 templateUrl: partial('tasks/delete-dialog.html'),
                 controller: function($scope, $modalInstance, TaskRepository, task) {
                     $scope.task = task;

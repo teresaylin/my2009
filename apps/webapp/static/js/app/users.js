@@ -15,6 +15,7 @@ module.controller('UserDetailStateCtrl', function($scope, $stateParams, $modal, 
         
     $scope.openEditProfileDialog = function() {
         var modal = $modal.open({
+            backdrop: 'static',
             templateUrl: partial('users/edit-profile-dialog.html'),
             controller: function($scope, $modalInstance, user) {
                 if(user.profile) {
@@ -102,6 +103,7 @@ module.controller('TeamStateCtrl', function($scope, $modal, NavFilterService, Te
     // Create/update a task force
     $scope.openEditTaskForceDialog = function(taskforce, parent) {
         var modal = $modal.open({
+            backdrop: 'static',
             templateUrl: partial('team/edit-taskforce-dialog.html'),
             controller: function($scope, $modalInstance, TaskForceRepository, MilestoneRepository, team) {
                 $scope.hasParent = parent ? true : false;
@@ -187,6 +189,7 @@ module.controller('TeamStateCtrl', function($scope, $modal, NavFilterService, Te
     // Delete task force
     $scope.openDeleteTaskForceDialog = function(taskforce) {
         var modal = $modal.open({
+            backdrop: 'static',
             templateUrl: partial('team/delete-taskforce-dialog.html'),
             controller: function($scope, $modalInstance, TaskForceRepository) {
                 $scope.taskforce = taskforce;

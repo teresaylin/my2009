@@ -114,7 +114,7 @@ module.controller('EventDialogCtrl', function($scope, $modalInstance, EventRepos
             });
     };
 
-    $scope.cancel = function() {
+    $scope.close = function() {
         $modalInstance.close(changesMade);
     };
         
@@ -138,6 +138,7 @@ module.factory('EventDialogService', function($modal) {
     return {
         openEvent: function(event) {
             var modal = $modal.open({
+                backdrop: 'static',
                 templateUrl: partial('events/event-dialog.html'),
                 controller: 'EventDialogCtrl',
                 resolve: {
@@ -154,6 +155,7 @@ module.factory('EventDialogService', function($modal) {
         },
         deleteEvent: function(event) {
             var modal = $modal.open({
+                backdrop: 'static',
                 templateUrl: partial('events/delete-dialog.html'),
                 controller: function($scope, $modalInstance, EventRepository, event) {
                     $scope.event = event;
