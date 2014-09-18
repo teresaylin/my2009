@@ -13,6 +13,7 @@ from ..serializers import TaskSerializer
 class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all().exclude(state='completed')
     serializer_class = TaskSerializer
+    filter_fields = ('parent',)
     ordering = ('due_time',)
     
     def get_queryset(self):
@@ -41,6 +42,45 @@ class TaskViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(assigned_taskforces__in=[taskforce])
         
         return queryset
+    
+    def list(self, request, *args, **kwargs):
+        if 'tree' in request.QUERY_PARAMS:
+            return self.listTree(request)
+        else:
+            return super().list(request, *args, **kwargs)
+        
+    def listTree(self, request):
+        """Return results as a tree, starting from any parent tasks that own tasks in the queryset"""
+        
+        tasks = {}
+        rootTasks = []
+        
+        queryset = self.get_queryset()
+
+        for task in queryset:
+            taskData = TaskSerializer(task, context={'request': request}).data
+            tasks[task.id] = taskData
+            
+        def processTask(task):
+            if task.parent:
+                if task.parent.id in tasks:
+                    if not 'subtasks' in tasks[task.parent.id]:
+                        tasks[task.parent.id]['subtasks'] = []
+                        tasks[task.parent.id]['_hasPartialSubtasks'] = True
+                    tasks[task.parent.id]['subtasks'].append(tasks[task.id])
+                else:
+                    parentData = TaskSerializer(task.parent, context={'request': request}).data
+                    parentData['subtasks'] = [ tasks[task.id] ]
+                    parentData['_hasPartialSubtasks'] = True
+                    tasks[task.parent.id] = parentData
+                    processTask(task.parent)
+            else:
+                rootTasks.append(tasks[task.id])
+
+        for task in queryset:
+            processTask(task)
+        
+        return Response(rootTasks)
     
     def pre_save(self, obj):
         # Set owner

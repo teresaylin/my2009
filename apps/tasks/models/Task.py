@@ -15,7 +15,7 @@ class Task(models.Model):
     )
 
     name = models.CharField(max_length=50, blank=False)
-    parent = models.ForeignKey('Task', blank=True, null=True)
+    parent = models.ForeignKey('Task', blank=True, null=True, related_name='subtasks')
     owner = models.ForeignKey(User, related_name='owned_tasks')
     description = models.TextField(blank=True)
     due_time = models.DateTimeField(null=True, blank=True)

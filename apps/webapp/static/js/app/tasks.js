@@ -15,11 +15,11 @@ module.controller('TasksStateCtrl', function($scope, $modal, NavFilterService, T
     };
 });
 
-module.controller('TaskListCtrl', function($scope, $modal, TaskRepository, TaskDialogService) {
+module.controller('TaskListCtrl', function($rootScope, $scope, $modal, TaskRepository, TaskDialogService) {
     var refreshTasks = function() {
         // Get list of tasks
         var query = {};
-        
+
         if($scope.filterUser) {
             query.user = $scope.filterUser.id;
         }
@@ -28,6 +28,7 @@ module.controller('TaskListCtrl', function($scope, $modal, TaskRepository, TaskD
         }
         
         if(!jQuery.isEmptyObject(query)) {
+            query.tree = true;
             TaskRepository.list(query)
                 .success(function(tasks) {
                     $scope.tasks = tasks;
@@ -41,54 +42,143 @@ module.controller('TaskListCtrl', function($scope, $modal, TaskRepository, TaskD
             refreshTasks();
         }
     });
-    
-    $scope.onCompletedChange = function(task, completed) {
-        if(completed) {
-            // Show confirm dialog
-            var modal = $modal.open({
-                templateUrl: partial('tasks/complete-dialog.html'),
-                controller: function($scope, $modalInstance, TaskRepository) {
-                    $scope.task = task;
-                    
-                    $scope.ok = function(form) {
-                        $modalInstance.close();
-                    };
-    
-                    $scope.cancel = function() {
-                        $modalInstance.dismiss('cancel');
-                    };
+
+    // Recursively scan a list of tasks for a specific task, returns list and index
+    var findTask = function(list, id) {
+        for(var i = 0; i < list.length; i++) {
+            var task = list[i];
+            if(task.id == id) {
+                return [list, i];
+            } else {
+                if('subtasks' in task) {
+                    var descTask = findTask(task.subtasks, id);
+                    if(descTask) {
+                        return descTask;
+                    }
                 }
-            });
-            
-            modal.result.then(function() {
-                // Mark task as completed
-                TaskRepository.complete(task.id)
-                    .success(function(data) {
-                        // Update task
-                        angular.copy(data, task);
-                    });
-            });
+            }
         }
+        return null;
+    };
+
+    // Listen for taskCreated signal
+    $scope.$on('taskCreated', function(event, task) {
+        refreshTasks();
+    });
+    
+    // Listen for taskUpdated signal
+    $scope.$on('taskUpdated', function(event, updatedTask) {
+        // Find task in tree
+        var result = findTask($scope.tasks, updatedTask.id);
+        var list = result[0];
+        var listIdx = result[1];
+        var task = list[listIdx];
+
+        if(task) {
+            // Remove completed tasks
+            if(updatedTask.state == 'completed') {
+                list.splice(listIdx, 1);
+            }
+
+            // Only copy the task data if they aren't referencing the same object
+            if(task != updatedTask) {
+                angular.copy(updatedTask, task);
+            }
+        }
+    });
+    
+    $scope.completeTask = function(task) {
+        // Show confirm dialog
+        var modal = $modal.open({
+            templateUrl: partial('tasks/complete-dialog.html'),
+            controller: function($scope, $modalInstance, TaskRepository) {
+                $scope.task = task;
+                
+                $scope.ok = function(form) {
+                    $modalInstance.close();
+                };
+
+                $scope.cancel = function() {
+                    $modalInstance.dismiss('cancel');
+                };
+            }
+        });
+        
+        modal.result.then(function() {
+            // Mark task as completed
+            TaskRepository.complete(task.id)
+                .success(function(data) {
+                    // Update task
+                    angular.copy(data, task);
+                    $rootScope.$broadcast('taskUpdated', data);
+                });
+        });
     };
 
     $scope.openTask = function(task) {
         var dlg = TaskDialogService.openTask(task);
-        
-        dlg.result.then(function(changesMade) {
-            if(changesMade) {
-                refreshTasks();
-            }
-        });
     };
 
     $scope.deleteTask = function(task) {
         var dlg = TaskDialogService.deleteTask(task);
-        
-        dlg.result.then(function(changesMade) {
-            if(changesMade) {
-                refreshTasks();
+    };
+    
+    $scope.toggleTask = function(task, shown) {
+        if(shown) {
+            // Get subtasks if not already loaded
+            if(!('subtasks' in task)) {
+                TaskRepository.list({ parent: task.id })
+                    .success(function(data) {
+                        task.subtasks = data;
+                    });
             }
-        });
+        }
+    };
+
+    $scope.newTask = function(parentTask) {
+        var dlg = TaskDialogService.newTask(parentTask);
+    };
+    
+    $scope.moreTasks = function(task) {
+        if('_hasPartialSubtasks' in task && task._hasPartialSubtasks) {
+            TaskRepository.list({ parent: task.id })
+                .success(function(data) {
+                    // Merge new tasks into existing subtasks array
+                    angular.forEach(data, function(newChild) {
+                        var exists = false;
+                        angular.forEach(task.subtasks, function(child) {
+                            if(child.id == newChild.id) {
+                                exists = true;
+                            }
+                        });
+                        if(!exists) {
+                            task.subtasks.push(newChild);
+                        }
+                    });
+                    task._hasPartialSubtasks = false;
+                });
+        }
+    };
+});
+
+module.directive('taskAssignees', function() {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            scope.$watch(attrs.taskAssignees, function(task) {
+                if(task) {
+                    var names = [];
+                    angular.forEach(task.assigned_taskforces, function(tf) {
+                        names.push(tf.name);
+                    });
+                    angular.forEach(task.assigned_users, function(user) {
+                        names.push(user.full_name);
+                    });
+                    names = names.join(', ');
+                    element.text(names);
+                }
+            });
+        }
     };
 });
 
@@ -104,8 +194,9 @@ module.directive('taskList', function() {
     };
 });
 
-module.controller('TaskDialogCtrl', function($scope, $modalInstance, TaskRepository, TaskDialogService, task) {
-    var changesMade = false; // This is set when a taskis created/edited
+module.controller('TaskDialogCtrl', function($rootScope, $scope, $modalInstance, TaskRepository, TaskDialogService, task, parent) {
+    var changesMade = false; // This is set when a task is created/edited
+    var taskCreated = false; // This is set when a task is created
     
     var loadTask = function(taskData) {
         $scope.task = taskData;
@@ -114,7 +205,9 @@ module.controller('TaskDialogCtrl', function($scope, $modalInstance, TaskReposit
     };
     
     var newTask = function() {
-        $scope.task = {};
+        $scope.task = {
+            'parent': parent ? parent.id : null
+        };
         $scope.creating = true;
         $scope.editing = true;
     };
@@ -136,6 +229,7 @@ module.controller('TaskDialogCtrl', function($scope, $modalInstance, TaskReposit
         TaskRepository.create($scope.task)
             .success(function(data) {
                 changesMade = true;
+                taskCreated = true;
                 // Refresh task with returned data
                 loadTask(data);
                 form.$setPristine();
@@ -164,6 +258,11 @@ module.controller('TaskDialogCtrl', function($scope, $modalInstance, TaskReposit
     };
 
     $scope.cancel = function() {
+        if(taskCreated) {
+            $rootScope.$broadcast('taskCreated', $scope.task);
+        } else if(changesMade) {
+            $rootScope.$broadcast('taskUpdated', $scope.task);
+        }
         $modalInstance.close(changesMade);
     };
         
@@ -200,21 +299,24 @@ module.controller('TaskDialogCtrl', function($scope, $modalInstance, TaskReposit
 
 module.factory('TaskDialogService', function($modal) {
     return {
-        openTask: function(task) {
+        openTask: function(task, parent) {
             var modal = $modal.open({
                 templateUrl: partial('tasks/task-dialog.html'),
                 controller: 'TaskDialogCtrl',
                 resolve: {
                     task: function() {
                         return task;
+                    },
+                    parent: function() {
+                        return parent;
                     }
                 }
             });
             
             return modal;
         },
-        newTask: function() {
-            return this.openTask(null);
+        newTask: function(parent) {
+            return this.openTask(null, parent);
         },
         deleteTask: function(task) {
             var modal = $modal.open({
@@ -226,6 +328,7 @@ module.factory('TaskDialogService', function($modal) {
                         // Delete task
                         TaskRepository.delete($scope.task.id)
                             .success(function() {
+                                $rootScope.$broadcast('taskDeleted', $scope.task);
                                 $modalInstance.close(true);
                             });
                     };

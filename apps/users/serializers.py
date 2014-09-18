@@ -26,10 +26,10 @@ class TeamSerializer(serializers.ModelSerializer):
         model = Team
         fields = ('id', 'color', 'team_email')
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('url', 'id', 'username', 'email', 'first_name', 'last_name', 'full_name', 'profile', 'user_roles', 'teams')
+        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'full_name', 'profile', 'user_roles', 'teams')
         
     profile = UserProfileSerializer()
     user_roles = UserRoleMappingSerializer()

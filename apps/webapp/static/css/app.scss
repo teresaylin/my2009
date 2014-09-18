@@ -134,6 +134,44 @@ hr {
     cursor: pointer;
 }
 
+.app-checkbox {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    position: relative;
+    font-size: 120%;
+    color: #333;
+    vertical-align: middle;
+    
+    &.disabled {
+        color: #bbb;
+        cursor: default;
+    }
+    
+    .app-checkbox-glyph-unchecked {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .app-checkbox-glyph-checked {
+        position: absolute;
+        top: 0;
+        left: 0;
+        visibility: hidden;
+    }
+    
+    &:not(.disabled):hover {
+        color: #333;
+        .app-checkbox-glyph-unchecked {
+            visibility: hidden;
+        }
+        .app-checkbox-glyph-checked {
+            visibility: visible;
+        }
+    }
+}
+
 /*---------- Files list ----------*/
 
 .files-list-buttons {
@@ -191,4 +229,52 @@ hr {
 
 .fc-event {
     cursor: pointer;
+}
+
+/*---------- Tasks ----------*/
+
+.task-list {
+    .task {
+        border-bottom: 1px dashed #eaeaea;
+        
+        .task-header {
+            padding: 4px 0;
+
+            .task-header-left {
+                width: 60%;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                white-space: nowrap;
+
+                .task-header-checkbox {
+                    display: inline-block;
+                    width: 16px;
+                }
+            }
+            .task-header-right {
+                text-align: right;
+                width: 40%;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                white-space: nowrap;
+            }
+            
+            &:hover {
+                background-color: #f7f7f7;
+                ~ .task-body {
+                    background-color: #f7f7f7;
+                }
+            }
+        }
+        
+        .task-body {
+            border-left: 1px solid #eaeaea;
+            margin: 4px 0 4px 16px;
+            padding: 6px 4px;
+        }
+    }
+    
+    .more-tasks {
+        padding: 3px 16px;
+    }
 }
