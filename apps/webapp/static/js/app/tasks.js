@@ -70,11 +70,11 @@ module.controller('TaskListCtrl', function($rootScope, $scope, $modal, TaskRepos
     $scope.$on('taskUpdated', function(event, updatedTask) {
         // Find task in tree
         var result = findTask($scope.tasks, updatedTask.id);
-        var list = result[0];
-        var listIdx = result[1];
-        var task = list[listIdx];
+        if(result) {
+            var list = result[0];
+            var listIdx = result[1];
+            var task = list[listIdx];
 
-        if(task) {
             // Remove completed tasks
             if(updatedTask.state == 'completed') {
                 list.splice(listIdx, 1);
