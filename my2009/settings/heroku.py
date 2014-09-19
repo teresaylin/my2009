@@ -17,3 +17,11 @@ ALLOWED_HOSTS = ['*']
 # Static asset configuration
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
+
+# Mailgun SMTP configuration
+if 'MAILGUN_SMTP_SERVER' in os.environ:
+    EMAIL_HOST = os.environ['MAILGUN_SMTP_SERVER']
+    EMAIL_PORT = int(os.environ['MAILGUN_SMTP_PORT'])
+    EMAIL_HOST_USER = os.environ['MAILGUN_SMTP_LOGIN']
+    EMAIL_HOST_PASSWORD = os.environ['MAILGUN_SMTP_PASSWORD']
+    EMAIL_USE_TLS = True
