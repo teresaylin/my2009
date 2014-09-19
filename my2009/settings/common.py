@@ -37,6 +37,7 @@ INSTALLED_APPS = (
     'apps.files',
     'apps.tasks',
     'apps.users',
+    'apps.user_tracking',
     'apps.webapp',
 )
 
@@ -47,6 +48,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'apps.user_tracking.middleware.UserTrackingMiddleware',
 )
 
 ROOT_URLCONF = 'my2009.urls'

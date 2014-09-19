@@ -154,6 +154,51 @@ app.controller('AppCtrl', function($scope, $modal, NavFilterService, UserReposit
     $scope.showSidebar = true;
 });
 
+app.controller('TeamMembersListCtrl', function($scope, $timeout, NavFilterService, UserRepository) {
+    var timeoutDelay = 60*1000; // Update every 60 seconds
+    var timeoutPromise = null;
+
+    var update = function() {
+        if(NavFilterService.team) {
+            // Get team members
+            UserRepository.list({ teams: NavFilterService.team.id })
+                .success(function(data) {
+                    $scope.users = data;
+
+                    // Set timeout for next update
+                    timeoutPromise = $timeout(update, timeoutDelay);
+                });
+        } else {
+            // Set timeout for next update
+            timeoutPromise = $timeout(update, timeoutDelay);
+        }
+    };
+    update();
+
+    $scope.$on('navFilterChanged', function(ev, changed) {
+        if('team' in changed && NavFilterService.team) {
+            // Cancel timeout and force update
+            $timeout.cancel(timeoutPromise);
+            update();
+        }
+    });
+    
+    $scope.userFilter = {
+        is_online: true
+    };
+    $scope.showAll = false;
+    
+    $scope.more = function() {
+        delete $scope.userFilter.is_online;
+        $scope.showAll = true;
+    };
+
+    $scope.less = function() {
+        $scope.userFilter.is_online = true;
+        $scope.showAll = false;
+    };
+});
+
 app.directive('timeFromNow', function($interval) {
     return {
         restrict: 'E',

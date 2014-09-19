@@ -11,9 +11,9 @@
     </div>
 
     <div class="col-lg-3 ds">
+        <!--
         <h3>Notifications</h3>
                           
-        <!-- First Action -->
         <div class="desc">
           <div class="thumb">
               <span class="badge bg-theme"><i class="fa fa-clock-o"></i></span>
@@ -24,7 +24,6 @@
               </p>
           </div>
         </div>
-        <!-- Second Action -->
         <div class="desc">
           <div class="thumb">
               <span class="badge bg-theme"><i class="fa fa-clock-o"></i></span>
@@ -35,7 +34,6 @@
               </p>
           </div>
         </div>
-        <!-- Third Action -->
         <div class="desc">
           <div class="thumb">
               <span class="badge bg-theme"><i class="fa fa-clock-o"></i></span>
@@ -46,7 +44,6 @@
               </p>
           </div>
         </div>
-        <!-- Fourth Action -->
         <div class="desc">
           <div class="thumb">
             <span class="badge bg-theme"><i class="fa fa-clock-o"></i></span>
@@ -57,7 +54,6 @@
             </p>
           </div>
         </div>
-        <!-- Fifth Action -->
         <div class="desc">
           <div class="thumb">
               <span class="badge bg-theme"><i class="fa fa-clock-o"></i></span>
@@ -68,63 +64,30 @@
               </p>
           </div>
         </div>
+        -->
 
-        <h3>Team Members</h3>
-        <!-- First Member -->
-        <div class="desc">
-          <div class="thumb">
-              <img class="img-circle" src="/static/img/ui-divya.jpg" width="35px" height="35px" align="">
-          </div>
-          <div class="details">
-              <p><a href="#">DIVYA MANIAN</a><br/>
-                 <small>Available</small>
-              </p>
-          </div>
+        <div ng-controller="TeamMembersListCtrl">
+            <h3>Team Members</h3>
+            <div class="desc" ng-repeat="user in users | filter:userFilter | orderBy:['-is_online', 'last_name']">
+                <div class="thumb">
+                    <img class="img-circle" height="40" user-picture="user" size="small">
+                </div>
+                <div class="details">
+                    <p>
+                        <a ui-sref="users.detail({ userId: user.id })">{{ user.full_name }}</a><br/>
+                        <span class="text-success" ng-if="user.is_online">
+                            <span class="fa fa-circle"></span>
+                            Online
+                        </span>
+                        <span class="text-muted" ng-if="!user.is_online">
+                            <span class="fa fa-circle-o"></span>
+                            Offline
+                        </span>
+                    </p>
+                </div>
+            </div>
+            <a href ng-click="more()" ng-if="!showAll">More...</a>
+            <a href ng-click="less()" ng-if="showAll">Less...</a>
         </div>
-        <!-- Second Member -->
-        <div class="desc">
-          <div class="thumb">
-              <img class="img-circle" src="/static/img/ui-sherman.jpg" width="35px" height="35px" align="">
-          </div>
-          <div class="details">
-              <p><a href="#">DJ SHERMAN</a><br/>
-                 <small>I am Busy</small>
-              </p>
-          </div>
-        </div>
-        <!-- Third Member -->
-        <div class="desc">
-          <div class="thumb">
-              <img class="img-circle" src="/static/img/ui-danro.jpg" width="35px" height="35px" align="">
-          </div>
-          <div class="details">
-              <p><a href="#">DAN ROGERS</a><br/>
-                 <small>Available</small>
-              </p>
-          </div>
-        </div>
-        <!-- Fourth Member -->
-        <div class="desc">
-          <div class="thumb">
-              <img class="img-circle" src="/static/img/ui-zac.jpg" width="35px" height="35px" align="">
-          </div>
-          <div class="details">
-              <p><a href="#">Zac Sniders</a><br/>
-                 <small>Available</small>
-              </p>
-          </div>
-        </div>
-        <!-- Fifth Member -->
-        <div class="desc">
-          <div class="thumb">
-              <img class="img-circle" src="/static/img/ui-sam.jpg" width="35px" height="35px" align="">
-          </div>
-          <div class="details">
-              <p><a href="#">Marcel Newman</a><br/>
-                 <small>Available</small>
-              </p>
-          </div>
-        </div>
-                
     </div>
 </div>

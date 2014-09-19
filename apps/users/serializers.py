@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
+from apps.user_tracking.models import UserTracking
 from .models import UserProfile, Role, UserRoleMapping, TaskForce, Team, Milestone, Comment
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -29,15 +30,22 @@ class TeamSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'full_name', 'profile', 'user_roles', 'teams')
+        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'full_name', 'profile', 'user_roles', 'teams', 'is_online')
         
     profile = UserProfileSerializer()
     user_roles = UserRoleMappingSerializer()
     teams = TeamSerializer()
     full_name = serializers.SerializerMethodField('getFullName')
+    is_online = serializers.SerializerMethodField('getIsOnline')
     
     def getFullName(self, obj):
         return obj.first_name + ' ' + obj.last_name
+
+    def getIsOnline(self, obj):
+        try:
+            return obj.tracking.isOnline()
+        except UserTracking.DoesNotExist:
+            return False
     
 class MilestoneSerializer(serializers.ModelSerializer):
     class Meta:
