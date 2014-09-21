@@ -1,9 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+from libs.softdelete.models import SoftDeleteableModel
 from apps.users.models import CommentThread, TaskForce
 
-class Task(models.Model):
+class Task(SoftDeleteableModel):
     class Meta:
         app_label = 'tasks'
         
@@ -40,4 +41,9 @@ class Task(models.Model):
     def delete(self, *args, **kwargs):
         # Delete comment thread
         self.comment_thread.delete()
+        
+        # Delete sub-tasks
+        for subtask in self.subtasks.all():
+            subtask.delete()
+        
         return super().delete(*args, **kwargs)

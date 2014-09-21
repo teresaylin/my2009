@@ -86,6 +86,19 @@ module.controller('TaskListCtrl', function($rootScope, $scope, $modal, TaskRepos
             }
         }
     });
+
+    // Listen for taskDeleted signal
+    $scope.$on('taskDeleted', function(event, task) {
+        // Find task in tree
+        var result = findTask($scope.tasks, task.id);
+        if(result) {
+            var list = result[0];
+            var listIdx = result[1];
+            
+            // Remove task
+            list.splice(listIdx, 1);
+        }
+    });
     
     $scope.completeTask = function(task) {
         // Show confirm dialog
@@ -324,7 +337,7 @@ module.factory('TaskDialogService', function($modal) {
             var modal = $modal.open({
                 backdrop: 'static',
                 templateUrl: partial('tasks/delete-dialog.html'),
-                controller: function($scope, $modalInstance, TaskRepository, task) {
+                controller: function($rootScope, $scope, $modalInstance, TaskRepository, task) {
                     $scope.task = task;
                     
                     $scope.delete = function() {

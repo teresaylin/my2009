@@ -4,9 +4,10 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 
+from libs.softdelete.models import SoftDeleteableModel
 from apps.users.models import CommentThread
 
-class Event(models.Model):
+class Event(SoftDeleteableModel):
     class Meta:
         app_label = 'events'
 

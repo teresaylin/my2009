@@ -2,6 +2,8 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.contrib.auth.models import User
 
+from libs.softdelete.models import SoftDeleteableModel
+
 class Team(models.Model):
     color = models.CharField(max_length=10, blank = False)
     team_email = models.EmailField(max_length=30)
@@ -70,7 +72,7 @@ class Milestone(models.Model):
     def __str__(self):
         return self.name + " " + str(self.end_date)
 
-class TaskForce(models.Model):
+class TaskForce(SoftDeleteableModel):
     name = models.CharField(max_length=50, blank = False)
     milestone = models.ForeignKey('Milestone')
     team = models.ForeignKey('Team')
@@ -80,6 +82,13 @@ class TaskForce(models.Model):
 
     def __str__(self):
         return self.name + "- " + str(self.milestone)
+    
+    def delete(self, *args, **kwargs):
+        # Delete sub taskforces
+        for tf in self.children.all():
+            tf.delete()
+            
+        return super().delete(*args, **kwargs)
 
 class UserTaskForceMapping(models.Model):
     user = models.ForeignKey(User)
@@ -88,10 +97,10 @@ class UserTaskForceMapping(models.Model):
     def __str__(self):
         return str(self.user) + "- " + str(self.task_force)
 
-class CommentThread(models.Model):
+class CommentThread(SoftDeleteableModel):
     pass
     
-class Comment(models.Model):
+class Comment(SoftDeleteableModel):
     thread = models.ForeignKey(CommentThread, related_name='comments')
     time = models.DateTimeField()
     user = models.ForeignKey(User)
