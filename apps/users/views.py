@@ -7,13 +7,13 @@ from django.contrib.auth.models import User
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, ParseError
 
 from libs.permissions.user_permissions import getUserObjectPermissions
 
-from .models import TaskForce, Team, UserProfile, Milestone, Comment, Role, UserRoleMapping
+from .models import TaskForce, Team, UserProfile, Milestone, Comment, CommentThread, Role, UserRoleMapping
 from .serializers import TaskForceSerializer, TeamSerializer, UserSerializer, UserProfileSerializer, MilestoneSerializer, CommentSerializer, RoleSerializer, UserRoleMappingSerializer
-from .exceptions import UserNotFound, UserAlreadyHasRole
+from .exceptions import UserNotFound, UserAlreadyHasRole, CommentThreadNotFound
 
 class TeamViewSet(viewsets.ModelViewSet):
     queryset = Team.objects.all()
@@ -184,16 +184,27 @@ class MilestoneViewSet(viewsets.ModelViewSet):
     
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
+    lookup_field = 'publicId'
     serializer_class = CommentSerializer
-    filter_fields = ('thread',)
     ordering = ('-time',)
     
     def get_queryset(self):
-        # Disallow comment listing unless 'thread' parameter is passed
-        if not 'thread' in self.request.QUERY_PARAMS:
+        if 'thread' in self.request.QUERY_PARAMS:
+            # Lookup comments by public thread ID
+            try:
+                id = int(self.request.QUERY_PARAMS.get('thread'))
+            except ValueError:
+                raise ParseError('Invalid thread ID')
+
+            try:
+                thread = CommentThread.objects.get(publicId=id)
+            except CommentThread.DoesNotExist:
+                raise CommentThreadNotFound()
+                
+            return Comment.objects.all().filter(thread=thread)
+        else:
+            # Disallow comment listing unless 'thread' parameter is passed
             return Comment.objects.none()
-        
-        return super().get_queryset()
 
     def pre_save(self, obj):
         # Set user

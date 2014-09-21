@@ -19,3 +19,7 @@ class RoleNotFound(APIException):
 class TeamNotFound(APIException):
     status_code = 404
     default_detail = 'Team not found'
+
+class CommentThreadNotFound(APIException):
+    status_code = 404
+    default_detail = 'Thread not found'

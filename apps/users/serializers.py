@@ -1,8 +1,9 @@
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from rest_framework import serializers
 
 from apps.user_tracking.models import UserTracking
-from .models import UserProfile, Role, UserRoleMapping, TaskForce, Team, Milestone, Comment
+from .models import UserProfile, Role, UserRoleMapping, TaskForce, Team, Milestone, Comment, CommentThread
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -71,10 +72,28 @@ class TaskForceSerializer(serializers.ModelSerializer):
     children = ChildTaskForceSerializer(read_only=True)
     members = UserSerializer(read_only=True)
     
+class CommentThreadIdField(serializers.WritableField):
+    def to_native(self, obj):
+        # Return thread's public ID
+        return str(obj.publicId)
+
+    def from_native(self, data):
+        # Get thread from public ID
+        try:
+            publicId = int(data)
+            thread = CommentThread.objects.get(publicId=publicId)
+        except ValueError:
+            raise ValidationError('Invalid thread ID')
+        except CommentThread.DoesNotExist:
+            raise ValidationError('Thread not found')
+        
+        return thread
+    
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ('thread', 'time', 'user', 'body')
         read_only_fields = ('time',)
         
+    thread = CommentThreadIdField(write_only=True)
     user = UserSerializer(read_only=True)

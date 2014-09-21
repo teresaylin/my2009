@@ -1,8 +1,12 @@
 from django.db import models
 from django.db.models.signals import post_save
+from django.db import IntegrityError
 from django.contrib.auth.models import User
 
 from libs.softdelete.models import SoftDeleteableModel
+
+from random import SystemRandom
+rngSource = SystemRandom()
 
 class Team(models.Model):
     color = models.CharField(max_length=10, blank = False)
@@ -98,7 +102,21 @@ class UserTaskForceMapping(models.Model):
         return str(self.user) + "- " + str(self.task_force)
 
 class CommentThread(SoftDeleteableModel):
-    pass
+    publicId = models.BigIntegerField(unique=True, null=True)
+    
+    def save(self, *args, **kwargs):
+        if not self.publicId:
+            # Assign random public ID
+            while True:
+                self.publicId = rngSource.randint(1, models.BigIntegerField.MAX_BIGINT)
+                try:
+                    super().save(*args, **kwargs)
+                    break
+                except IntegrityError:
+                    # Retry in the super-rare event that the ID is already taken
+                    continue
+        else:
+            super().save(*args, **kwargs)
     
 class Comment(SoftDeleteableModel):
     thread = models.ForeignKey(CommentThread, related_name='comments')
