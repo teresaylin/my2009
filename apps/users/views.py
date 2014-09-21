@@ -187,6 +187,13 @@ class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     filter_fields = ('thread',)
     ordering = ('-time',)
+    
+    def get_queryset(self):
+        # Disallow comment listing unless 'thread' parameter is passed
+        if not 'thread' in self.request.QUERY_PARAMS:
+            return Comment.objects.none()
+        
+        return super().get_queryset()
 
     def pre_save(self, obj):
         # Set user
