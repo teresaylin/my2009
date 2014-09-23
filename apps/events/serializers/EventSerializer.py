@@ -9,7 +9,10 @@ class EventSerializer(ObjectPermissionsSerializerMixin, serializers.ModelSeriali
     class Meta:
         model = Event
         fields = ('id', 'title', 'owner', 'start', 'end', 'location', 'description', 'comment_thread', 'attendees')
-        read_only_fields = ('comment_thread',)
     
     owner = UserSerializer(read_only=True)
     attendees = UserSerializer(read_only=True)
+
+    comment_thread = serializers.SerializerMethodField('getCommentThread')
+    def getCommentThread(self, obj):
+        return str(obj.comment_thread.publicId)

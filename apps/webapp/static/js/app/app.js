@@ -174,6 +174,12 @@ app.controller('TeamMembersListCtrl', function($scope, $timeout, NavFilterServic
         }
     };
     update();
+    
+    $scope.$on('$destroy', function() {
+        if(timeoutPromise) {
+            $timeout.cancel(timeoutPromise);
+        }
+    });
 
     $scope.$on('navFilterChanged', function(ev, changed) {
         if('team' in changed && NavFilterService.team) {

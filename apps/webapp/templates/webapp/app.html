@@ -207,6 +207,17 @@
     <a href ng-click="more()" ng-hide="!nextPageUrl">More...</a>
 </script>
 
+<script type="text/ng-template" id="events/calendar.html">
+    <div class="content-panel" ng-controller="CalendarCtrl">
+        <div class="panel-body">
+            <div ui-calendar="uiConfig.calendar" class="span8 calendar" ng-model="eventSources" calendar="calendar"></div> 
+            <div class="mt">
+                <button class="btn btn-sm btn-success" ng-click="newEvent()">New event</button>
+            </div>
+        </div>
+    </div>
+</script>
+
 {% endverbatim %}
 
 {% endblock %}

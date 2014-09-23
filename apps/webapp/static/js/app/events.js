@@ -187,23 +187,22 @@ module.factory('EventDialogService', function($modal) {
 module.controller('CalendarCtrl', function($scope, $modal, $state, EventRepository, EventDialogService, NavFilterService) {
     $scope.eventsSource = function(start, end, timezone, callback) {
         // Get events within date range
-        var query = {
-            start: start.toJSON(),
-            end: end.toJSON(),
-        };
-
         if(NavFilterService.team) {
-            query.team = NavFilterService.team.id;
-        }
+            var query = {
+                start: start.toJSON(),
+                end: end.toJSON(),
+                team: NavFilterService.team.id
+            };
 
-        EventRepository.list(query)
-            .success(function(events) {
-                callback(events);
-            });
+            EventRepository.list(query)
+                .success(function(events) {
+                    callback(events);
+                });
+        };
     };
     
     $scope.$on('navFilterChanged', function(event, changed) {
-        if('team' in changed) {
+        if('team' in changed && 'calendar' in $scope) {
             // Reload events
             $scope.calendar.fullCalendar('refetchEvents');
         }
@@ -256,5 +255,14 @@ module.controller('CalendarCtrl', function($scope, $modal, $state, EventReposito
                 $scope.calendar.fullCalendar('refetchEvents');
             }
         });
+    };
+});
+
+module.directive('calendar', function() {
+    return {
+        restrict: 'E',
+        scope: {},
+        templateUrl: 'events/calendar.html',
+        controller: 'CalendarCtrl'
     };
 });
