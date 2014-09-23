@@ -17,6 +17,9 @@ class Team(models.Model):
         return self.color
 
 class UserTeamMapping(models.Model):
+    class Meta:
+        unique_together = ('user', 'team')
+
     user = models.ForeignKey(User)
     team = models.ForeignKey('Team')
     section = models.CharField(max_length=15, blank = True)
