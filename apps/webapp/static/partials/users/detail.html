@@ -31,22 +31,24 @@
     </tbody></table>
 </div>
 
-<h2>Roles</h2>
-<div class="content-panel">
-    <div class="panel-body">
-        <form class="form-inline">
-            <select class="form-control" ng-model="newRole" ng-options="role.name for role in roles">
-                <option value="">---</option>
-            </select>
-            <button class="btn btn-sm btn-primary" ng-click="addRole(newRole); newRole = null" ng-disabled="!newRole">Add role</button>
-        </form>
-        <ul class="list-group">
-            <li class="list-group-item" ng-repeat="userRole in user.user_roles">
-                <a href ng-click="removeRole(userRole)">
-                    <span class="glyphicon glyphicon-remove"></span>
-                </a>
-                {{ userRole.role.name }}
-            </li>
-        </ul>
+<div ng-if="user.id == currentUser.id">
+    <h2>Roles</h2>
+    <div class="content-panel">
+        <div class="panel-body">
+            <form class="form-inline">
+                <select class="form-control" ng-model="newRole" ng-options="role.name for role in roles">
+                    <option value="">---</option>
+                </select>
+                <button class="btn btn-sm btn-primary" ng-click="addRole(newRole); newRole = null" ng-disabled="!newRole">Add role</button>
+            </form>
+            <ul class="list-group">
+                <li class="list-group-item" ng-repeat="userRole in user.user_roles">
+                    <a href ng-click="removeRole(userRole)">
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </a>
+                    {{ userRole.role.name }}
+                </li>
+            </ul>
+        </div>
     </div>
 </div>
