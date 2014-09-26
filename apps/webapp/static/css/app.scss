@@ -176,10 +176,94 @@ hr {
     }
 }
 
-/*---------- Files list ----------*/
+/*---------- File browser ----------*/
 
-.files-list-buttons {
-    padding: 8px;
+.filebrowser {
+    .filebrowser-header {
+        line-height: 30px;
+        
+        .dropbox-logo {
+            vertical-align: middle;
+            font-size: 120%;
+            color: #1081de;
+        }
+        
+        .filebrowser-search {
+            position: relative;
+            float: right;
+            width: 200px;
+            
+            > span {
+                position: absolute;
+                left: 8px;
+                font-size: 75%;
+            }
+            
+            input {
+                padding-left: 2em;
+            }
+        }
+        
+        .filebrowser-header-buttons {
+            padding-right: 4px;
+            font-size: 120%;
+            
+            a {
+                margin-right: 4px;
+                vertical-align: middle;
+            }
+        }
+    }
+    
+    .filebrowser-files {
+        margin: 26px 26px 0 26px;
+        
+        table {
+            width: 100%;
+
+            > thead > tr > th {
+                line-height: 29px;
+                color: #aaa;
+            }
+            
+            > tbody > tr {
+                border-top: 1px solid #e5e5e5;
+                white-space: nowrap;
+                
+                &:first-child > td {
+                    width: 100%;
+                }
+
+                > td {
+                    padding: 6px 0;
+                    line-height: 32px;
+                }
+            }
+            
+            .filebrowser-file {
+                &.selected {
+                    background-color: #e3f2ff;
+                    &:hover {
+                        background-color: #e3f2ff;
+                    }
+                }
+
+                &:hover {
+                    background-color: #f5fafe;
+                }
+
+                a {
+                    color: #3d464d;
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
+                .filebrowser-file-icon {
+                    margin-right: 11px;
+                }
+            }
+        }
+    }
 }
 
 /*---------- Users ----------*/

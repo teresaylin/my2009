@@ -48,27 +48,6 @@ module.factory('EventRepository', function($http) {
     };
 });
 
-module.factory('FileRepository', function($http) {
-    var baseUrl = '/api/files/';
-    
-    return {
-        get: function(id) {
-            return $http.get(baseUrl+id+'/');
-        },
-        delete: function(id) {
-            return $http.delete(baseUrl+id+'/');
-        },
-        createSubdirectory: function(id, name) {
-            return $http.post(baseUrl+id+'/create_subdirectory/', {
-                'name': name
-            });
-        },
-        getFileShare: function(id) {
-            return $http.get(baseUrl+id+'/share/');
-        }
-    };
-});
-
 module.factory('MilestoneRepository', function($http) {
     var baseUrl = '/api/milestones/';
     

@@ -1,54 +1,68 @@
 <h1>Files</h1>
 <hr>
 
+<script type="text/ng-template" id="components/path-breadcrumbs.html">
+    <span ng-repeat="name in fragments">
+        <a href ng-if="!$last" ng-click="fragmentClicked($index)">{{ name }}</a>
+        <span ng-if="$last">{{ name }}</span>
+        <span ng-if="!$last"><span class="fa fa-angle-right"></span></span>
+    </span>
+</script>
+
 <div class="row">
 	<div class="col-lg-12">
-    	<div class="content-panel" ng-controller="FilesListCtrl" ng-init="init(1)">
-    	    <h4><span class="fa fa-angle-right"></span> Files</h4>
-    	    <div class="files-list-buttons">
-    	    	<button class="btn btn-default" ng-click="openUploadDialog()"><span class="fa fa-upload"></span> Upload</button>
-    	    	<button class="btn btn-default" ng-click="openCreateFolderDialog()"><span class="fa fa-folder"></span> Create folder</button>
-    	    	<button class="btn btn-default" ng-click="delete()"><span class="fa fa-times"></span> Delete</button>
-    	    </div>
-            <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>Name</th>
-                        <th>Size</th>
-                        <th>Modified</th>
-                        <th>Owner</th>
-                        <th>Comments</th>
-                        <th>Tags</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="info" ng-if="directory.id != rootDirId">
-                        <td></td>
-                        <td>
-                            <img src="/static/img/dropbox/icons/16x16/folder.gif">
-                            <a href ng-click="setDirectory(directory.parent)">Up</a>
-                        </td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr ng-repeat="file in directory.files" ng-class="{ success: file.selected }">
-                        <td><input type="checkbox" ng-model="file.selected"></td>
-                        <td>
-                            <img ng-src="/static/img/dropbox/icons/16x16/{{ file.icon }}.gif">
-                        	<a href ng-click="openFile(file)">{{ file.name }}</a>
-                        </td>
-                        <td>{{ file.size|filesize }}</td>
-                        <td>{{ file.modified_time }}</td>
-                        <td><a ui-sref="users.detail({ userId: file.owner.id })">{{ file.owner.full_name }}</a></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+	    <div class="content-panel">
+	        <div class="panel-body">
+                <div class="filebrowser" ng-controller="FileBrowserCtrl">
+                    <div class="filebrowser-header h4">
+                        <div class="filebrowser-header-right pull-right">
+                            <div class="filebrowser-search">
+                                <span class="text-muted"><span class="fa fa-search"></span></span>
+                                <input type="text" class="form-control input-sm" placeholder="Search" ng-model="nameSearch">
+                            </div>
+                            <span class="filebrowser-header-buttons">
+                                <a href ng-click="openUploadDialog()"><span class="fa fa-arrow-circle-o-up"></span></a>
+                                <a href ng-click="openCreateFolderDialog()"><span class="fa fa-folder"></span></a>
+                            </span>
+                        </div>
+                        <div>
+                            <span class="dropbox-logo">
+                                <span class="fa fa-dropbox"></span>
+                            </span>
+                            <path-breadcrumbs path="directory.path" path-change="setDirectory(path)"></path-breadcrumbs>
+                        </div>
+                    </div>
+                    <div class="filebrowser-files">
+                        <table ng-if="directory && directory.contents.length > 0">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Modified</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="filebrowser-file" ng-repeat="file in directory.contents|filter:{filename: nameSearch}"
+                                    ng-class="{ selected: file.selected }" ng-click="file.selected = !file.selected"
+                                >
+                                    <td>
+                                        <a href ng-click="openFile(file)" class="filebrowser-file-icon">
+                                            <img width="32" ng-src="/static/img/dropbox/icons/48x48/{{ file.icon }}48.gif">
+                                        </a>
+                                        <a href ng-click="openFile(file)">{{ file.path|basename }}</a>
+                                    </td>
+                                    <td>
+                                        <time-from-now ng-if="!file.is_dir" time="file.modified" time-format="rfc2822"></time-from-now>
+                                        <span ng-if="file.is_dir">--</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p ng-if="directory && directory.contents.length == 0">
+                            This folder is empty.
+                        </p>
+                    </div>
+                </div>
+            </div>
+         </div>
      </div>
 </div>

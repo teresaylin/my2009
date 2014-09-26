@@ -7,11 +7,10 @@ admin.autodiscover()
 
 from apps.users import views as userViews
 from apps.events import views as eventViews
-from apps.files import views as fileViews
 from apps.tasks import views as taskViews
 
 from apps.webapp import urls as webappUrls
-from apps.dropbox import urls as dropboxUrls
+from apps.files import urls as filesUrls
 
 # API router
 router = routers.DefaultRouter()
@@ -23,7 +22,6 @@ router.register(r'teams', userViews.TeamViewSet)
 router.register(r'users', userViews.UserViewSet)
 router.register(r'user-profiles', userViews.UserProfileViewSet)
 router.register(r'events', eventViews.EventViewSet)
-router.register(r'files', fileViews.FileViewSet)
 router.register(r'tasks', taskViews.TaskViewSet)
 
 urlpatterns = patterns('',
@@ -41,6 +39,6 @@ urlpatterns = patterns('',
     url(r'^app/', include(webappUrls, namespace='webapp')),
     
     # API
+    url(r'^api/files/', include(filesUrls, namespace='files')),
     url(r'^api/', include(router.urls)),
-    url(r'^dropbox/', include(dropboxUrls, namespace='dropbox'))
 )

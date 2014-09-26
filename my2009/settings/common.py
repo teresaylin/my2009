@@ -32,7 +32,6 @@ INSTALLED_APPS = (
 
     'rest_framework',
 
-    'apps.dropbox',
     'apps.events',
     'apps.files',
     'apps.tasks',

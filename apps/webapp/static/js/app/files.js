@@ -21,7 +21,7 @@ module.directive('filename', function() {
 });
 
 // 'basename' filter: get filename from full path
-dropbox.filter('basename', function() {
+module.filter('basename', function() {
     return function(path) {
         return path.substr(path.lastIndexOf('/') + 1);
     };
@@ -42,33 +42,87 @@ module.filter('filesize', function() {
     };
 });
 
-module.controller('FilesListCtrl', function($scope, $modal, FileRepository, DropboxUploadService) {
+module.directive('pathBreadcrumbs', function() {
+    return {
+        restrict: 'E',
+        scope: {
+            pathChange: '&'
+        },
+        templateUrl: 'components/path-breadcrumbs.html',
+        link: function(scope, elm, attrs) {
+            scope.$parent.$watch(attrs.path, function(path) {
+                if(path) {
+                    var fragments = path.split('/');
+                    
+                    // Remove empty fragments caused by leading and trailing slashes
+                    if(fragments.length > 0 && fragments[0] == '') {
+                        fragments.shift();
+                    }
+                    if(fragments.length > 0 && fragments[fragments.length-1] == '') {
+                        fragments.pop();
+                    }
 
-    $scope.init = function(rootDirId) {
-        $scope.rootDirId = rootDirId;
-        $scope.setDirectory(rootDirId);
+                    scope.fragments = fragments;
+                }
+            });
+            
+            scope.fragmentClicked = function(idx) {
+                var path = scope.fragments.slice(0, idx+1);
+                path = '/' + path.join('/');
+                scope.pathChange({ path: path });
+            };
+        }
     };
+});
+
+module.factory('FileRepository', function($http) {
+    var baseUrl = '/api/files/';
+    
+    return {
+        metadata: function(path) {
+            return $http.get(baseUrl+'metadata/', { params: {
+                path: path                
+            }});
+        },
+        createFolder: function(path) {
+            return $http.post(baseUrl+'create-folder/', {
+                'path': path
+            });
+        }
+        /*
+        getFileShare: function(id) {
+            return $http.get(baseUrl+id+'/share/');
+        }
+        */
+    };
+});
+
+module.controller('FileBrowserCtrl', function($scope, $modal, FileRepository) {
+    
+    var initialDir = '/Green';
     
     $scope.refresh = function() {
-        // Retrieve directory listing
-        FileRepository.get($scope.directory.id)
-            .success(function(dir) {
-                $scope.directory = dir;
+        // Retrieve metadata
+        FileRepository.metadata($scope.directory.path)
+            .success(function(data) {
+                $scope.directory = data;
             });
     };
 
-    $scope.setDirectory = function(id) {
-        // Retrieve directory listing
-        FileRepository.get(id)
-            .success(function(dir) {
-                $scope.directory = dir;
+    $scope.setDirectory = function(path) {
+        // Retrieve metadata
+        FileRepository.metadata(path)
+            .success(function(data) {
+                $scope.directory = data;
             });
     };
+    
+    $scope.setDirectory(initialDir);
         
     // Called when user clicks a file/directory
     $scope.openFile = function(file) {
-        if(file.is_directory) {
-            $scope.setDirectory(file.id);
+        if(file.is_dir) {
+            $scope.setDirectory(file.path);
         } else {
             // TEMPORARY: open Dropbox share in new window
             FileRepository.getFileShare(file.id)
@@ -112,10 +166,13 @@ module.controller('FilesListCtrl', function($scope, $modal, FileRepository, Drop
     };
 
     $scope.openCreateFolderDialog = function() {
+        if(!$scope.directory) return;
+        var path = $scope.directory.path;
+        
         var modal = $modal.open({
             backdrop: 'static',
             templateUrl: partial('files/create-folder-dialog.html'),
-            controller: function($scope, $modalInstance, DropboxService) {
+            controller: function($scope, $modalInstance, FileRepository) {
                 $scope.nameChanged = function(form) {
                     // Reset invalidName flag when name changes
                     form.name.$setValidity('invalidName', true);
@@ -123,7 +180,7 @@ module.controller('FilesListCtrl', function($scope, $modal, FileRepository, Drop
 
                 $scope.create = function(form) {
                     // Create subdirectory
-                    FileRepository.createSubdirectory(1, form.nameValue)
+                    FileRepository.createFolder(path+'/'+form.nameValue)
                         .success(function() {
                             $modalInstance.close();
                         })

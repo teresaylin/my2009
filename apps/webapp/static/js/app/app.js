@@ -3,7 +3,6 @@ var app = angular.module('app', [
     'ui.bootstrap',
     'ui.calendar',
     
-    'dropbox',
     'events',
     'files',
     'navfilter',
@@ -209,11 +208,18 @@ app.directive('timeFromNow', function($interval) {
     return {
         restrict: 'E',
         scope: {
-            time: '='
+            time: '=',
+            timeFormat: '='
         },
         templateUrl: 'components/time-from-now.html',
         link: function(scope, element, attrs) {
-            var mTime = moment(scope.time);
+            if('timeFormat' in attrs && attrs.timeFormat == 'rfc2822') {
+                // Note: JS Date constructor can accept RFC 2822 date strings, according to MDN.
+                var mTime = moment(new Date(scope.time));
+            } else {
+                var mTime = moment(scope.time);
+            }
+
             scope.isoTime = mTime.toISOString();
             
             var update = function() {
