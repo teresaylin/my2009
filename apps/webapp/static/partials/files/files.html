@@ -1,14 +1,6 @@
 <h1>Files</h1>
 <hr>
 
-<script type="text/ng-template" id="components/path-breadcrumbs.html">
-    <span ng-repeat="name in fragments">
-        <a href ng-if="!$last" ng-click="fragmentClicked($index)">{{ name }}</a>
-        <span ng-if="$last">{{ name }}</span>
-        <span ng-if="!$last"><span class="fa fa-angle-right"></span></span>
-    </span>
-</script>
-
 <div class="row">
 	<div class="col-lg-12">
 	    <div class="content-panel">
@@ -21,15 +13,21 @@
                                 <input type="text" class="form-control input-sm" placeholder="Search" ng-model="nameSearch">
                             </div>
                             <span class="filebrowser-header-buttons">
-                                <a href ng-click="openUploadDialog()"><span class="fa fa-arrow-circle-o-up"></span></a>
-                                <a href ng-click="openCreateFolderDialog()"><span class="fa fa-folder"></span></a>
+                                <a href ng-click="openUploadDialog()" tooltip="Upload">
+                                    <span class="fa fa-arrow-circle-o-up"></span>
+                                </a>
+                                <a href ng-click="openCreateFolderDialog()" tooltip="New folder">
+                                    <span class="fa fa-folder"></span>
+                                </a>
                             </span>
                         </div>
                         <div>
-                            <span class="dropbox-logo">
+                            <a class="dropbox-logo" href="https://www.dropbox.com/home{{ directory.path }}" target="_blank" tooltip="Open in Dropbox">
                                 <span class="fa fa-dropbox"></span>
-                            </span>
+                            </a>
                             <path-breadcrumbs path="directory.path" path-change="setDirectory(path)"></path-breadcrumbs>
+                        </div>
+                        <div>
                         </div>
                     </div>
                     <div class="filebrowser-files">
@@ -46,7 +44,7 @@
                                 >
                                     <td>
                                         <a href ng-click="openFile(file)" class="filebrowser-file-icon">
-                                            <img width="32" ng-src="/static/img/dropbox/icons/48x48/{{ file.icon }}48.gif">
+                                            <img file-thumbnail="file" size="xs" width="32">
                                         </a>
                                         <a href ng-click="openFile(file)">{{ file.path|basename }}</a>
                                     </td>

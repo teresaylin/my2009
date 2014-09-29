@@ -123,6 +123,12 @@ hr {
     cursor: pointer;
 }
 
+.lg-dialog {
+    > .modal-dialog {
+        width: 65%;
+    }
+}
+
 .error-dialog {
     .modal-header {
         background-color: red;
@@ -176,7 +182,7 @@ hr {
     }
 }
 
-/*---------- File browser ----------*/
+/*---------- Files ----------*/
 
 .filebrowser {
     .filebrowser-header {
@@ -262,6 +268,14 @@ hr {
                     margin-right: 11px;
                 }
             }
+        }
+    }
+}
+
+.fileinfo {
+    .fileinfo-preview {
+        > figure > img {
+            max-width: 100%;
         }
     }
 }

@@ -75,6 +75,41 @@ module.directive('pathBreadcrumbs', function() {
     };
 });
 
+module.directive('fileThumbnail', function(FileRepository) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            // As the Dropbox 48x48 icon set is incomplete, we need to map replacement icon filenames
+            var iconMap = {
+                'page_white_excel': 'excel',
+                'page_white_film': 'page_white_dvd',
+                'page_white_powerpoint': 'powerpoint',
+                'page_white_word': 'word',
+                'page_white_sound': 'music',
+                'page_white_compressed': 'page_white_zip'
+            };
+
+            scope.$watch(attrs.fileThumbnail, function(file) {
+                if(file) {
+                    var size = attrs.size;
+                    
+                    if(file.thumb_exists) {
+                        var imgPath = FileRepository.getThumbnailUrl(file.path, size);
+                    } else {
+                        if(file.icon in iconMap) {
+                            var filename = iconMap[file.icon];
+                        } else {
+                            var filename = file.icon;
+                        }
+                        var imgPath = '/static/img/dropbox/icons/48x48/'+filename+'48.gif';
+                    }
+                    element.attr('src', imgPath);
+                }
+            });
+        }
+    };
+});
+
 module.factory('FileRepository', function($http) {
     var baseUrl = '/api/files/';
     
@@ -88,6 +123,12 @@ module.factory('FileRepository', function($http) {
             return $http.post(baseUrl+'create-folder/', {
                 'path': path
             });
+        },
+        getThumbnailUrl: function(path, size) {
+            return baseUrl+'thumbnails'+path+'/'+size+'.jpeg';
+        },
+        getPreviewUrl: function(path, size) {
+            return baseUrl+'previews'+path;
         }
         /*
         getFileShare: function(id) {
@@ -97,7 +138,7 @@ module.factory('FileRepository', function($http) {
     };
 });
 
-module.controller('FileBrowserCtrl', function($scope, $modal, FileRepository) {
+module.controller('FileBrowserCtrl', function($scope, $modal, FileRepository, FileDialogService) {
     
     var initialDir = '/Green';
     
@@ -124,11 +165,7 @@ module.controller('FileBrowserCtrl', function($scope, $modal, FileRepository) {
         if(file.is_dir) {
             $scope.setDirectory(file.path);
         } else {
-            // TEMPORARY: open Dropbox share in new window
-            FileRepository.getFileShare(file.id)
-                .success(function(data) {
-                    window.open(data.url, 'ShareWindow', 'width=640,height=480');
-                });
+            FileDialogService.openFile(file);
         }
     };
     
@@ -201,5 +238,47 @@ module.controller('FileBrowserCtrl', function($scope, $modal, FileRepository) {
             // Refresh directory listing
             $scope.refresh();
         });
+    };
+});
+
+module.factory('FileDialogService', function($modal) {
+    return {
+        openFile: function(file) {
+            var modal = $modal.open({
+                backdrop: 'static',
+                windowClass: 'lg-dialog',
+                templateUrl: partial('files/file-dialog.html'),
+                controller: function($scope, $modalInstance, FileRepository) {
+                    // Retrieve file metadata
+                    /*
+                    FileRepository.metadata(path)
+                        .success(function(data) {
+                            $scope.file = data;
+                        });
+                        */
+                    $scope.file = file;
+                    
+                    var getFileExtension = function(filename) {
+                        var i = filename.lastIndexOf('.');
+                        return i >= 0 ? filename.substr(i+1) : null;
+                    };
+
+                    var previewExts = [
+                        'doc', 'docx', 'docm', 'ppt', 'pps',
+                        'ppsx', 'ppsm', 'pptx', 'pptm', 'xls',
+                        'xlsx', 'xlsm', 'rtf', 'pdf'
+                    ];
+                    
+                    if(previewExts.indexOf(getFileExtension(file.path)) >= 0) {
+                        $scope.previewUrl = FileRepository.getPreviewUrl(file.path);
+                    }
+                    
+                    $scope.close = function() {
+                        $modalInstance.close();
+                    };
+                }
+            });
+            return modal;
+        }
     };
 });

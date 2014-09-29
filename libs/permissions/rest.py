@@ -9,13 +9,17 @@ class ObjectPermissions(BasePermission):
         # Allow API root browsing
         if view.__class__.__name__ == 'APIRoot':
             return True
-            
+        
         modelCls = getattr(view, 'model', None)
         queryset = getattr(view, 'queryset', None)
 
         if modelCls is None and queryset is not None:
             modelCls = queryset.model
-
+            
+        # Allow access to all non model-related views
+        if modelCls is None:
+            return True
+            
         user = request.user
         perms = getUserPermissions(user, modelCls)
         

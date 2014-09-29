@@ -148,6 +148,9 @@ hr {
 .accordion-toggle {
   cursor: pointer; }
 
+.lg-dialog > .modal-dialog {
+  width: 65%; }
+
 .error-dialog .modal-header {
   background-color: red; }
 .error-dialog iframe {
@@ -184,7 +187,7 @@ hr {
     .app-checkbox:not(.disabled):hover .app-checkbox-glyph-checked {
       visibility: visible; }
 
-/*---------- File browser ----------*/
+/*---------- Files ----------*/
 .filebrowser .filebrowser-header {
   line-height: 30px; }
   .filebrowser .filebrowser-header .dropbox-logo {
@@ -234,6 +237,9 @@ hr {
         text-decoration: underline; }
     .filebrowser .filebrowser-files table .filebrowser-file .filebrowser-file-icon {
       margin-right: 11px; }
+
+.fileinfo .fileinfo-preview > figure > img {
+  max-width: 100%; }
 
 /*---------- Users ----------*/
 .user-photo {
