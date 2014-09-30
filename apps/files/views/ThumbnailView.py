@@ -11,7 +11,6 @@ class ThumbnailView(View):
     def get(self, request, path=None, size=None, format=None):
         # Get requested image format
         format = format.upper()
-        print(format in ['JPEG', 'PNG'])
         if not format in ['JPEG', 'PNG']:
             return HttpResponseBadRequest('Invalid file type')
 

@@ -1,4 +1,7 @@
-var module = angular.module('files', []);
+var module = angular.module('files', [
+    'ngCookies',
+    'angularFileUpload'
+]);
 
 // 'filename' directive
 module.directive('filename', function() {
@@ -30,14 +33,29 @@ module.filter('basename', function() {
 // 'filesize' filter: get human-friendly file size
 module.filter('filesize', function() {
     return function(sizeBytes) {
-        if(sizeBytes > 1024*1024*1024) {
-            return (sizeBytes / 1024*1024*1024).toFixed(1) + ' GB';
-        } else if(sizeBytes > 1024*1024) {
-            return (sizeBytes / 1024*1024).toFixed(1) + ' MB';
-        } else if(sizeBytes > 1024) {
+        if(sizeBytes >= 1024*1024*1024) {
+            return (sizeBytes / (1024*1024*1024)).toFixed(1) + ' GB';
+        } else if(sizeBytes >= 1024*1024) {
+            return (sizeBytes / (1024*1024)).toFixed(1) + ' MB';
+        } else if(sizeBytes >= 1024) {
             return (sizeBytes / 1024).toFixed(1) + ' KB';
         } else {
             return sizeBytes + ' bytes';
+        }
+    };
+});
+
+// This directive allows a button to trigger an invisible file <input>
+module.directive('fileInputContainer', function() {
+    return {
+        restrict: 'E',
+        scope: {},
+        link: function(scope, elm, attrs) {
+            var input = elm.find('input[type="file"]');
+            input.css('display', 'none');
+            elm.find('button').click(function() {
+                input.click();
+            });
         }
     };
 });
@@ -113,22 +131,53 @@ module.directive('fileThumbnail', function(FileRepository) {
 module.factory('FileRepository', function($http) {
     var baseUrl = '/api/files/';
     
+    //! Adds 'name' and 'dir_path' field to a file object
+    var injectFilenames = function(file) {
+        var dirname = function(path) {
+            var i = path.lastIndexOf('/');
+            return i > 0 ? path.substr(0, i) : i;
+        };
+
+        var basename = function(path) {
+            return path.substr(path.lastIndexOf('/') + 1);
+        };
+        
+        file.name = basename(file.path);
+        file.dir_path = dirname(file.path);
+        if('contents' in file) {
+            angular.forEach(file.contents, function(childFile) {
+                childFile.name = basename(childFile.path);
+                childFile.dir_path = dirname(childFile.path);
+            });
+        }
+    };
+    
     return {
+        injectFilenames: injectFilenames,
         metadata: function(path) {
             return $http.get(baseUrl+'metadata/', { params: {
                 path: path                
-            }});
+            }})
+                .success(function(data) {
+                    injectFilenames(data);
+                });
         },
         createFolder: function(path) {
             return $http.post(baseUrl+'create-folder/', {
                 'path': path
-            });
+            })
+                .success(function(data) {
+                    injectFilenames(data);
+                });
         },
         getThumbnailUrl: function(path, size) {
             return baseUrl+'thumbnails'+path+'/'+size+'.jpeg';
         },
         getPreviewUrl: function(path, size) {
             return baseUrl+'previews'+path;
+        },
+        getUploadUrl: function() {
+            return baseUrl+'upload/';
         }
         /*
         getFileShare: function(id) {
@@ -141,6 +190,11 @@ module.factory('FileRepository', function($http) {
 module.controller('FileBrowserCtrl', function($scope, $modal, FileRepository, FileDialogService) {
     
     var initialDir = '/Green';
+    
+    $scope.fileOrder = [
+        '-is_dir',
+        'name'
+    ];
     
     $scope.refresh = function() {
         // Retrieve metadata
@@ -157,8 +211,26 @@ module.controller('FileBrowserCtrl', function($scope, $modal, FileRepository, Fi
                 $scope.directory = data;
             });
     };
-    
     $scope.setDirectory(initialDir);
+    
+    // Add newly created files to the directory contents
+    $scope.$on('fileCreated', function(event, file) {
+        if(file.dir_path == $scope.directory.path) {
+            $scope.directory.contents.push(file);
+        }
+    });
+
+    // Update directory contents on 'fileUpdated' event
+    $scope.$on('fileUpdated', function(event, file) {
+        if(file.dir_path == $scope.directory.path) {
+            angular.forEach($scope.directory.contents, function(dirFile) {
+                if(dirFile.path == file.path) {
+                    angular.copy(file, dirFile);
+                    console.log(dirFile);
+                }
+            });
+        }
+    });
         
     // Called when user clicks a file/directory
     $scope.openFile = function(file) {
@@ -193,12 +265,60 @@ module.controller('FileBrowserCtrl', function($scope, $modal, FileRepository, Fi
     };
     
     $scope.openUploadDialog = function() {
-        // Open upload dialog
-        var dlg = DropboxUploadService.openUploadDialog($scope.directory.id);
-        
-        dlg.result.then(function() {
-            // Refresh directory listing
-            $scope.refresh();
+        if(!$scope.directory) return;
+
+        var modal = $modal.open({
+            backdrop: 'static',
+            templateUrl: partial('files/upload-dialog.html'),
+            controller: function($scope, $rootScope, $modalInstance, $cookies, FileUploader, FileRepository, directory) {
+                $scope.directory = directory;
+                
+                $scope.uploader = new FileUploader({
+                    url: FileRepository.getUploadUrl(),
+                    headers: {
+                        'X-CSRFToken': $cookies.csrftoken
+                    },
+                    autoUpload: true
+                });
+                
+                $scope.uploader.onAfterAddingFile = function(item) {
+                    var filename = item.file.name;
+
+                    // If a file with the same name already exists, send it's 'rev' value along to avoid conflicts.
+                    item._exists = false;
+                    angular.forEach(directory.contents, function(file) {
+                        if(file.name.toLowerCase() == filename.toLowerCase()) {
+                            item._exists = true;
+                            item.formData.push({
+                                'parent_rev': file.rev
+                            });
+                        }
+                    });
+                    
+                    // Add file path to POST data
+                    item.formData.push({
+                        path: directory.path+'/'+filename
+                    });
+                };
+                
+                $scope.uploader.onSuccessItem = function(item, response, status, headers) {
+                    var data = response;
+                    FileRepository.injectFilenames(data);
+                    
+                    if(item._exists) {
+                        $rootScope.$broadcast('fileUpdated', data);
+                    } else {
+                        $rootScope.$broadcast('fileCreated', data);
+                    }
+                };
+                
+                $scope.close = function() {
+                    $modalInstance.close();
+                };
+            },
+            resolve: {
+                directory: function() { return $scope.directory; }
+            }
         });
     };
 
@@ -209,7 +329,7 @@ module.controller('FileBrowserCtrl', function($scope, $modal, FileRepository, Fi
         var modal = $modal.open({
             backdrop: 'static',
             templateUrl: partial('files/create-folder-dialog.html'),
-            controller: function($scope, $modalInstance, FileRepository) {
+            controller: function($scope, $rootScope, $modalInstance, FileRepository) {
                 $scope.nameChanged = function(form) {
                     // Reset invalidName flag when name changes
                     form.name.$setValidity('invalidName', true);
@@ -218,7 +338,8 @@ module.controller('FileBrowserCtrl', function($scope, $modal, FileRepository, Fi
                 $scope.create = function(form) {
                     // Create subdirectory
                     FileRepository.createFolder(path+'/'+form.nameValue)
-                        .success(function() {
+                        .success(function(data) {
+                            $rootScope.$broadcast('fileCreated', data);
                             $modalInstance.close();
                         })
                         .error(function(data, status) {
@@ -232,11 +353,6 @@ module.controller('FileBrowserCtrl', function($scope, $modal, FileRepository, Fi
                     $modalInstance.dismiss('cancel');
                 };
             }
-        });
-        
-        modal.result.then(function() {
-            // Refresh directory listing
-            $scope.refresh();
         });
     };
 });

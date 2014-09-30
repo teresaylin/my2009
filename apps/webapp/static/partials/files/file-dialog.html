@@ -1,5 +1,5 @@
 <div class="modal-header">
-    <h3 class="modal-title">{{ file.path|basename }}</h3>
+    <h3 class="modal-title">{{ file.name }}</h3>
 </div>
 <div class="modal-body">
     <div class="fileinfo">
@@ -14,7 +14,7 @@
                 {{ previewAvailable }}
             </div>
             <div class="col-md-7">
-                {{ file.path|basename }}<br>
+                {{ file.name }}<br>
                 {{ file.size }}<br>
                 Modified: {{ file.modified }}<br>
             </div>

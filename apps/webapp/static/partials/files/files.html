@@ -13,10 +13,10 @@
                                 <input type="text" class="form-control input-sm" placeholder="Search" ng-model="nameSearch">
                             </div>
                             <span class="filebrowser-header-buttons">
-                                <a href ng-click="openUploadDialog()" tooltip="Upload">
+                                <a href ng-click="openUploadDialog()" ng-show="directory" tooltip="Upload">
                                     <span class="fa fa-arrow-circle-o-up"></span>
                                 </a>
-                                <a href ng-click="openCreateFolderDialog()" tooltip="New folder">
+                                <a href ng-click="openCreateFolderDialog()" ng-show="directory" tooltip="New folder">
                                     <span class="fa fa-folder"></span>
                                 </a>
                             </span>
@@ -39,14 +39,14 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr class="filebrowser-file" ng-repeat="file in directory.contents|filter:{filename: nameSearch}"
+                                <tr class="filebrowser-file" ng-repeat="file in directory.contents|filter:{name: nameSearch}|orderBy:fileOrder"
                                     ng-class="{ selected: file.selected }" ng-click="file.selected = !file.selected"
                                 >
                                     <td>
                                         <a href ng-click="openFile(file)" class="filebrowser-file-icon">
                                             <img file-thumbnail="file" size="xs" width="32">
                                         </a>
-                                        <a href ng-click="openFile(file)">{{ file.path|basename }}</a>
+                                        <a href ng-click="openFile(file)">{{ file.name }}</a>
                                     </td>
                                     <td>
                                         <time-from-now ng-if="!file.is_dir" time="file.modified" time-format="rfc2822"></time-from-now>

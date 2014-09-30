@@ -213,25 +213,39 @@ app.directive('timeFromNow', function($interval) {
         },
         templateUrl: 'components/time-from-now.html',
         link: function(scope, element, attrs) {
-            if('timeFormat' in attrs && attrs.timeFormat == 'rfc2822') {
-                // Note: JS Date constructor can accept RFC 2822 date strings, according to MDN.
-                var mTime = moment(new Date(scope.time));
-            } else {
-                var mTime = moment(scope.time);
-            }
+            var mTime = null;
+            var timeoutId = null;
+            
+            scope.$watch('time', function(time) {
+                if(time) {
+                    // Convert time to Moment object and ISO string
+                    if('timeFormat' in attrs && attrs.timeFormat == 'rfc2822') {
+                        // Note: JS Date constructor can accept RFC 2822 date strings, according to MDN.
+                        mTime = moment(new Date(scope.time));
+                    } else {
+                        mTime = moment(scope.time);
+                    }
+                    scope.isoTime = mTime.toISOString();
 
-            scope.isoTime = mTime.toISOString();
+                    // Cancel existing timeout if it exists
+                    if(timeoutId) {
+                        $interval.cancel(timeoutId);
+                    }
+                    
+                    // Update every minute
+                    timeoutId = $interval(update, 60*1000);
+                    update();
+                }
+            });
             
             var update = function() {
                 scope.fromNow = mTime.fromNow();
             };
 
-            // Update every minute
-            var timeoutId = $interval(update, 60*1000);
-            update();
-
             element.on('$destroy', function() {
-                $interval.cancel(timeoutId);
+                if(timeoutId) {
+                    $interval.cancel(timeoutId);
+                }
             });
         }
     };
