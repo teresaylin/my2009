@@ -162,6 +162,11 @@ module.factory('FileRepository', function($http) {
                     injectFilenames(data);
                 });
         },
+        delete: function(paths) {
+            return $http.post(baseUrl+'delete/', {
+                'paths': paths
+            });
+        },
         createFolder: function(path) {
             return $http.post(baseUrl+'create-folder/', {
                 'path': path
@@ -187,9 +192,13 @@ module.factory('FileRepository', function($http) {
     };
 });
 
-module.controller('FileBrowserCtrl', function($scope, $modal, FileRepository, FileDialogService) {
-    
-    var initialDir = '/Green';
+module.controller('FileBrowserCtrl', function($scope, $modal, NavFilterService, FileRepository, FileDialogService) {
+    // Change to team's root directory when nav filter team changes
+    $scope.$on('navFilterChanged', function(event, changed) {
+        if('team' in changed) {
+            $scope.setDirectory('/'+NavFilterService.team.color);
+        }
+    });
     
     $scope.fileOrder = [
         '-is_dir',
@@ -201,6 +210,7 @@ module.controller('FileBrowserCtrl', function($scope, $modal, FileRepository, Fi
         FileRepository.metadata($scope.directory.path)
             .success(function(data) {
                 $scope.directory = data;
+                $scope.clearSelection();
             });
     };
 
@@ -209,9 +219,9 @@ module.controller('FileBrowserCtrl', function($scope, $modal, FileRepository, Fi
         FileRepository.metadata(path)
             .success(function(data) {
                 $scope.directory = data;
+                $scope.clearSelection();
             });
     };
-    $scope.setDirectory(initialDir);
     
     // Add newly created files to the directory contents
     $scope.$on('fileCreated', function(event, file) {
@@ -226,9 +236,25 @@ module.controller('FileBrowserCtrl', function($scope, $modal, FileRepository, Fi
             angular.forEach($scope.directory.contents, function(dirFile) {
                 if(dirFile.path == file.path) {
                     angular.copy(file, dirFile);
-                    console.log(dirFile);
                 }
             });
+        }
+    });
+    
+    // Remove files from directory on 'fileDeleted' event
+    $scope.$on('fileDeleted', function(event, file) {
+        if(file.dir_path == $scope.directory.path) {
+            angular.forEach($scope.directory.contents, function(dirFile, i) {
+                if(dirFile.path == file.path) {
+                    $scope.directory.contents.splice(i, 1);
+                }
+            });
+            
+            // Clear the deleted file from the selection
+            if(file.path in $scope.selection) {
+                delete $scope.selection[file.path];
+                $scope.selectionLength = Object.keys($scope.selection).length;
+            }
         }
     });
         
@@ -241,27 +267,39 @@ module.controller('FileBrowserCtrl', function($scope, $modal, FileRepository, Fi
         }
     };
     
-    $scope.delete = function() {
-        // Queue files for deletion
-        var promise = null;
-        angular.forEach($scope.directory.files, function(file) {
-            if('selected' in file && file.selected) {
-                if(!promise) {
-                    promise = FileRepository.delete(file.id);
-                } else {
-                    promise.then(function() {
-                        FileRepository.delete(file.id);
-                    });
-                }
-            }
-        });
-
-        // Refresh directory listing when finished deleting
-        if(promise) {
-            promise.then(function() {
-                $scope.refresh();
-            });
+    $scope.selection = {};
+    $scope.selectionLength = 0;
+    $scope.selectFile = function(file, toggle) {
+        if(toggle) {
+            var selected = !(file.path in $scope.selection);
+        } else {
+            var selected = true;
         }
+        
+        if(selected) {
+            if(!toggle) $scope.selection = {};
+            $scope.selection[file.path] = file;
+        } else {
+            delete $scope.selection[file.path];
+        }
+        
+        $scope.selectionLength = Object.keys($scope.selection).length;
+    };
+    
+    $scope.clearSelection = function() {
+        $scope.selection = {};
+        $scope.selectionLength = 0;
+    };
+    
+    $scope.deleteSelection = function() {
+        // Convert selection to array of files
+        var files = [];
+        angular.forEach($scope.selection, function(v) {
+            files.push(v);
+        });
+        
+        // Delete
+        FileDialogService.deleteFiles(files);
     };
     
     $scope.openUploadDialog = function() {
@@ -355,6 +393,11 @@ module.controller('FileBrowserCtrl', function($scope, $modal, FileRepository, Fi
             }
         });
     };
+    
+    // Default to browsing team's root directory
+    if(NavFilterService.team) {
+        $scope.setDirectory('/'+NavFilterService.team.color);
+    }
 });
 
 module.factory('FileDialogService', function($modal) {
@@ -365,13 +408,6 @@ module.factory('FileDialogService', function($modal) {
                 windowClass: 'lg-dialog',
                 templateUrl: partial('files/file-dialog.html'),
                 controller: function($scope, $modalInstance, FileRepository) {
-                    // Retrieve file metadata
-                    /*
-                    FileRepository.metadata(path)
-                        .success(function(data) {
-                            $scope.file = data;
-                        });
-                        */
                     $scope.file = file;
                     
                     var getFileExtension = function(filename) {
@@ -379,18 +415,50 @@ module.factory('FileDialogService', function($modal) {
                         return i >= 0 ? filename.substr(i+1) : null;
                     };
 
+                    // Determine whether a file preview is available
                     var previewExts = [
                         'doc', 'docx', 'docm', 'ppt', 'pps',
                         'ppsx', 'ppsm', 'pptx', 'pptm', 'xls',
                         'xlsx', 'xlsm', 'rtf', 'pdf'
                     ];
-                    
                     if(previewExts.indexOf(getFileExtension(file.path)) >= 0) {
                         $scope.previewUrl = FileRepository.getPreviewUrl(file.path);
                     }
                     
                     $scope.close = function() {
                         $modalInstance.close();
+                    };
+                }
+            });
+            return modal;
+        },
+        deleteFiles: function(files) {
+            var modal = $modal.open({
+                backdrop: 'static',
+                templateUrl: partial('files/delete-dialog.html'),
+                controller: function($scope, $rootScope, $modalInstance, FileRepository) {
+                    $scope.files = files;
+                    
+                    $scope.delete = function() {
+                        // Build array of file paths
+                        var paths = files.map(function(file) {
+                            return file.path;
+                        });
+
+                        // Delete files
+                        FileRepository.delete(paths)
+                            .success(function() {
+                                // Broadcast delete messages
+                                angular.forEach(files, function(file) {
+                                    $rootScope.$broadcast('fileDeleted', file);
+                                });
+                                
+                                $modalInstance.close();
+                            });
+                    };
+                    
+                    $scope.cancel = function() {
+                        $modalInstance.dismiss('cancel');
                     };
                 }
             });
