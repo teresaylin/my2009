@@ -9,6 +9,10 @@ from ..utils import userPathToDropboxPath
 class ThumbnailView(View):
 
     def get(self, request, path=None, size=None, format=None):
+        # Only allow logged-in users
+        if not request.user.is_authenticated():
+            return HttpResponse('Unauthorized', status=401)
+
         # Get requested image format
         format = format.upper()
         if not format in ['JPEG', 'PNG']:

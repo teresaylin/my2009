@@ -1,5 +1,7 @@
 from django.views.generic import View
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseBadRequest
+from django.conf import settings
+from django.shortcuts import redirect
 
 import dropbox
 
@@ -9,6 +11,10 @@ from ..utils import userPathToDropboxPath
 class PreviewView(View):
 
     def get(self, request, path=None):
+        # Redirect to login page if not authenticated
+        if not request.user.is_authenticated():
+            return redirect(settings.LOGIN_URL)
+
         # Transform user path to Dropbox path
         path = userPathToDropboxPath(path, request.user)
         
