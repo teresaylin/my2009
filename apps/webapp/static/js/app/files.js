@@ -302,6 +302,23 @@ module.controller('FileBrowserCtrl', function($scope, $modal, NavFilterService, 
         FileDialogService.deleteFiles(files);
     };
     
+    var MAX_UPLOAD_SIZE = 50*1024*1024;
+    var showUploadSizeLimitDialog = function() {
+        var modal = $modal.open({
+            backdrop: 'static',
+            templateUrl: partial('files/upload-size-limit-dialog.html'),
+            controller: function($scope, $modalInstance) {
+                $scope.maxSize = MAX_UPLOAD_SIZE;
+                
+                $scope.close = function() {
+                    $modalInstance.close();
+                };
+            }
+        });
+                
+        return modal;
+    };
+    
     $scope.openUploadDialog = function() {
         if(!$scope.directory) return;
 
@@ -316,7 +333,18 @@ module.controller('FileBrowserCtrl', function($scope, $modal, NavFilterService, 
                     headers: {
                         'X-CSRFToken': $cookies.csrftoken
                     },
-                    autoUpload: true
+                    autoUpload: true,
+                    filters: [{
+                        name: 'sizeLimit',
+                        fn: function(file) {
+                            if(file.size > MAX_UPLOAD_SIZE) {
+                                showUploadSizeLimitDialog();
+                                return false;
+                            } else {
+                                return true;
+                            }
+                        }
+                    }]
                 });
                 
                 $scope.uploader.onAfterAddingFile = function(item) {

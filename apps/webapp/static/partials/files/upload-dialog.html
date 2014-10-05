@@ -13,7 +13,7 @@
                 <span class="text-muted" ng-show="uploader.isHTML5"> &ndash; {{ item.file.size|filesize }}</span>
                 <span class="pull-right">
                     <span ng-show="item.isSuccess"><span class="glyphicon glyphicon-ok"></span></span>
-                    <span ng-show="item.isCancel || item.isError"><span class="glyphicon glyphicon-remove"></span></span>
+                    <span ng-show="item.isError"><span class="glyphicon glyphicon-remove"></span></span>
 
                     <a href ng-click="item.isUploading ? item.cancel() : item.remove()" ng-show="!item.isUploaded">
                         <span class="glyphicon glyphicon-remove"></span>
