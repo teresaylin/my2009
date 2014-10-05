@@ -20,21 +20,25 @@
                 <p ng-if="!editing && event.location">{{ event.location }}</p>
                 <input ng-if="editing" class="form-control" type="text" placeholder="Location" maxlength="100" ng-model="event.location">
             </div>
-            <div>
-                <span ng-if="!editing">{{ event.date|date:'fullDate' }}</span>
-                <input ng-if="editing" type="text" class="form-control" placeholder="Date" datepicker-popup ng-model="event.date" ng-required="true" />
-            </div>
             <div class="row">
                 <div class="col-xs-5">
-                    <span ng-if="!editing">{{ event.start|date:'shortTime' }}</span>
+                    <span ng-if="!editing">
+                        {{ event.start|date:'shortTime' }}<br>
+                        {{ event.start|date:'fullDate' }}
+                    </span>
                     <timepicker ng-if="editing" ng-model="event.start" ng-required="true"></timepicker>
+                    <input ng-if="editing" type="text" class="form-control" placeholder="Start date" datepicker-popup ng-model="event.start" ng-required="true" />
                 </div>
                 <div class="col-xs-2">
                     <p ng-style="{ 'line-height': editing ? '102px' : null }">to</p>
                 </div>
                 <div class="col-xs-5">
-                    <span ng-if="!editing">{{ event.end|date:'shortTime' }}</span>
+                    <span ng-if="!editing">
+                        {{ event.end|date:'shortTime' }}<br>
+                        {{ event.end|date:'fullDate' }}
+                    </span>
                     <timepicker ng-if="editing" ng-model="event.end" ng-required="true"></timepicker>
+                    <input ng-if="editing" type="text" class="form-control" placeholder="End date" datepicker-popup ng-model="event.end" ng-required="true" />
                 </div>
             </div>
         </fieldset>

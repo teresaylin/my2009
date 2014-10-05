@@ -31,7 +31,6 @@ module.controller('EventDialogCtrl', function($scope, $modalInstance, EventRepos
         $scope.creating = false;
         $scope.editing = false;
         
-        $scope.event.date = new Date($scope.event.start).toISOString();
         $scope.event.start = new Date($scope.event.start).toISOString();
         $scope.event.end = new Date($scope.event.end).toISOString();
     };
@@ -40,9 +39,8 @@ module.controller('EventDialogCtrl', function($scope, $modalInstance, EventRepos
         var now = moment();
         $scope.event = {
             // Initialize start and end times
-            date: now.toISOString(),
-            start: now.clone(),
-            end: now.clone().add(1, 'hours')
+            start: now.clone().toISOString(),
+            end: now.clone().add(1, 'hours').toISOString()
         };
         $scope.creating = true;
         $scope.editing = true;
@@ -56,31 +54,11 @@ module.controller('EventDialogCtrl', function($scope, $modalInstance, EventRepos
         newEvent();
     }
     
-    // Updates the 'start' and 'end' fields with the date
-    var setStartEndDate = function() {
-        var date = new Date($scope.event.date);
-        var start = new Date($scope.event.start);
-        var end = new Date($scope.event.end);
-        
-        start.setDate(date.getDate());
-        start.setMonth(date.getMonth());
-        start.setFullYear(date.getFullYear());
-        
-        end.setDate(date.getDate());
-        end.setMonth(date.getMonth());
-        end.setFullYear(date.getFullYear());
-        
-        $scope.event.start = start;
-        $scope.event.end = end;
-    };
-    
     $scope.edit = function() {
         $scope.editing = true;
     };
     
     $scope.create = function(form) {
-        setStartEndDate();
-        
         // Create event
         EventRepository.create($scope.event)
             .success(function(data) {
@@ -92,8 +70,6 @@ module.controller('EventDialogCtrl', function($scope, $modalInstance, EventRepos
     };
 
     $scope.update = function(form) {
-        setStartEndDate();
-        
         // Update event
         EventRepository.update($scope.event.id, $scope.event)
             .success(function(data) {
@@ -237,6 +213,7 @@ module.controller('CalendarCtrl', function($scope, $modal, $state, EventReposito
                 center: 'title',
                 right: 'today prev,next'
             },
+            allDaySlot: false,
             timezone: 'local',
             eventClick: onEventClick,
             eventDrop: onEventDrop,
