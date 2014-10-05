@@ -19,6 +19,12 @@
                 Modified: {{ file.modified }}<br>
             </div>
         </div>
+        <div ng-if="file.app_data">
+            <comments-section thread-id="file.app_data.comment_thread"></comments-section>
+        </div>
+        <p ng-if="!file.app_data" class="alert alert-info">
+            This file is awaiting processing; comments will be unavailable until then. Please try again later.
+        </p>
     </div>
 </div>
 <div class="modal-footer">

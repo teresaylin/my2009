@@ -229,6 +229,13 @@ hr {
       background-color: #e3f2ff; }
       .filebrowser .filebrowser-files table .filebrowser-file.selected:hover {
         background-color: #e3f2ff; }
+    .filebrowser .filebrowser-files table .filebrowser-file.pending {
+      /*background-color: #ddd;*/ }
+      .filebrowser .filebrowser-files table .filebrowser-file.pending td {
+        font-style: italic;
+        color: #aaa; }
+        .filebrowser .filebrowser-files table .filebrowser-file.pending td a {
+          color: #aaa; }
     .filebrowser .filebrowser-files table .filebrowser-file:hover {
       background-color: #f5fafe; }
     .filebrowser .filebrowser-files table .filebrowser-file a {

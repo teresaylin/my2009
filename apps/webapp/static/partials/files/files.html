@@ -47,7 +47,8 @@
                             </thead>
                             <tbody>
                                 <tr class="filebrowser-file" ng-repeat="file in directory.contents|filter:{name: nameSearch}|orderBy:fileOrder"
-                                    ng-class="{ selected: selection[file.path] }" ng-click="selectFile(file, $event.ctrlKey); $event.stopPropagation()"
+                                    ng-class="{ selected: selection[file.path], pending: !file.app_data && !file.is_dir }"
+                                    ng-click="selectFile(file, $event.ctrlKey); $event.stopPropagation()"
                                 >
                                     <td>
                                         <a href ng-click="openFile(file); $event.stopPropagation();" class="filebrowser-file-icon">

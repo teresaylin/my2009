@@ -9,4 +9,6 @@ urlpatterns = patterns('',
     url(r'^previews(?P<path>/.+)$', PreviewView.as_view(), name='preview'),
     url(r'^thumbnails(?P<path>/.+)/(?P<size>[a-z][a-z]?)\.(?P<format>[a-z]+)$', ThumbnailView.as_view(), name='thumbnail'),
     url(r'^upload/$', UploadView.as_view(), name='upload'),
+
+    url(r'^dropbox-webhook/$', DropboxWebhookView.as_view(), name='dropbox-webhook'),
 )

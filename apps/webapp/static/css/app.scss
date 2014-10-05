@@ -253,6 +253,17 @@ hr {
                         background-color: #e3f2ff;
                     }
                 }
+                
+                &.pending {
+                    /*background-color: #ddd;*/
+                    td {
+                        font-style: italic;
+                        color: #aaa;
+                        a {
+                            color: #aaa;
+                        }
+                    }
+                }
 
                 &:hover {
                     background-color: #f5fafe;
