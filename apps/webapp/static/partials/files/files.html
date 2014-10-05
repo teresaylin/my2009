@@ -13,6 +13,9 @@
                                 <input type="text" class="form-control input-sm" placeholder="Search" ng-model="nameSearch">
                             </div>
                             <span class="filebrowser-header-buttons">
+                                <a href ng-click="refresh()" ng-show="directory" tooltip="Refresh">
+                                    <span class="fa fa-refresh"></span>
+                                </a>
                                 <a href ng-click="openUploadDialog()" ng-show="directory" tooltip="Upload">
                                     <span class="fa fa-arrow-circle-o-up"></span>
                                 </a>
