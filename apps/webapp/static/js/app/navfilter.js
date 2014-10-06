@@ -136,6 +136,39 @@ module.controller('NavFilterCtrl', function($scope, NavFilterService, TeamReposi
         }
     });
     
+    // Add newly created taskforces to taskforce lists
+    $scope.$on('taskforceCreated', function(event, taskforce) {
+        if($scope.activeTeam && $scope.activeTeam.id == taskforce.team) {
+            var parent = null;
+            angular.forEach($scope.taskforces, function(tf) {
+                if(parent == taskforce.parent_task_force) {
+                    tf.list.push(taskforce);
+                }
+                parent = tf.active ? tf.active.id : null;
+            });
+        }
+    });
+
+    // Remove delete taskforces from taskforce lists
+    $scope.$on('taskforceDeleted', function(event, taskforce) {
+        if($scope.activeTeam && $scope.activeTeam.id == taskforce.team) {
+            console.log(taskforce);
+            angular.forEach($scope.taskforces, function(tf) {
+                if(tf.active && tf.active.id == taskforce.id) {
+                    tf.active = null;
+                    $scope.taskforces.splice(tf.idx+1);
+                    NavFilterService.setTaskforce(taskforce.parent_task_force);
+                }
+                
+                angular.forEach(tf.list, function(listTaskforce, idx) {
+                    if(listTaskforce.id == taskforce.id) {
+                        tf.list.splice(idx, 1);
+                    }
+                });
+            });
+        }
+    });
+    
     $scope.activeTeam = null;
     $scope.activeUser = null;
     $scope.taskforces = [];

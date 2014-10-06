@@ -67,7 +67,7 @@ module.controller('UserDetailStateCtrl', function($scope, $stateParams, $modal, 
     };
 });
 
-module.controller('TeamStateCtrl', function($scope, $modal, NavFilterService, TeamRepository, UserRepository, TaskForceRepository) {
+module.controller('TeamStateCtrl', function($scope, $rootScope, $modal, NavFilterService, TeamRepository, UserRepository, TaskForceRepository) {
     var update = function() {
         if(NavFilterService.team) {
             $scope.team = NavFilterService.team;
@@ -142,7 +142,8 @@ module.controller('TeamStateCtrl', function($scope, $modal, NavFilterService, Te
                     // Create task force
                     $scope.taskforce.milestone_id = $scope.taskforce.milestone.id;
                     TaskForceRepository.create($scope.taskforce)
-                        .success(function() {
+                        .success(function(data) {
+                            $rootScope.$broadcast('taskforceCreated', data);
                             $modalInstance.close();
                         });
                 };
@@ -198,6 +199,7 @@ module.controller('TeamStateCtrl', function($scope, $modal, NavFilterService, Te
                     // Delete task force
                     TaskForceRepository.delete(taskforce.id)
                         .success(function() {
+                            $rootScope.$broadcast('taskforceDeleted', taskforce);
                             $modalInstance.close();
                         });
                 };
