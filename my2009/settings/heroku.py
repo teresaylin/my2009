@@ -1,6 +1,7 @@
 from .prod import *
 
 import os
+from urllib.parse import urlparse
 
 # Parse database configuration from $DATABASE_URL
 import dj_database_url
@@ -31,3 +32,16 @@ DROPBOX_APP_KEY = os.environ['DROPBOX_APP_KEY']
 DROPBOX_APP_SECRET = os.environ['DROPBOX_APP_SECRET']
 DROPBOX_ACCESS_TOKEN = os.environ['DROPBOX_ACCESS_TOKEN']
 DROPBOX_BASE_PATH = os.environ['DROPBOX_BASE_PATH']
+
+# Cache configuration
+redis_url = urlparse(os.environ.get('REDISCLOUD_URL'))
+CACHES = {
+    'default': {
+        'BACKEND': 'redis_cache.cache.RedisCache',
+        'LOCATION': '%s:%s:0' % (redis_url.hostname, redis_url.port),
+        'OPTIONS': {
+            'CLIENT_CLASS': 'redis_cache.client.DefaultClient',
+            'PASSWORD': redis_url.password,
+        }
+    }
+}
