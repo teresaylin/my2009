@@ -1,3 +1,6 @@
+from django.core.cache import caches
+from django.conf import settings
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import ParseError
@@ -12,27 +15,35 @@ from ..serializers import FileAppDataSerializer
 
 class MetadataView(APIView):
     
-    def get(self, request, format=None):
-        # Get path from query string
-        path = request.GET.get('path', None)
-        if not path:
-            raise ParseError('No path given')
-        
+    def get(self, request, path=None):
         # Transform user path to Dropbox path
         path = userPathToDropboxPath(path, request.user)
         
         # Create Dropbox client object
         client = AppDropboxClient()
         
+        # Lookup metadata in cache
+        cache = caches['default']
+        cacheKey = 'file-metadata:%s' % (path,)
+        cacheData = cache.get(cacheKey)
+        
         # Retrieve metadata
         try:
-            data = client.metadata(path)
+            data = client.metadata(path, hash=cacheData.get('hash', None) if cacheData else None)
+
+            # Cache directory listings
+            if data['is_dir']:
+                cache.set(cacheKey, data, settings.FILE_METADATA_CACHE_TIMEOUT)
         except dropbox.rest.ErrorResponse as e:
-            if e.status == 404:
+            if e.status == 304:
+                # Folder unchanged, use cached data
+                data = cacheData
+            elif e.status == 404:
                 raise FileNotFound()
             else:
                 raise
             
+        # Inject local app data
         if 'contents' in data:
             fileMap = {}
             for file in data['contents']:

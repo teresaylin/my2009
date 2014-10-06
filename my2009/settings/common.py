@@ -90,3 +90,6 @@ REST_FRAMEWORK = {
     ),
     'PAGINATE_BY_PARAM': 'page_size',
 }
+
+FILE_THUMBNAIL_CACHE_TIMEOUT = 5*60    # Number of seconds to cache Dropbox thumbnails
+FILE_METADATA_CACHE_TIMEOUT = 60*60    # Number of seconds to cache Dropbox file metadata

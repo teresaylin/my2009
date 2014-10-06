@@ -155,9 +155,7 @@ module.factory('FileRepository', function($http) {
     return {
         injectFilenames: injectFilenames,
         metadata: function(path) {
-            return $http.get(baseUrl+'metadata/', { params: {
-                path: path                
-            }})
+            return $http.get(baseUrl+'metadata'+path)
                 .success(function(data) {
                     injectFilenames(data);
                 });
