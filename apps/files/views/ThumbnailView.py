@@ -65,6 +65,5 @@ class ThumbnailView(View):
         # Create response
         response = HttpResponse(data['content'], content_type=data['type'])
         response['Cache-Control'] = 'public, max-age=%d' % (settings.FILE_THUMBNAIL_CACHE_TIMEOUT,)
-        print(response['Cache-Control'])
         
         return response
