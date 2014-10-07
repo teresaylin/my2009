@@ -275,7 +275,7 @@ module.directive('userPicture', function() {
     };
 });
 
-module.directive('userPicker', function(UserRepository) {
+module.directive('userPicker', function(NavFilterService, UserRepository) {
     return {
         restrict: 'E',
         scope: {
@@ -291,6 +291,11 @@ module.directive('userPicker', function(UserRepository) {
                 };
                 if(scope.restrictTeam) {
                     params.teams = scope.restrictTeam.id;
+                } else {
+                    // Restrict to team selected in nav filter, by default
+                    if(NavFilterService.team) {
+                        params.teams = NavFilterService.team.id;
+                    }
                 }
 
                 return UserRepository.list(params)
