@@ -128,7 +128,7 @@ module.directive('fileThumbnail', function(FileRepository) {
     };
 });
 
-module.directive('filePicker', function(FileRepository) {
+module.directive('filePicker', function(FileRepository, NavFilterService) {
     return {
         restrict: 'E',
         scope: {
@@ -137,10 +137,12 @@ module.directive('filePicker', function(FileRepository) {
         templateUrl: 'components/file-picker.html',
         link: function(scope, element, attrs) {
             scope.search = function(q) {
-                return FileRepository.search('/Green', q)
-                    .then(function(res) {
-                        return res.data;
-                    });
+                if(NavFilterService.team) {
+                    return FileRepository.search('/'+NavFilterService.team.color, q)
+                        .then(function(res) {
+                            return res.data;
+                        });
+                }
             };
         }
     };
