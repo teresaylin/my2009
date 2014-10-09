@@ -209,9 +209,6 @@ module.directive('taskList', function() {
 });
 
 module.controller('TaskDialogCtrl', function($rootScope, $scope, $modalInstance, TaskRepository, TaskDialogService, FileRepository, FileDialogService, task, parent) {
-    var changesMade = false; // This is set when a task is created/edited
-    var taskCreated = false; // This is set when a task is created
-    
     var loadTask = function(taskData) {
         $scope.task = taskData;
         $scope.creating = false;
@@ -228,7 +225,7 @@ module.controller('TaskDialogCtrl', function($rootScope, $scope, $modalInstance,
     
     if(task) {
         // Opening existing event
-        loadTask(angular.copy(task));
+        loadTask(task);
     } else {
         // Creating new event
         newTask();
@@ -236,14 +233,15 @@ module.controller('TaskDialogCtrl', function($rootScope, $scope, $modalInstance,
     
     $scope.edit = function() {
         $scope.editing = true;
+        // Create a copy of the task for editing
+        $scope.task = angular.copy($scope.task);
     };
     
     $scope.create = function(form) {
         // Create task
         TaskRepository.create($scope.task)
             .success(function(data) {
-                changesMade = true;
-                taskCreated = true;
+                $rootScope.$broadcast('taskCreated', data);
                 // Refresh task with returned data
                 loadTask(data);
                 form.$setPristine();
@@ -254,7 +252,7 @@ module.controller('TaskDialogCtrl', function($rootScope, $scope, $modalInstance,
         // Update task
         TaskRepository.update($scope.task.id, $scope.task)
             .success(function(data) {
-                changesMade = true;
+                $rootScope.$broadcast('taskUpdated', data);
                 // Refresh task with returned data
                 loadTask(data);
                 form.$setPristine();
@@ -263,27 +261,23 @@ module.controller('TaskDialogCtrl', function($rootScope, $scope, $modalInstance,
     
     $scope.delete = function() {
         // Open delete task dialog
-        TaskDialogService.deleteTask(task).result
+        TaskDialogService.deleteTask($scope.task).result
             .then(function(deleted) {
                 if(deleted) {
-                    $modalInstance.close(true);
+                    $modalInstance.close();
                 }
             });
     };
 
     $scope.close = function() {
-        if(taskCreated) {
-            $rootScope.$broadcast('taskCreated', $scope.task);
-        } else if(changesMade) {
-            $rootScope.$broadcast('taskUpdated', $scope.task);
-        }
-        $modalInstance.close(changesMade);
+        $modalInstance.close();
     };
         
     $scope.addAssignedUser = function(user) {
         TaskRepository.addAssignedUser($scope.task.id, user.id)
             .success(function() {
                 $scope.task.assigned_users.push(user);
+                $rootScope.$broadcast('taskUpdated', $scope.task);
             });
     };
 
@@ -292,6 +286,7 @@ module.controller('TaskDialogCtrl', function($rootScope, $scope, $modalInstance,
             .success(function() {
                 var assignedUsers = $scope.task.assigned_users;
                 assignedUsers.splice(assignedUsers.indexOf(user), 1);
+                $rootScope.$broadcast('taskUpdated', $scope.task);
             });
     };
 
@@ -299,6 +294,7 @@ module.controller('TaskDialogCtrl', function($rootScope, $scope, $modalInstance,
         TaskRepository.addAssignedTaskforce($scope.task.id, taskforce.id)
             .success(function() {
                 $scope.task.assigned_taskforces.push(taskforce);
+                $rootScope.$broadcast('taskUpdated', $scope.task);
             });
     };
 
@@ -307,6 +303,7 @@ module.controller('TaskDialogCtrl', function($rootScope, $scope, $modalInstance,
             .success(function() {
                 var assignedTaskforces = $scope.task.assigned_taskforces;
                 assignedTaskforces.splice(assignedTaskforces.indexOf(taskforce), 1);
+                $rootScope.$broadcast('taskUpdated', $scope.task);
             });
     };
 
@@ -314,6 +311,7 @@ module.controller('TaskDialogCtrl', function($rootScope, $scope, $modalInstance,
         TaskRepository.addFile($scope.task.id, path)
             .success(function() {
                 $scope.task.files.push(path);
+                $rootScope.$broadcast('taskUpdated', $scope.task);
             });
     };
 
@@ -322,6 +320,7 @@ module.controller('TaskDialogCtrl', function($rootScope, $scope, $modalInstance,
             .success(function() {
                 var files = $scope.task.files;
                 files.splice(files.indexOf(path), 1);
+                $rootScope.$broadcast('taskUpdated', $scope.task);
             });
     };
     

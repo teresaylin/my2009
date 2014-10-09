@@ -98,6 +98,7 @@ module.controller('EventDialogCtrl', function($scope, $modalInstance, EventRepos
         EventRepository.addAttendee($scope.event.id, user.id)
             .success(function() {
                 $scope.event.attendees.push(user);
+                changesMade = true;
             });
     };
 
@@ -106,6 +107,7 @@ module.controller('EventDialogCtrl', function($scope, $modalInstance, EventRepos
             .success(function() {
                 var attendees = $scope.event.attendees;
                 attendees.splice(attendees.indexOf(user), 1);
+                changesMade = true;
             });
     };
 
@@ -113,6 +115,7 @@ module.controller('EventDialogCtrl', function($scope, $modalInstance, EventRepos
         EventRepository.addFile($scope.event.id, path)
             .success(function() {
                 $scope.event.files.push(path);
+                changesMade = true;
             });
     };
 
@@ -121,6 +124,7 @@ module.controller('EventDialogCtrl', function($scope, $modalInstance, EventRepos
             .success(function() {
                 var files = $scope.event.files;
                 files.splice(files.indexOf(path), 1);
+                changesMade = true;
             });
     };
     
