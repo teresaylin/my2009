@@ -34,6 +34,27 @@
         <hr>
         <tab>
             <tab-heading><span class="fa fa-paperclip"></span></tab-heading>
+            
+            <h4>Files</h4>
+            <div>
+                <form class="form-inline" ng-if="task._permissions.update">
+                    <file-picker file="newFile"></file-picker>
+                    <button class="btn btn-sm btn-primary"
+                        ng-click="addFile(newFile.path); newFile = null"
+                        ng-disabled="!newFile">
+                    Add</button>
+                </form> 
+
+                <p ng-if="task.files.length == 0">There are no files associated with this task.</p>
+                <ul class="list-group">
+                    <li class="list-group-item" ng-repeat="file in task.files">
+                        <a href ng-click="removeFile(file)" ng-if="task._permissions.update">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </a>
+                        <a href title="{{ file }}" ng-click="openFile(file)">{{ file|basename }}</a>
+                    </li>
+                </ul>
+            </div>
         </tab>
         <tab>
             <tab-heading><span class="fa fa-users"></span></tab-heading>

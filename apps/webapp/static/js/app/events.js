@@ -23,7 +23,7 @@ module.controller('EventDetailStateCtrl', function($scope, $stateParams, EventRe
     };
 });
 
-module.controller('EventDialogCtrl', function($scope, $modalInstance, EventRepository, EventDialogService, event) {
+module.controller('EventDialogCtrl', function($scope, $modalInstance, EventRepository, EventDialogService, FileRepository, FileDialogService, event) {
     var changesMade = false; // This is set when an event is created/edited
     
     var loadEvent = function(eventData) {
@@ -106,6 +106,28 @@ module.controller('EventDialogCtrl', function($scope, $modalInstance, EventRepos
             .success(function() {
                 var attendees = $scope.event.attendees;
                 attendees.splice(attendees.indexOf(user), 1);
+            });
+    };
+
+    $scope.addFile = function(path) {
+        EventRepository.addFile($scope.event.id, path)
+            .success(function() {
+                $scope.event.files.push(path);
+            });
+    };
+
+    $scope.removeFile = function(path) {
+        EventRepository.removeFile($scope.event.id, path)
+            .success(function() {
+                var files = $scope.event.files;
+                files.splice(files.indexOf(path), 1);
+            });
+    };
+    
+    $scope.openFile = function(path) {
+        FileRepository.metadata(path)
+            .success(function(file) {
+                FileDialogService.openFile(file);
             });
     };
 });

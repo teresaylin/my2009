@@ -128,6 +128,24 @@ module.directive('fileThumbnail', function(FileRepository) {
     };
 });
 
+module.directive('filePicker', function(FileRepository) {
+    return {
+        restrict: 'E',
+        scope: {
+            'file': '='
+        },
+        templateUrl: 'components/file-picker.html',
+        link: function(scope, element, attrs) {
+            scope.search = function(q) {
+                return FileRepository.search('/Green', q)
+                    .then(function(res) {
+                        return res.data;
+                    });
+            };
+        }
+    };
+});
+
 module.factory('FileRepository', function($http) {
     var baseUrl = '/api/files/';
     
@@ -159,6 +177,11 @@ module.factory('FileRepository', function($http) {
                 .success(function(data) {
                     injectFilenames(data);
                 });
+        },
+        search: function(path, query) {
+            return $http.get(baseUrl+'search'+path, { params: {
+                query: query
+            }});
         },
         delete: function(paths) {
             return $http.post(baseUrl+'delete/', {

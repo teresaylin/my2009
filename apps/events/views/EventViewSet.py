@@ -11,11 +11,13 @@ from rest_framework.response import Response
 from apps.users.exceptions import UserNotFound, TeamNotFound
 from apps.users.models import Team
 
+from apps.files.views import ModelWithFilesViewSetMixin
+
 from ..exceptions import EventAlreadyHasAttendee, EventEndPrecedesStart
 from ..models import Event, EventAttendee
 from ..serializers import EventSerializer
 
-class EventViewSet(viewsets.ModelViewSet):
+class EventViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
     #filter_fields = ('teams',)

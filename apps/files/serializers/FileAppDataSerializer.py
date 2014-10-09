@@ -5,7 +5,7 @@ from ..models import FileAppData
 class FileAppDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = FileAppData
-        fields = ('id', 'comment_thread')
+        fields = ('comment_thread',)
     
     comment_thread = serializers.SerializerMethodField('getCommentThread')
     def getCommentThread(self, obj):

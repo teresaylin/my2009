@@ -208,7 +208,7 @@ module.directive('taskList', function() {
     };
 });
 
-module.controller('TaskDialogCtrl', function($rootScope, $scope, $modalInstance, TaskRepository, TaskDialogService, task, parent) {
+module.controller('TaskDialogCtrl', function($rootScope, $scope, $modalInstance, TaskRepository, TaskDialogService, FileRepository, FileDialogService, task, parent) {
     var changesMade = false; // This is set when a task is created/edited
     var taskCreated = false; // This is set when a task is created
     
@@ -307,6 +307,28 @@ module.controller('TaskDialogCtrl', function($rootScope, $scope, $modalInstance,
             .success(function() {
                 var assignedTaskforces = $scope.task.assigned_taskforces;
                 assignedTaskforces.splice(assignedTaskforces.indexOf(taskforce), 1);
+            });
+    };
+
+    $scope.addFile = function(path) {
+        TaskRepository.addFile($scope.task.id, path)
+            .success(function() {
+                $scope.task.files.push(path);
+            });
+    };
+
+    $scope.removeFile = function(path) {
+        TaskRepository.removeFile($scope.task.id, path)
+            .success(function() {
+                var files = $scope.task.files;
+                files.splice(files.indexOf(path), 1);
+            });
+    };
+    
+    $scope.openFile = function(path) {
+        FileRepository.metadata(path)
+            .success(function(file) {
+                FileDialogService.openFile(file);
             });
     };
 });

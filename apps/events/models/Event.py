@@ -6,6 +6,7 @@ from django.utils import timezone
 
 from libs.softdelete.models import SoftDeleteableModel
 from apps.users.models import CommentThread
+from apps.files.models import FileAppData
 
 class Event(SoftDeleteableModel):
     class Meta:
@@ -20,6 +21,8 @@ class Event(SoftDeleteableModel):
     comment_thread = models.OneToOneField(CommentThread)
 
     attendees = models.ManyToManyField(User, through='EventAttendee')
+
+    files = models.ManyToManyField(FileAppData, blank=True)
     
     def __str__(self):
         return self.title

@@ -44,16 +44,23 @@ class MetadataView(APIView):
                 raise
             
         # Inject local app data
-        if 'contents' in data:
-            fileMap = {}
-            for file in data['contents']:
-                if file['is_dir']:
-                    continue
-                fileMap[file['path'].lower()] = file
-                
-            dataObjs = FileAppData.objects.filter(path__in=fileMap.keys())
-            for dataObj in dataObjs:
-                fileMap[dataObj.path]['app_data'] = FileAppDataSerializer(dataObj).data
+        if data['is_dir']:
+            if 'contents' in data:
+                fileMap = {}
+                for file in data['contents']:
+                    if file['is_dir']:
+                        continue
+                    fileMap[file['path'].lower()] = file
+                    
+                dataObjs = FileAppData.objects.filter(path__in=fileMap.keys())
+                for dataObj in dataObjs:
+                    fileMap[dataObj.path]['app_data'] = FileAppDataSerializer(dataObj).data
+        else:
+            try:
+                dataObj = FileAppData.objects.get(path=data['path'].lower())
+                data['app_data'] = FileAppDataSerializer(dataObj).data
+            except FileAppData.DoesNotExist:
+                pass
 
         # Transform Dropbox paths to user paths
         data['path'] = dropboxPathToUserPath(data['path'])

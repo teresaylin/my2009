@@ -225,6 +225,16 @@
     </span>
 </script>
 
+<script type="text/ng-template" id="components/file-picker.html">
+    <div class="form-group" ng-class="{ 'has-success': file }">
+        <input type="text" ng-model="file"
+            typeahead="file as file.path for file in search($viewValue) | filter:{path:$viewValue}"
+            typeahead-min-length="2"
+            typeahead-editable="false" 
+            class="form-control">
+    </div>
+</script>
+
 {% endverbatim %}
 
 {% endblock %}

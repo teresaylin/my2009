@@ -2,6 +2,8 @@ from .CreateFolderView import CreateFolderView
 from .DeleteView import DeleteView
 from .DropboxWebhookView import DropboxWebhookView
 from .MetadataView import MetadataView
+from .ModelWithFilesViewSetMixin import ModelWithFilesViewSetMixin
 from .PreviewView import PreviewView
+from .SearchView import SearchView
 from .ThumbnailView import ThumbnailView
 from .UploadView import UploadView

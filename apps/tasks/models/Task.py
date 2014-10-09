@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 
 from libs.softdelete.models import SoftDeleteableModel
 from apps.users.models import CommentThread, TaskForce
+from apps.files.models import FileAppData
 
 class Task(SoftDeleteableModel):
     class Meta:
@@ -26,6 +27,8 @@ class Task(SoftDeleteableModel):
 
     assigned_taskforces = models.ManyToManyField(TaskForce, blank=True)
     assigned_users = models.ManyToManyField(User, blank=True)
+    
+    files = models.ManyToManyField(FileAppData, blank=True)
 
     def __str__(self):
         return str(self.name)

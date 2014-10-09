@@ -9,11 +9,13 @@ from libs.permissions.user_permissions import getUserObjectPermissions
 from apps.users.exceptions import UserNotFound, TaskForceNotFound
 from apps.users.models import TaskForce
 
+from apps.files.views import ModelWithFilesViewSetMixin
+
 from ..exceptions import TaskAlreadyAssignedToUser, TaskAlreadyAssignedToTaskForce
 from ..models import Task
 from ..serializers import TaskSerializer
 
-class TaskViewSet(viewsets.ModelViewSet):
+class TaskViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
     queryset = Task.objects.all().exclude(state='completed')
     serializer_class = TaskSerializer
     filter_fields = ('parent',)

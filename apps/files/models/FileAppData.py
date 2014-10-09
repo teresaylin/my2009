@@ -2,12 +2,17 @@ from django.db import models
 
 from apps.users.models import CommentThread
 
+from ..utils import dropboxPathToUserPath
+
 class FileAppData(models.Model):
-    path = models.CharField(max_length=512, unique=True)
+    path = models.CharField(max_length=512, unique=True, db_index=True)
     comment_thread = models.OneToOneField(CommentThread)
     
     def __str__(self):
         return self.path
+    
+    def getUserPath(self):
+        return dropboxPathToUserPath(self.path)
 
     def save(self, *args, **kwargs):
         # Ensure paths are always lowercase (Dropbox paths are case insensitive)

@@ -44,6 +44,16 @@ module.factory('EventRepository', function($http) {
             return $http.put(baseUrl+id+'/remove_attendee/', {
                 'user_id': userId
             });
+        },
+        addFile: function(id, path) {
+            return $http.put(baseUrl+id+'/add_file/', {
+                'path': path
+            });
+        },
+        removeFile: function(id, path) {
+            return $http.put(baseUrl+id+'/remove_file/', {
+                'path': path
+            });
         }
     };
 });
@@ -114,6 +124,16 @@ module.factory('TaskRepository', function($http) {
         removeAssignedTaskforce: function(id, taskforceId) {
             return $http.put(baseUrl+id+'/remove_assigned_taskforce/', {
                 'taskforce_id': taskforceId
+            });
+        },
+        addFile: function(id, path) {
+            return $http.put(baseUrl+id+'/add_file/', {
+                'path': path
+            });
+        },
+        removeFile: function(id, path) {
+            return $http.put(baseUrl+id+'/remove_file/', {
+                'path': path
             });
         }
     };
