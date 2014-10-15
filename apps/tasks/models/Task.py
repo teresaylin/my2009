@@ -25,7 +25,7 @@ class Task(SoftDeleteableModel):
     completed_by = models.ForeignKey(User, related_name='completed_tasks', null=True, blank=True)
     comment_thread = models.OneToOneField(CommentThread)
 
-    assigned_taskforces = models.ManyToManyField(TaskForce, blank=True)
+    assigned_taskforces = models.ManyToManyField(TaskForce, blank=True, related_name='assigned_tasks')
     assigned_users = models.ManyToManyField(User, blank=True)
     
     files = models.ManyToManyField(FileAppData, blank=True)
