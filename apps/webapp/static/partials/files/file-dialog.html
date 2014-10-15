@@ -17,6 +17,10 @@
                 {{ file.name }}<br>
                 {{ file.size }}<br>
                 Modified: {{ file.modified }}<br>
+                
+                <p>
+                    <a target="_blank" href="/api/files/download{{ file.path }}">Download...</a>
+                </p>
             </div>
         </div>
         <div ng-if="file.app_data">
