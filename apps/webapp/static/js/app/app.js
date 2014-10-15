@@ -49,7 +49,10 @@ app.config(function($stateProvider, $urlRouterProvider) {
         .state('dashboard', {
             url: '/',
             templateUrl: partial('dashboard.html'),
-            controller: function($scope, TaskRepository) {
+            controller: function($scope, TaskDialogService) {
+                $scope.newTask = function() {
+                    var dlg = TaskDialogService.newTask();
+                };
             }
         })
         // Settings
