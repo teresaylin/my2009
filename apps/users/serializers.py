@@ -14,7 +14,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class RoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role
-        fields = ('id', 'name',)
+        fields = ('id', 'name', 'user_assignable')
 
 class UserRoleMappingSerializer(serializers.ModelSerializer):
     class Meta:

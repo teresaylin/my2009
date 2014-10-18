@@ -43,9 +43,12 @@
             </form>
             <ul class="list-group">
                 <li class="list-group-item" ng-repeat="userRole in user.user_roles">
-                    <a href ng-click="removeRole(userRole)">
+                    <a href ng-click="removeRole(userRole)" ng-if="userRole.role.user_assignable">
                         <span class="glyphicon glyphicon-remove"></span>
                     </a>
+                    <span ng-if="!userRole.role.user_assignable">
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </span>
                     {{ userRole.role.name }}
                 </li>
             </ul>

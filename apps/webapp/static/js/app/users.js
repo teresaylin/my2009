@@ -7,11 +7,15 @@ module.controller('UserDetailStateCtrl', function($scope, $stateParams, $modal, 
             $scope.user = user;
         });
         
-    // Get list of all roles
-    RoleRepository.list()
-        .success(function(roles) {
-            $scope.roles = roles;
-        });
+    // Get list of roles that user can assign themselves when viewing own profile
+    $scope.$watch('currentUser', function(currentUser) {
+        if(currentUser && currentUser.id == $stateParams.userId) {
+            RoleRepository.list({ 'user_assignable': true })
+                .success(function(roles) {
+                    $scope.roles = roles;
+                });
+        }
+    });
         
     $scope.openEditProfileDialog = function() {
         var modal = $modal.open({

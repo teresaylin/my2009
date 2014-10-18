@@ -67,6 +67,15 @@ class UserViewSet(viewsets.ModelViewSet):
         except Role.DoesNotExist:
             raise RoleNotFound()
         
+        # Check role is user assignable
+        if not role.user_assignable:
+            raise PermissionDenied()
+        
+        # Check user has required parent role
+        if role.required_role:
+            if not role.required_role in [userRole.role for userRole in user.user_roles.all()]:
+                raise PermissionDenied()
+        
         # Create UserRoleMapping object
         try:
             userRole = UserRoleMapping.objects.create(
@@ -89,6 +98,10 @@ class UserViewSet(viewsets.ModelViewSet):
             userRole = user.user_roles.all().get(role__id=roleId)
         except UserRoleMapping.DoesNotExist:
             raise RoleNotFound()
+
+        # Check role is user assignable
+        if not userRole.role.user_assignable:
+            raise PermissionDenied()
         
         # Delete UserRole object
         userRole.delete()
@@ -216,3 +229,16 @@ class CommentViewSet(viewsets.ModelViewSet):
 class RoleViewSet(viewsets.ModelViewSet):
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        if 'user_assignable' in self.request.QUERY_PARAMS:
+            # Return only roles that the current user can assign themselves
+            roles = [userRole.role for userRole in self.request.user.user_roles.all()]
+            queryset = queryset.filter(
+                user_assignable=True,
+                required_role__in=roles
+            )
+
+        return queryset

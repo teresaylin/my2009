@@ -6,6 +6,8 @@ from django.template.loader import get_template
 from django.core.mail import send_mass_mail
 from django.core.urlresolvers import reverse
 from django.contrib.messages import ERROR, WARNING
+from django.shortcuts import render_to_response, redirect
+
 from apps.users.models import Team, UserTeamMapping, Role, UserRoleMapping, UserProfile, Milestone, TaskForce, UserTaskForceMapping
 
 class TeamAdmin(admin.ModelAdmin):
@@ -30,6 +32,7 @@ admin.site.register(UserTeamMapping, UserTeamMappingAdmin)
 
 class RoleAdmin(admin.ModelAdmin):
     display = ('name',)
+    list_display = ('name', 'required_role', 'user_assignable')
 
 admin.site.register(Role, RoleAdmin)
 
@@ -60,8 +63,22 @@ class UserTaskForceMappingAdmin(admin.ModelAdmin):
 
 admin.site.register(UserTaskForceMapping, UserTaskForceMappingAdmin)
 
+from django.conf.urls import patterns, url
+from django.views.generic import TemplateView
+from django import forms
+from django.template import RequestContext
+from django.contrib import messages
+from django.db import IntegrityError
+
 class CustomUserAdmin(UserAdmin):
-    actions = ['sendWelcomeEmail']
+    actions = ['sendWelcomeEmail', 'assignRole']
+
+    def get_urls(self):
+        # Add "assign role" view to available URLs
+        urls = super().get_urls()
+        return patterns('',
+            url(r'^assign_role/$', self.__class__.AssignRoleView.as_view(), name='assign-role'),
+        ) + urls
 
     def sendWelcomeEmail(self, request, queryset):
         """Generates a random password for, and sends a welcome e-mail to, the selected users"""
@@ -97,6 +114,58 @@ class CustomUserAdmin(UserAdmin):
             self.message_user(request, 'No e-mails sent', WARNING)
 
     sendWelcomeEmail.short_description = 'Send welcome e-mail'
+
+    class AssignRoleForm(forms.Form):
+        users = forms.ModelMultipleChoiceField(queryset=User.objects.all())
+        role = forms.ModelChoiceField(queryset=Role.objects.all())
+    
+    class AssignRoleView(TemplateView):
+        template_name = 'users/admin/assign-role.html'
+        
+        def post(self, request):
+            form = CustomUserAdmin.AssignRoleForm(request.POST)
+            
+            if form.is_valid():
+                users = form.cleaned_data['users']
+                role = form.cleaned_data['role']
+                
+                # Assign roles
+                count = 0
+                for user in users:
+                    # Create UserRoleMapping object
+                    try:
+                        userRole = UserRoleMapping.objects.create(
+                            user=user,
+                            role=role,
+                            status=''
+                        )
+                        count += 1
+                    except IntegrityError:
+                        # User already has role
+                        messages.add_message(request, messages.WARNING, "Role already assigned to user '%s'" % (user.username,))
+                
+                # Send user message and redirect to user list
+                if count > 0:
+                    messages.add_message(request, messages.INFO, 'Role assigned to %d users' % (count,))
+                else:
+                    messages.add_message(request, messages.WARNING, 'No users were assigned roles')
+                return redirect('admin:auth_user_changelist')
+
+            context = super().get_context_data()
+            context['form'] = form
+            return self.render_to_response(context)
+            
+    def assignRole(self, request, queryset):
+        """Assign a role to selected users"""
+        form = self.__class__.AssignRoleForm(initial={
+            'users': queryset
+        })
+        return render_to_response('users/admin/assign-role.html', {
+            'form': form,
+            'users': queryset
+        }, context_instance=RequestContext(request))
+        
+    assignRole.short_description = 'Assign role'
 
 admin.site.unregister(User)
 admin.site.register(User, CustomUserAdmin)

@@ -30,6 +30,8 @@ class UserTeamMapping(models.Model):
 
 class Role(models.Model):
     name = models.CharField(max_length=50)
+    required_role = models.ForeignKey('Role', null=True, blank=True, related_name='required_by')
+    user_assignable = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
