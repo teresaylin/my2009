@@ -40,6 +40,11 @@ module.factory('EventRepository', function($http) {
                 'user_id': userId
             });
         },
+        addAttendeeTaskforce: function(id, taskforceId) {
+            return $http.put(baseUrl+id+'/add_attendee_taskforce/', {
+                'taskforce_id': taskforceId
+            });
+        },
         removeAttendee: function(id, userId) {
             return $http.put(baseUrl+id+'/remove_attendee/', {
                 'user_id': userId

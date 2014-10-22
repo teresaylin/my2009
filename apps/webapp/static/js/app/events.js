@@ -102,6 +102,14 @@ module.controller('EventDialogCtrl', function($scope, $modalInstance, EventRepos
             });
     };
 
+    $scope.addAttendeeTaskforce = function(taskforce) {
+        EventRepository.addAttendeeTaskforce($scope.event.id, taskforce.id)
+            .success(function(data) {
+                $scope.event.attendees = data.attendees;
+                changesMade = true;
+            });
+    };
+
     $scope.removeAttendee = function(user) {
         EventRepository.removeAttendee($scope.event.id, user.id)
             .success(function() {

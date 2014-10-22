@@ -8,8 +8,8 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError
 from rest_framework.response import Response
 
-from apps.users.exceptions import UserNotFound, TeamNotFound
-from apps.users.models import Team
+from apps.users.exceptions import UserNotFound, TeamNotFound, TaskForceNotFound
+from apps.users.models import Team, TaskForce
 
 from apps.files.views import ModelWithFilesViewSetMixin
 
@@ -82,6 +82,31 @@ class EventViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
             raise EventAlreadyHasAttendee()
         
         return Response({})
+
+    @action(methods=['PUT'])
+    def add_attendee_taskforce(self, request, pk=None):
+        event = self.get_object()
+        
+        # Get TaskForce object
+        try:
+            taskforceId = request.DATA.get('taskforce_id', None)
+            taskforce = TaskForce.objects.get(id=taskforceId)
+        except TaskForce.DoesNotExist:
+            raise TaskForceNotFound()
+        
+        # Create EventAttendee objects for taskforce's users
+        for user in taskforce.members.all():
+            try:
+                EventAttendee.objects.create(
+                    event=event,
+                    user=user
+                )
+            except IntegrityError:
+                # Ignore members of the taskforce that are already attendees
+                pass
+            
+        # Return updated event
+        return Response(EventSerializer(event, context={'request': request}).data)
 
     @action(methods=['PUT'])
     def remove_attendee(self, request, pk=None):

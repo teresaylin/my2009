@@ -71,11 +71,23 @@
         </tab>
         <tab>
             <tab-heading><span class="fa fa-users"></span></tab-heading>
+            <h4>Attendees</h4>
+
             <form class="form-inline" ng-if="event._permissions.update">
+                <p>Add user</p>
                 <user-picker user="newAttendeeUser"></user-picker>
                 <button class="btn btn-sm btn-primary"
                     ng-click="addAttendee(newAttendeeUser); newAttendeeUser = null"
                     ng-disabled="!newAttendeeUser">
+                Add</button>
+            </form> 
+
+            <form class="form-inline" ng-if="event._permissions.update">
+                <p>Add task force</p>
+                <taskforce-picker taskforce="newAttendeeTaskforce"></taskforce-picker>
+                <button class="btn btn-sm btn-primary"
+                    ng-click="addAttendeeTaskforce(newAttendeeTaskforce); newAttendeeTaskforce = null"
+                    ng-disabled="!newAttendeeTaskforce">
                 Add</button>
             </form> 
             
