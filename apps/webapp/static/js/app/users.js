@@ -311,7 +311,7 @@ module.directive('userPicker', function(NavFilterService, UserRepository) {
     };
 });
 
-module.directive('taskforcePicker', function(TaskForceRepository) {
+module.directive('taskforcePicker', function(TaskForceRepository, NavFilterService) {
     return {
         restrict: 'E',
         scope: {
@@ -320,13 +320,16 @@ module.directive('taskforcePicker', function(TaskForceRepository) {
         templateUrl: 'components/taskforce-picker.html',
         link: function(scope, element, attrs) {
             scope.search = function(q) {
-                return TaskForceRepository.list({
-                    search_name: q,
-                    page_size: 10
-                })
-                    .then(function(res){
-                        return res.data.results;
-                    });
+                if(NavFilterService.team) {
+                    return TaskForceRepository.list({
+                        search_name: q,
+                        page_size: 10,
+                        team: NavFilterService.team.id // Restrict taskforce search to currently active team
+                    })
+                        .then(function(res){
+                            return res.data.results;
+                        });
+                }
             };
         }
     };
