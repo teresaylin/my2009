@@ -1,4 +1,4 @@
-from .common import *
+from .dev import *
 
 # Put local settings here
 
