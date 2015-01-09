@@ -8,7 +8,7 @@ def userPathToDropboxPath(path, user):
 
     # Check first directory of path is the team name of a team the user is a member of (case insensitive)
     teamName = path.split('/', 2)[1].lower()
-    if not teamName in [team.color.lower() for team in user.teams.all()]:
+    if not teamName in [team.name.lower() for team in user.teams.all()]:
         raise PermissionDenied()
     
     # Prepend app base directory

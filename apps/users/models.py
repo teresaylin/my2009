@@ -9,12 +9,12 @@ from random import SystemRandom
 rngSource = SystemRandom()
 
 class Team(models.Model):
-    color = models.CharField(max_length=10, blank = False)
+    name = models.CharField(max_length=50, blank=False)
     team_email = models.EmailField(max_length=30)
     users = models.ManyToManyField(User, through='UserTeamMapping', related_name='teams')
 
     def __str__(self):
-        return self.color
+        return self.name
 
 class UserTeamMapping(models.Model):
     class Meta:
@@ -25,7 +25,7 @@ class UserTeamMapping(models.Model):
     section = models.CharField(max_length=15, blank = True)
 
     def __str__(self):
-        return self.user.first_name + " " + self.user.last_name + " ("+ self.user.email +") - " + self.team.color + "/ " + self.section
+        return self.user.first_name + " " + self.user.last_name + " ("+ self.user.email +") - " + self.team.name + "/ " + self.section
         #return u"%s %s (%s): %s" % (self.user.first_name, self.user.last_name, self.user.email, self.team.color)
 
 class Role(models.Model):

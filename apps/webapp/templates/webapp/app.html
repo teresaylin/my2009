@@ -19,7 +19,7 @@
 {% block pageContent %}
 <section id="container">
     <!-- Top bar -->
-    {% verbatim %}<header class="header black-bg" ng-class="'team-'+activeTeam.color|lowercase" ng-controller="NavFilterCtrl">{% endverbatim %}
+    {% verbatim %}<header class="header black-bg" ng-class="'team-'+activeTeam.name|lowercase" ng-controller="NavFilterCtrl">{% endverbatim %}
         <div class="sidebar-toggle-box">
             <div class="fa fa-bars" tooltip="Toggle navigation" tooltip-placement="right" ng-click="toggleSidebar()"></div>
         </div>
@@ -30,10 +30,10 @@
         {% verbatim %}
         <div class="nav-filter">
             <span class="dropdown">
-                <a href class="dropdown-toggle">{{ activeTeam.color }}</a>
+                <a href class="dropdown-toggle">{{ activeTeam.name }}</a>
                 <ul class="dropdown-menu" ng-visible="teamSelectOpen">
                     <li ng-repeat="team in teams">
-                        <a href ng-click="selectTeam(team)">{{ team.color }}</a>
+                        <a href ng-click="selectTeam(team)">{{ team.name }}</a>
                     </li>
                 </ul>
             </span>

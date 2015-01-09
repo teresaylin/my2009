@@ -11,7 +11,7 @@ from django.shortcuts import render_to_response, redirect
 from apps.users.models import Team, UserTeamMapping, Role, UserRoleMapping, UserProfile, Milestone, TaskForce, UserTaskForceMapping
 
 class TeamAdmin(admin.ModelAdmin):
-    list_display = ('color', 'team_email')
+    list_display = ('name', 'team_email')
 
 admin.site.register(Team, TeamAdmin)
 

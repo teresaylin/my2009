@@ -138,7 +138,7 @@ module.directive('filePicker', function(FileRepository, NavFilterService) {
         link: function(scope, element, attrs) {
             scope.search = function(q) {
                 if(NavFilterService.team) {
-                    return FileRepository.search('/'+NavFilterService.team.color, q)
+                    return FileRepository.search('/'+NavFilterService.team.name, q)
                         .then(function(res) {
                             return res.data;
                         });
@@ -219,7 +219,7 @@ module.controller('FileBrowserCtrl', function($scope, $modal, NavFilterService, 
     // Change to team's root directory when nav filter team changes
     $scope.$on('navFilterChanged', function(event, changed) {
         if('team' in changed) {
-            $scope.setDirectory('/'+NavFilterService.team.color);
+            $scope.setDirectory('/'+NavFilterService.team.name);
         }
     });
     
@@ -447,7 +447,7 @@ module.controller('FileBrowserCtrl', function($scope, $modal, NavFilterService, 
     
     // Default to browsing team's root directory
     if(NavFilterService.team) {
-        $scope.setDirectory('/'+NavFilterService.team.color);
+        $scope.setDirectory('/'+NavFilterService.team.name);
     }
 });
 
