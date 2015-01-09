@@ -19,7 +19,7 @@
 {% block pageContent %}
 <section id="container">
     <!-- Top bar -->
-    {% verbatim %}<header class="header black-bg" ng-class="'team-'+activeTeam.name|lowercase" ng-controller="NavFilterCtrl">{% endverbatim %}
+    {% verbatim %}<header class="header black-bg" ng-class="activeTeam.color ? 'team-'+activeTeam.color : null" ng-controller="NavFilterCtrl">{% endverbatim %}
         <div class="sidebar-toggle-box">
             <div class="fa fa-bars" tooltip="Toggle navigation" tooltip-placement="right" ng-click="toggleSidebar()"></div>
         </div>
