@@ -190,6 +190,7 @@ module.directive('taskAssignees', function() {
                     });
                     names = names.join(', ');
                     element.text(names);
+                    element.attr('title', names);
                 }
             });
         }

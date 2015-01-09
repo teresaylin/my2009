@@ -18,7 +18,7 @@
                 <span class="glyphicon" ng-class="{'glyphicon-chevron-down': isOpen, 'glyphicon-chevron-right': !isOpen}"></span>
             </a>
             <span class="task-title-sp">
-                <a href ng-click="openTask(task)">{{ task.name }}</a>
+                <a href ng-click="openTask(task)" ng-attr-title="{{ task.name }}">{{ task.name }}</a>
             </span>
         </div>
     </div>
