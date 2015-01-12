@@ -31,7 +31,7 @@ class TeamSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'full_name', 'profile', 'user_roles', 'teams', 'is_online')
+        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'full_name', 'is_superuser', 'profile', 'user_roles', 'teams', 'is_online')
         
     profile = UserProfileSerializer()
     user_roles = UserRoleMappingSerializer()

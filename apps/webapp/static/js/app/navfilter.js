@@ -52,11 +52,31 @@ module.factory('NavFilterService', function($rootScope) {
 });
 
 module.controller('NavFilterCtrl', function($scope, NavFilterService, TeamRepository, UserRepository, TaskForceRepository) {
-    // Get list of all teams user belongs to
-    TeamRepository.list({ current: true })
-        .success(function(teams) {
-            $scope.teams = teams;
-        });
+    var initUser = function(user) {
+        var filter = {};
+        
+        // Restrict list to teams user belongs to if non-superuser; otherwise show all
+        if(!user.is_superuser) {
+            filter.current = true;
+        }
+
+        // Get list of teams
+        TeamRepository.list(filter)
+            .success(function(teams) {
+                $scope.teams = teams;
+                
+                // Select first team by default
+                NavFilterService.setTeam(teams[0]);
+            });
+    };
+    
+    // If we already have the currentUser object, initialize; otherwise wait for event to be fired
+    if('currentUser' in $scope && $scope.currentUser) {
+        initUser($scope.currentUser);
+    }
+    $scope.$on('gotCurrentUser', function(event, user) {
+        initUser(user);
+    });
 
     var setTeam = function(team) {
         // Check if the current user is in this team

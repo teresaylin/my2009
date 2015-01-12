@@ -118,7 +118,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
         ;
 });
 
-app.controller('AppCtrl', function($scope, $modal, NavFilterService, UserRepository) {
+app.controller('AppCtrl', function($rootScope, $scope, $modal, NavFilterService, UserRepository) {
     $scope.$on('serverError', function(ev, response) {
         var modal = $modal.open({
             backdrop: 'static',
@@ -142,11 +142,10 @@ app.controller('AppCtrl', function($scope, $modal, NavFilterService, UserReposit
 
     // Get current user
     UserRepository.getCurrentUser()
-        .success(function(user) {
-            $scope.currentUser = user[0];
-            
-            // Initialize NavFilter to show current user/team
-            NavFilterService.setTeam(user[0].teams[0]);
+        .success(function(data) {
+            var user = data[0];
+            $scope.currentUser = user;
+            $rootScope.$broadcast('gotCurrentUser', user);
         });
         
     $scope.toggleSidebar = function() {
