@@ -23,7 +23,7 @@ class Task(SoftDeleteableModel):
     due_time = models.DateTimeField(null=True, blank=True)
     state = models.CharField(max_length=50, choices=STATES, blank=True)
     completed_by = models.ForeignKey(User, related_name='completed_tasks', null=True, blank=True)
-    comment_thread = models.OneToOneField(CommentThread)
+    comment_thread = models.OneToOneField(CommentThread, editable=False)
 
     assigned_taskforces = models.ManyToManyField(TaskForce, blank=True, related_name='assigned_tasks')
     assigned_users = models.ManyToManyField(User, blank=True)

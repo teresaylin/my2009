@@ -18,7 +18,7 @@ class Event(SoftDeleteableModel):
     end = models.DateTimeField()
     location = models.CharField(max_length=100, blank=True)
     description = models.TextField(blank=True)
-    comment_thread = models.OneToOneField(CommentThread)
+    comment_thread = models.OneToOneField(CommentThread, editable=False)
 
     attendees = models.ManyToManyField(User, through='EventAttendee')
 
