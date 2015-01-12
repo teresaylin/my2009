@@ -9,7 +9,8 @@ from ..models import Event
 class EventSerializer(ObjectPermissionsSerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = Event
-        fields = ('id', 'title', 'owner', 'start', 'end', 'location', 'description', 'comment_thread', 'attendees', 'files')
+        fields = ('id', 'title', 'owner', 'start', 'end', 'is_global',
+                  'location', 'description', 'comment_thread', 'attendees', 'files')
     
     owner = UserSerializer(read_only=True)
     attendees = UserSerializer(read_only=True)

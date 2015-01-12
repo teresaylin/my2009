@@ -206,6 +206,13 @@ module.controller('CalendarCtrl', function($scope, $modal, $state, EventReposito
 
             EventRepository.list(query)
                 .success(function(events) {
+                    angular.forEach(events, function(event) {
+                        // Mark global events as different colour
+                        if(event.is_global) {
+                            event.color = 'red';
+                        }
+                    });
+                    
                     callback(events);
                 });
         };

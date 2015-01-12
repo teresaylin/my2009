@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.contrib.auth.models import User
 from apps.events.models import Event
 from apps.tasks.models import Task
@@ -16,8 +17,8 @@ def filterQueryset(queryset, user):
         # All comments visible to all users
         return queryset
     elif cls == Event:
-        # Only show events belonging to user's teams
-        return queryset.filter(owner__teams__in=user.teams.all())
+        # Only show events belonging to user's teams, or any events marked as global
+        return queryset.filter(Q(owner__teams__in=user.teams.all()) | Q(is_global=True))
     elif cls == Milestone:
         # All milestones visible to all users
         return queryset

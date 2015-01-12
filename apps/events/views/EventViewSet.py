@@ -48,7 +48,7 @@ class EventViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
                 raise ParseError('Invalid team ID')
             except Team.DoesNotExist:
                 raise TeamNotFound()
-            queryset = queryset.filter(owner__teams__in=[team])
+            queryset = queryset.filter(Q(owner__teams__in=[team]) | Q(is_global=True))
         
         return queryset
     

@@ -16,6 +16,7 @@ class Event(SoftDeleteableModel):
     owner = models.ForeignKey(User, related_name='events_owned')
     start = models.DateTimeField()
     end = models.DateTimeField()
+    is_global = models.BooleanField(default=False)
     location = models.CharField(max_length=100, blank=True)
     description = models.TextField(blank=True)
     comment_thread = models.OneToOneField(CommentThread, editable=False)
