@@ -1,0 +1,20 @@
+{% extends 'admin/base_site.html' %}
+
+{% block content %}
+
+<h1>Clone tasks</h1>
+
+<p>The following tasks will be cloned for all users currently in a team:</p>
+<ul>
+    {% for task in tasks %}
+        <li>{{ task.name }}</li>
+    {% endfor %}
+</ul>
+
+<form action="{% url 'admin:clone-tasks' %}" method="post">
+    {% csrf_token %}
+    {{ form.tasks.as_hidden }}
+    <input type="submit" value="Clone">
+</form>
+
+{% endblock %}

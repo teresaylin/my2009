@@ -24,6 +24,7 @@ class Task(SoftDeleteableModel):
     state = models.CharField(max_length=50, choices=STATES, blank=True)
     completed_by = models.ForeignKey(User, related_name='completed_tasks', null=True, blank=True)
     comment_thread = models.OneToOneField(CommentThread, editable=False)
+    prototype = models.ForeignKey('Task', blank=True, null=True, related_name='prototype_for')
 
     assigned_taskforces = models.ManyToManyField(TaskForce, blank=True, related_name='assigned_tasks')
     assigned_users = models.ManyToManyField(User, blank=True)
@@ -48,5 +49,20 @@ class Task(SoftDeleteableModel):
         # Delete sub-tasks
         for subtask in self.subtasks.all():
             subtask.delete()
+            
+        # Delete any tasks created with this task as the prototype
+        for task in self.prototype_for.all():
+            task.delete()
         
         return super().delete(*args, **kwargs)
+    
+    def clone(self, owner):
+        return self.__class__(
+            name=self.name,
+            parent=self.parent,
+            owner=owner,
+            description=self.description,
+            due_time=self.due_time,
+            state=self.state,
+            prototype=self
+        )
