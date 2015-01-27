@@ -1,0 +1,30 @@
+<div class="modal-header">
+    <h3 class="modal-title">Repeat event</h3>
+</div>
+<div class="modal-body">
+    <form name="form" class="form-horizontal">
+        <div class="form-group">
+            <label for="event-repeat-interval" class="col-sm-3 control-label">Every</label>
+            <div class="col-sm-6">
+                <input ng-model="$parent.interval" type="number" min="1" id="event-repeat-interval" class="form-control">
+            </div>
+            <div class="col-sm-3">
+                <select ng-model="$parent.intervalUnit" class="form-control">
+                    <option value="d">days</option>
+                    <option value="w">weeks</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="event-repeat-count" class="col-sm-3 control-label">for a total of</label>
+            <div class="col-sm-6">
+                <input ng-model="$parent.count" type="number" min="1" id="event-repeat-count" class="form-control">
+            </div>
+            <div class="col-sm-3 control-label">new events</div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="repeat(form)">Repeat</button>
+    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>

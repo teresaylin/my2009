@@ -59,6 +59,13 @@ module.factory('EventRepository', function($http) {
             return $http.put(baseUrl+id+'/remove_file/', {
                 'path': path
             });
+        },
+        repeat: function(id, interval, intervalUnit, count) {
+            return $http.put(baseUrl+id+'/repeat/', {
+                'interval': interval,
+                'intervalUnit': intervalUnit,
+                'count': count,
+            });
         }
     };
 });

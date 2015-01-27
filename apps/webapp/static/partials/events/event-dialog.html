@@ -108,6 +108,7 @@
     </tabset>
 </div>
 <div class="modal-footer">
+    <button class="btn" ng-click="repeat()" ng-if="event._permissions.update && !editing">Repeat</button>
     <button class="btn btn-primary" ng-click="edit()" ng-if="event._permissions.update && !editing">Edit</button>
     <button class="btn btn-danger" ng-click="delete()" ng-if="event._permissions.delete && editing && !creating">Delete</button>
     <button class="btn btn-primary" ng-click="update(form)" ng-disabled="form.$invalid || !form.$dirty" ng-if="editing && !creating">Save</button>

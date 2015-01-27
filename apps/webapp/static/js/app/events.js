@@ -142,6 +142,13 @@ module.controller('EventDialogCtrl', function($scope, $modalInstance, EventRepos
                 FileDialogService.openFile(file);
             });
     };
+    
+    $scope.repeat = function() {
+        // Open "repeat event" dialog
+        EventDialogService.repeatEvent(event).result
+            .then(function() {
+            });
+    };
 });
 
 module.factory('EventDialogService', function($modal) {
@@ -190,7 +197,42 @@ module.factory('EventDialogService', function($modal) {
             });
             
             return modal;
-        }
+        },
+        repeatEvent: function(event) {
+            var modal = $modal.open({
+                backdrop: 'static',
+                templateUrl: partial('events/repeat-dialog.html'),
+                controller: function($rootScope, $scope, $modalInstance, EventRepository, event) {
+                    $scope.interval = 1;
+                    $scope.intervalUnit = 'd';
+                    $scope.count = 1;
+                    
+                    $scope.repeat = function(form) {
+                        // Repeat event
+                        EventRepository.repeat(
+                            event.id,
+                            $scope.interval, $scope.intervalUnit,
+                            $scope.count
+                        )
+                            .success(function() {
+                                $rootScope.$broadcast('refreshEvents');
+                                $modalInstance.close();
+                            });
+                    };
+
+                    $scope.cancel = function() {
+                        $modalInstance.dismiss('cancel');
+                    };
+                },
+                resolve: {
+                    event: function() {
+                        return event;
+                    }
+                }
+            });
+            
+            return modal;
+        },
     };
 });
 
@@ -274,6 +316,13 @@ module.controller('CalendarCtrl', function($scope, $modal, $state, EventReposito
             }
         });
     };
+    
+    $scope.$on('refreshEvents', function() {
+        // Reload events
+        if('calendar' in $scope) {
+            $scope.calendar.fullCalendar('refetchEvents');
+        }
+    });
 });
 
 module.directive('calendar', function() {

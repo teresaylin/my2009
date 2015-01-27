@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.db.models import Q
@@ -121,5 +123,53 @@ class EventViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
         
         # Remove EventAttendee object
         eventAttendee.delete()
+        
+        return Response({})
+
+    @action(methods=['PUT'])
+    def repeat(self, request, pk=None):
+        event = self.get_object()
+        
+        # Get interval
+        try:
+            interval = int(request.DATA['interval'])
+            if interval < 1:
+                raise ValueError()
+        except:
+            raise ParseError('Invalid interval')
+
+        # Get interval unit
+        try:
+            unit = request.DATA['intervalUnit']
+            if not unit in ['d', 'w']:
+                raise ValueError()
+        except:
+            raise ParseError('Invalid intervalUnit')
+
+        # Get count
+        try:
+            count = int(request.DATA['count'])
+            if count < 1:
+                raise ValueError()
+        except:
+            raise ParseError('Invalid count')
+        
+        # Convert interval to timedelta object
+        if unit == 'w':
+            days = interval * 7
+        else:
+            days = interval
+        intv = timedelta(days=days)
+        
+        for i in range(count):
+            # Clone event
+            newEvent = event.clone(request.user)
+
+            # Adjust start/end times
+            newEvent.start += intv * (i+1)
+            newEvent.end += intv * (i+1)
+            
+            # Save
+            newEvent.save()
         
         return Response({})

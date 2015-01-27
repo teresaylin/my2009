@@ -40,3 +40,17 @@ class Event(SoftDeleteableModel):
         # Delete comment thread
         self.comment_thread.delete()
         return super().delete(*args, **kwargs)
+    
+    def clone(self, owner):
+        # Ensure only superusers can create global events
+        is_global = self.is_global and owner.is_superuser
+        
+        return self.__class__(
+            title=self.title,
+            owner=owner,
+            start=self.start,
+            end=self.end,
+            is_global=is_global,
+            location=self.location,
+            description=self.description
+        )
