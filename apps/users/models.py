@@ -12,6 +12,7 @@ class Team(models.Model):
     name = models.CharField(max_length=50, blank=False)
     team_email = models.EmailField(max_length=30)
     color = models.CharField(max_length=20, blank=True)
+    logo_filename = models.CharField(max_length=30, blank=True)
     users = models.ManyToManyField(User, through='UserTeamMapping', related_name='teams')
 
     def __str__(self):
