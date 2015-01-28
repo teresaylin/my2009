@@ -38,7 +38,7 @@ class TaskAdmin(admin.ModelAdmin):
                 for task in tasks:
                     for user in users:
                         # Create new task
-                        newTask = task.clone(user)
+                        newTask = task.clone(request.user)
                         newTask.save()
                         
                         # Assign user to task
