@@ -24,7 +24,7 @@
             <div class="fa fa-bars" tooltip="Toggle navigation" tooltip-placement="right" ng-click="toggleSidebar()"></div>
         </div>
         <!-- Logo -->
-        <a ui-sref="dashboard" class="logo">
+        <a ui-sref="dashboard" class="logo hidden-xs">
             <img ng-src="{% static 'img/logos/' %}{% verbatim %}{{ activeTeam.logo_filename ? activeTeam.logo_filename : 'logo.png' }}{% endverbatim %}">
         </a>
         
@@ -75,12 +75,14 @@
         {% endverbatim %}
 
         <!-- Logout -->
-        <div class="top-menu">
+        <div class="top-menu hidden-xs">
             <ul class="nav pull-right top-menu">
                 <li><a class="logout" ui-sref="settings">
                 	<span class="fa fa-cog"></span> Settings
                 </a></li>
-                <li><a class="logout" href="{% url 'webapp:logout' %}">Logout</a></li>
+                <li><a class="logout" href="{% url 'webapp:logout' %}">
+                    <span class="fa fa-sign-out"></span> Logout
+                </a></li>
             </ul>
         </div>
     </header>
@@ -99,32 +101,38 @@
                   
                 <li class="mt">
                     <a ui-sref="dashboard">
-                        <i class="fa fa-dashboard"></i>
-                        <span>Dashboard</span>
+                        <i class="fa fa-dashboard"></i> <span>Dashboard</span>
                     </a>
                 </li>
                 <li>
                     <a ui-sref="tasks">
-                        <i class="fa fa-tasks"></i>
-                        <span>Tasks</span>
+                        <i class="fa fa-tasks"></i> <span>Tasks</span>
                     </a>
                 </li>
                 <li>
                     <a ui-sref="team">
-                        <i class="fa fa-users"></i>
-                        <span>Team</span>
+                        <i class="fa fa-users"></i> <span>Team</span>
                     </a>
                 </li>
                 <li>
                     <a ui-sref="events">
-                        <i class="fa fa-calendar"></i>
-                        <span>Events</span>
+                        <i class="fa fa-calendar"></i> <span>Events</span>
                     </a>
                 </li>
                 <li>
                     <a ui-sref="files">
-                        <i class="fa fa-folder"></i>
-                        <span>Files</span>
+                        <i class="fa fa-folder"></i> <span>Files</span>
+                    </a>
+                </li>
+                <!-- Mobile only -->
+                <li class="visible-xs">
+                    <a ui-sref="settings">
+                	    <i class="fa fa-cog"></i> <span>Settings</span>
+                    </a>
+                </li>
+                <li class="visible-xs">
+                    <a class="logout" href="{% url 'webapp:logout' %}">
+                	    <i class="fa fa-sign-out"></i> <span>Logout</span>
                     </a>
                 </li>
             </ul>
