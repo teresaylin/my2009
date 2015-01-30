@@ -145,7 +145,7 @@ module.controller('EventDialogCtrl', function($scope, $modalInstance, EventRepos
     
     $scope.repeat = function() {
         // Open "repeat event" dialog
-        EventDialogService.repeatEvent(event).result
+        EventDialogService.repeatEvent($scope.event).result
             .then(function() {
             });
     };
