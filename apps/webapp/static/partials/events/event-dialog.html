@@ -27,7 +27,8 @@
                         {{ event.start|date:'fullDate' }}
                     </span>
                     <timepicker ng-if="editing" ng-model="event.start" ng-required="true"></timepicker>
-                    <input ng-if="editing" type="text" class="form-control" placeholder="Start date" datepicker-popup ng-model="event.start" ng-required="true" />
+                    <input ng-if="editing" type="text" class="form-control" placeholder="Start date" datepicker-popup
+                        name="startDate" ng-model="event.start" ng-required="true" ng-change="startDateChanged(form)" />
                 </div>
                 <div class="col-xs-2">
                     <p ng-style="{ 'line-height': editing ? '102px' : null }">to</p>
@@ -38,7 +39,8 @@
                         {{ event.end|date:'fullDate' }}
                     </span>
                     <timepicker ng-if="editing" ng-model="event.end" ng-required="true"></timepicker>
-                    <input ng-if="editing" type="text" class="form-control" placeholder="End date" datepicker-popup ng-model="event.end" ng-required="true" />
+                    <input ng-if="editing" type="text" class="form-control" placeholder="End date" datepicker-popup
+                        name="endDate" ng-model="event.end" ng-required="true" />
                 </div>
             </div>
         </fieldset>

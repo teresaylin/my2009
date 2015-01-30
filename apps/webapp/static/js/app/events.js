@@ -149,6 +149,18 @@ module.controller('EventDialogCtrl', function($scope, $modalInstance, EventRepos
             .then(function() {
             });
     };
+    
+    $scope.startDateChanged = function(form) {
+        // Match end date to start date, unless end date has been changed by the user
+        if(!form.endDate.$dirty) {
+            var start = new Date($scope.event.start);
+            var end = new Date($scope.event.end);
+            end.setDate(start.getDate());
+            end.setMonth(start.getMonth());
+            end.setFullYear(start.getFullYear());
+            $scope.event.end = end;
+        }
+    };
 });
 
 module.factory('EventDialogService', function($modal) {
