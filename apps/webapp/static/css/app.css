@@ -191,6 +191,12 @@ hr {
   max-height: 500px;
   overflow-y: auto; }
 
+.progress-bar-invisible {
+  background: transparent;
+  color: inherit;
+  box-shadow: none;
+  -webkit-box-shadow: none; }
+
 /*---------- Files ----------*/
 .filebrowser .filebrowser-header {
   line-height: 30px; }

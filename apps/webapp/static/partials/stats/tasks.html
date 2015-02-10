@@ -1,0 +1,38 @@
+<h1>Stats</h1>
+<hr>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="content-panel">
+            <div class="panel-heading">
+                <h2>Tasks</h2>
+            </div>
+            <div class="panel-body">
+                <div>
+                    <h3>Assigned to class</h3>
+                    <ul>
+                        <li ng-repeat="task in stats">
+                            <a href ng-click="isOpen = !isOpen; toggleTask(task, isOpen)">
+                                <span class="glyphicon" ng-class="{'glyphicon-chevron-down': isOpen, 'glyphicon-chevron-right': !isOpen}"></span>
+                            </a>
+                            {{ task.task.name }}
+
+                            <progress-proportional value="task.total.completed" total="task.total.assigned"></progress-proportional>
+                            
+                            <div collapse="!isOpen">
+                                <div class="row" ng-repeat="team in task.teams">
+                                    <div class="col-md-8">
+                                        <progress-proportional value="team.completed" total="team.assigned"></progress-proportional>
+                                    </div>
+                                    <div class="col-md-4">
+                                        {{ team.team.name }}
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -187,6 +187,14 @@ hr {
     overflow-y: auto;
 }
 
+.progress-bar-invisible {
+    background: transparent;
+    color: inherit;
+    
+    box-shadow: none;
+    -webkit-box-shadow: none;
+}
+
 /*---------- Files ----------*/
 
 .filebrowser {

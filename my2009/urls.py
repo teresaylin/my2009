@@ -11,6 +11,7 @@ from apps.tasks import views as taskViews
 
 from apps.webapp import urls as webappUrls
 from apps.files import urls as filesUrls
+from apps.stats import urls as statsUrls
 
 # API router
 router = routers.DefaultRouter()
@@ -40,5 +41,6 @@ urlpatterns = patterns('',
     
     # API
     url(r'^api/files/', include(filesUrls, namespace='files')),
+    url(r'^api/stats/', include(statsUrls, namespace='stats')),
     url(r'^api/', include(router.urls)),
 )

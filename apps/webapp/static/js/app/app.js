@@ -8,7 +8,9 @@ var app = angular.module('app', [
     'navfilter',
     'repositories',
     'tasks',
-    'users'
+    'users',
+    
+    'stats'
 ]);
 
 app.factory('HttpErrorInterceptor', function($q, $rootScope) {

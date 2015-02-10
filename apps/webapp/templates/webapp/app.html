@@ -13,6 +13,8 @@
     <script src="{% static 'js/app/tasks.js' %}"></script>
     <script src="{% static 'js/app/users.js' %}"></script>
 
+    <script src="{% static 'js/app/stats.js' %}"></script>
+
     <script src="{% static 'js/app/app.js' %}"></script>
 {% endblock %}
 
@@ -242,6 +244,17 @@
             typeahead-min-length="2"
             typeahead-editable="false" 
             class="form-control">
+    </div>
+</script>
+
+<script type="text/ng-template" id="components/progress-proportional.html">
+    <div class="progress">
+        <div class="progress-bar" ng-style="{ width: valuePct+'%' }">
+            <span>{{ value }}</span>
+        </div>
+        <div class="progress-bar progress-bar-invisible" ng-style="{ width: remainPct+'%' }">
+            <span>{{ remain }}</span>
+        </div>
     </div>
 </script>
 
