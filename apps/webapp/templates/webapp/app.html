@@ -126,6 +126,13 @@
                         <i class="fa fa-folder"></i> <span>Files</span>
                     </a>
                 </li>
+                {% if user.is_superuser %}
+                <li>
+                    <a ui-sref="stats.tasks">
+                        <i class="fa fa-bar-chart-o"></i> <span>Stats</span>
+                    </a>
+                </li>
+                {% endif %}
                 <!-- Mobile only -->
                 <li class="visible-xs">
                     <a ui-sref="settings">

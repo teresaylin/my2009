@@ -10,7 +10,7 @@
             <div class="panel-body">
                 <div>
                     <h3>Assigned to class</h3>
-                    <ul>
+                    <ul class="list-unstyled">
                         <li ng-repeat="task in stats">
                             <a href ng-click="isOpen = !isOpen; toggleTask(task, isOpen)">
                                 <span class="glyphicon" ng-class="{'glyphicon-chevron-down': isOpen, 'glyphicon-chevron-right': !isOpen}"></span>
@@ -21,7 +21,8 @@
                             
                             <div collapse="!isOpen">
                                 <div class="row" ng-repeat="team in task.teams">
-                                    <div class="col-md-8">
+                                    <div class="col-md-1"></div>
+                                    <div class="col-md-7">
                                         <progress-proportional value="team.completed" total="team.assigned"></progress-proportional>
                                     </div>
                                     <div class="col-md-4">
