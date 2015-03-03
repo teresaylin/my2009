@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied
 
 from libs.permissions.user_permissions import getUserObjectPermissions
+from libs import tracking
 
 from apps.users.exceptions import UserNotFound, TaskForceNotFound
 from apps.users.models import TaskForce
@@ -102,6 +103,10 @@ class TaskViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
         # Assign task to owner when object is created
         if created:
             obj.assigned_users.add(obj.owner)
+
+        # Track task creation
+        if created:
+            tracking.trackTaskCreated(obj)
             
     @action(methods=['PUT'])
     def complete(self, request, pk=None):
@@ -120,6 +125,9 @@ class TaskViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
                 
         # Complete task and all subtasks
         completeTask(task)
+
+        # Track task completion
+        tracking.trackTaskCompleted(task)
         
         # Return updated task
         return Response(TaskSerializer(task, context={'request': request}).data)

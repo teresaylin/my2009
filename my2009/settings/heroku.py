@@ -45,3 +45,6 @@ CACHES = {
         }
     }
 }
+
+if 'STATSMIX_URL' in os.environ:
+    STATSMIX_URL = os.environ['STATSMIX_URL']

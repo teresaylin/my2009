@@ -15,6 +15,8 @@ from apps.users.models import Team, TaskForce
 
 from apps.files.views import ModelWithFilesViewSetMixin
 
+from libs import tracking
+
 from ..exceptions import EventAlreadyHasAttendee, EventEndPrecedesStart
 from ..models import Event, EventAttendee
 from ..serializers import EventSerializer
@@ -62,6 +64,11 @@ class EventViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
         # Check start time precedes end time
         if obj.end < obj.start:
             raise EventEndPrecedesStart()
+
+    def post_save(self, obj, created=False):
+        if created:
+            # Track event creation
+            tracking.trackEventCreated(obj)
         
     @action(methods=['PUT'])
     def add_attendee(self, request, pk=None):
