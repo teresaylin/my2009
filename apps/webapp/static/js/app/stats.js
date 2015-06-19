@@ -1,10 +1,21 @@
-var stats = angular.module('stats', []);
+var stats = angular.module('stats', [
+    'googlechart'
+]);
 
 stats.config(function($stateProvider, $urlRouterProvider) {
     $stateProvider
         .state('stats', {
             url: '/stats',
-            abstract: true
+            templateUrl: partial('stats/stats.html')
+        })
+        .state('stats.teamOverview', {
+            url: '/team-overview',
+            views: {
+                '@': {
+                    templateUrl: partial('stats/team-overview.html'),
+                    controller: 'StatsTeamOverviewStateCtrl'
+                }
+            }
         })
         .state('stats.tasks', {
             url: '/tasks',
@@ -56,4 +67,58 @@ stats.controller('StatsTasksStateCtrl', function($scope, StatsService) {
         .success(function(data) {
             $scope.stats = data;
         });
+});
+
+stats.controller('StatsTeamOverviewStateCtrl', function($scope, StatsService) {
+$scope.chartObject = {
+    "type": "AnnotationChart",
+    "displayed": true,
+    "data": {
+        "cols": [
+            {
+            "id": "date",
+            "label": "Date",
+            "type": "date",
+            "p": {}
+            },
+            {
+            "id": "tasks",
+            "label": "Tasks",
+            "type": "number",
+            "p": {}
+            },
+            {
+            "id": "files",
+            "label": "Files",
+            "type": "number",
+            "p": {}
+            }
+        ],
+        "rows": []
+    },
+    "options": {
+        "fill": 20,
+        "displayExactValues": true,
+        "hAxis": {
+            "title": "Date"
+        }
+    },
+    "formatters": {}
+}
+
+    var addRow = function(date, tasks, files) {
+        $scope.chartObject.data.rows.push({
+            c: [
+                { v: date },
+                { v: tasks },
+                { v: files }
+            ]
+        });
+    }
+
+    var date = new Date(2015, 1, 1);
+    for(var i = 0; i < 365; i++) {
+        addRow(new Date(date), parseInt((Math.random() * 100).toFixed(0)), parseInt((Math.random() * 100).toFixed(0)));
+        date.setDate(date.getDate() + 1);
+    }
 });
