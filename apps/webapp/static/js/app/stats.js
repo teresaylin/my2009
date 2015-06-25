@@ -36,6 +36,11 @@ stats.factory('StatsService', function($http) {
         getTaskStats: function(id) {
             return $http.get(baseUrl+'tasks/');
         },
+        getDailyTeamStats: function(teamId) {
+            return $http.get(baseUrl+'team-daily/', { params: {
+                team: teamId
+            }});
+        }
     };
 });
 
@@ -69,56 +74,77 @@ stats.controller('StatsTasksStateCtrl', function($scope, StatsService) {
         });
 });
 
-stats.controller('StatsTeamOverviewStateCtrl', function($scope, StatsService) {
-$scope.chartObject = {
-    "type": "AnnotationChart",
-    "displayed": true,
-    "data": {
-        "cols": [
-            {
-            "id": "date",
-            "label": "Date",
-            "type": "date",
-            "p": {}
+stats.controller('StatsTeamOverviewStateCtrl', function($scope, StatsService, NavFilterService) {
+    function initChart() {
+        $scope.chartReady = false;
+        $scope.chartObject = {
+            "type": "AnnotationChart",
+            "displayed": true,
+            "data": {
+                "cols": [
+                    {
+                    "id": "date",
+                    "label": "Date",
+                    "type": "date",
+                    "p": {}
+                    },
+                    {
+                    "id": "tasksOpen",
+                    "label": "Open Tasks",
+                    "type": "number",
+                    "p": {}
+                    },
+                    {
+                    "id": "eventsScheduled",
+                    "label": "Events scheduled",
+                    "type": "number",
+                    "p": {}
+                    }
+                ],
+                "rows": []
             },
-            {
-            "id": "tasks",
-            "label": "Tasks",
-            "type": "number",
-            "p": {}
+            "options": {
+                "fill": 20,
+                "displayExactValues": true,
+                "hAxis": {
+                    "title": "Date"
+                }
             },
-            {
-            "id": "files",
-            "label": "Files",
-            "type": "number",
-            "p": {}
-            }
-        ],
-        "rows": []
-    },
-    "options": {
-        "fill": 20,
-        "displayExactValues": true,
-        "hAxis": {
-            "title": "Date"
+            "formatters": {}
         }
-    },
-    "formatters": {}
-}
+    }
 
-    var addRow = function(date, tasks, files) {
+    var addRow = function(date, tasksOpen, eventsScheduled) {
         $scope.chartObject.data.rows.push({
             c: [
                 { v: date },
-                { v: tasks },
-                { v: files }
+                { v: tasksOpen },
+                { v: eventsScheduled }
             ]
         });
     }
 
-    var date = new Date(2015, 1, 1);
-    for(var i = 0; i < 365; i++) {
-        addRow(new Date(date), parseInt((Math.random() * 100).toFixed(0)), parseInt((Math.random() * 100).toFixed(0)));
-        date.setDate(date.getDate() + 1);
+    var update = function() {
+        if(!NavFilterService.team) return;
+
+        $scope.team = NavFilterService.team;
+
+        // Clear chart and retrieve new set of data
+        initChart();
+        StatsService.getDailyTeamStats(NavFilterService.team.id)
+            .success(function(data) {
+                angular.forEach(data, function(stat) {
+                    addRow(new Date(stat.date), stat.tasksOpen, stat.eventsScheduled);
+                });
+                $scope.chartReady = true;
+            });
     }
+
+    // Watch for nav filter team changes
+    $scope.$on('navFilterChanged', function(event, changed) {
+        if('team' in changed) {
+            update();
+        }
+    });
+    update();
 });

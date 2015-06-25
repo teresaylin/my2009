@@ -7,7 +7,7 @@ from apps.users.models import Team
 from apps.events.models import Event
 from apps.tasks.models import Task
 
-from libs import tracking
+from ...models import DailyTeamStats
 
 class Command(BaseCommand):
     help = 'Gather daily app statistics'
@@ -29,5 +29,13 @@ class Command(BaseCommand):
                 .filter(owner__teams__in=[team]) \
                 .filter(start__gte=startTime, end__lt=endTime)
             
-            tracking.teamOpenTasks(team, tasks.count(), startTime.date())
-            tracking.teamEventsToday(team, events.count(), startTime.date())
+            # Record stats
+            data = {
+                'tasksOpen': tasks.count(),
+                'eventsScheduled': events.count()
+            }
+            DailyTeamStats.objects.update_or_create(
+                team=team,
+                date=startTime.date(),
+                defaults=data
+            )
