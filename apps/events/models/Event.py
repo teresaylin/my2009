@@ -21,7 +21,7 @@ class Event(SoftDeleteableModel):
     description = models.TextField(blank=True)
     comment_thread = models.OneToOneField(CommentThread, editable=False)
 
-    attendees = models.ManyToManyField(User, through='EventAttendee')
+    attendees = models.ManyToManyField(User, through='EventAttendee', related_name='events_attending')
 
     files = models.ManyToManyField(FileAppData, blank=True)
     

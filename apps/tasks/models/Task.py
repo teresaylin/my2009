@@ -27,7 +27,7 @@ class Task(SoftDeleteableModel):
     prototype = models.ForeignKey('Task', blank=True, null=True, related_name='prototype_for', editable=False)
 
     assigned_taskforces = models.ManyToManyField(TaskForce, blank=True, related_name='assigned_tasks')
-    assigned_users = models.ManyToManyField(User, blank=True)
+    assigned_users = models.ManyToManyField(User, blank=True, related_name='assigned_tasks')
     
     files = models.ManyToManyField(FileAppData, blank=True)
 
