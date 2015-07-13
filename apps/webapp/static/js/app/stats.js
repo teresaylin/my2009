@@ -94,22 +94,28 @@ stats.controller('StatsTeamCtrl', function($scope, StatsService, NavFilterServic
             "data": {
                 "cols": [
                     {
-                    "id": "date",
-                    "label": "Date",
-                    "type": "date",
-                    "p": {}
+                        "id": "date",
+                        "label": "Date",
+                        "type": "date",
+                        "p": {}
                     },
                     {
-                    "id": "tasksOpen",
-                    "label": "Open Tasks",
-                    "type": "number",
-                    "p": {}
+                        "id": "tasksOpen",
+                        "label": "Open Tasks",
+                        "type": "number",
+                        "p": {}
                     },
                     {
-                    "id": "eventsScheduled",
-                    "label": "Scheduled events",
-                    "type": "number",
-                    "p": {}
+                        "id": "eventsScheduled",
+                        "label": "Scheduled events",
+                        "type": "number",
+                        "p": {}
+                    },
+                    {
+                        "id": "dropboxFiles",
+                        "label": "Dropbox files",
+                        "type": "number",
+                        "p": {}
                     }
                 ],
                 "rows": []
@@ -124,12 +130,13 @@ stats.controller('StatsTeamCtrl', function($scope, StatsService, NavFilterServic
         }
     }
 
-    var addRow = function(date, tasksOpen, eventsScheduled) {
+    var addRow = function(date, tasksOpen, eventsScheduled, dropboxFiles) {
         $scope.chartObject.data.rows.push({
             c: [
                 { v: date },
                 { v: tasksOpen },
-                { v: eventsScheduled }
+                { v: eventsScheduled },
+                { v: dropboxFiles }
             ]
         });
     }
@@ -144,7 +151,7 @@ stats.controller('StatsTeamCtrl', function($scope, StatsService, NavFilterServic
         StatsService.getDailyTeamStats(NavFilterService.team.id)
             .success(function(data) {
                 angular.forEach(data, function(stat) {
-                    addRow(new Date(stat.date), stat.tasksOpen, stat.eventsScheduled);
+                    addRow(new Date(stat.date), stat.tasksOpen, stat.eventsScheduled, stat.dropboxFiles);
                 });
                 $scope.chartReady = true;
             });
@@ -218,16 +225,16 @@ stats.controller('StatsTfUserCtrl', function($scope, StatsService, NavFilterServ
             "data": {
                 "cols": [
                     {
-                    "id": "date",
-                    "label": "Date",
-                    "type": "date",
-                    "p": {}
+                        "id": "date",
+                        "label": "Date",
+                        "type": "date",
+                        "p": {}
                     },
                     {
-                    "id": "tasksAssigned",
-                    "label": "Tasks assigned",
-                    "type": "number",
-                    "p": {}
+                        "id": "tasksAssigned",
+                        "label": "Tasks assigned",
+                        "type": "number",
+                        "p": {}
                     }
                 ],
                 "rows": []
@@ -316,22 +323,28 @@ stats.controller('StatsGlobalCtrl', function($scope, StatsService, NavFilterServ
             "data": {
                 "cols": [
                     {
-                    "id": "date",
-                    "label": "Date",
-                    "type": "date",
-                    "p": {}
+                        "id": "date",
+                        "label": "Date",
+                        "type": "date",
+                        "p": {}
                     },
                     {
-                    "id": "tasksOpen",
-                    "label": "Open Tasks",
-                    "type": "number",
-                    "p": {}
+                        "id": "tasksOpen",
+                        "label": "Open Tasks",
+                        "type": "number",
+                        "p": {}
                     },
                     {
-                    "id": "eventsScheduled",
-                    "label": "Scheduled events",
-                    "type": "number",
-                    "p": {}
+                        "id": "eventsScheduled",
+                        "label": "Scheduled events",
+                        "type": "number",
+                        "p": {}
+                    },
+                    {
+                        "id": "dropboxFiles",
+                        "label": "Dropbox files",
+                        "type": "number",
+                        "p": {}
                     }
                 ],
                 "rows": []
@@ -346,12 +359,13 @@ stats.controller('StatsGlobalCtrl', function($scope, StatsService, NavFilterServ
         }
     }
 
-    var addRow = function(date, tasksOpen, eventsScheduled) {
+    var addRow = function(date, tasksOpen, eventsScheduled, dropboxFiles) {
         $scope.chartObject.data.rows.push({
             c: [
                 { v: date },
                 { v: tasksOpen },
-                { v: eventsScheduled }
+                { v: eventsScheduled },
+                { v: dropboxFiles }
             ]
         });
     }
@@ -362,7 +376,7 @@ stats.controller('StatsGlobalCtrl', function($scope, StatsService, NavFilterServ
         StatsService.getDailyGlobalStats()
             .success(function(data) {
                 angular.forEach(data, function(stat) {
-                    addRow(new Date(stat.date), stat.tasksOpen, stat.eventsScheduled);
+                    addRow(new Date(stat.date), stat.tasksOpen, stat.eventsScheduled, stat.dropboxFiles);
                 });
                 $scope.chartReady = true;
             });

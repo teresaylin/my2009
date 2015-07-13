@@ -9,6 +9,8 @@ from apps.tasks.models import Task
 
 from ...models import DailyTeamStats, DailyUserStats, DailyTaskForceStats, DailyGlobalStats
 
+from apps.files.stats import teamFilesCount, globalFilesCount
+
 class Command(BaseCommand):
     help = 'Gather daily app statistics'
 
@@ -34,11 +36,15 @@ class Command(BaseCommand):
             events = Event.objects.all() \
                 .filter(owner__teams__in=[team]) \
                 .filter(start__gte=startTime, end__lt=endTime)
+
+            # Get number of Dropbox files in the team folder
+            dropboxFiles = teamFilesCount(team)
             
             # Record stats
             data = {
                 'tasksOpen': tasks.count(),
-                'eventsScheduled': events.count()
+                'eventsScheduled': events.count(),
+                'dropboxFiles': dropboxFiles
             }
             DailyTeamStats.objects.update_or_create(
                 team=team,
@@ -86,6 +92,9 @@ class Command(BaseCommand):
         data['eventsScheduled'] = Event.objects.all() \
             .filter(start__gte=startTime, end__lt=endTime) \
             .count()
+
+        # Get total number of Dropbox files
+        data['dropboxFiles'] = globalFilesCount()
         
         # Record stats
         DailyGlobalStats.objects.update_or_create(

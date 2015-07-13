@@ -8,3 +8,4 @@ class DailyGlobalStats(models.Model):
 
     tasksOpen = models.PositiveIntegerField()
     eventsScheduled = models.PositiveIntegerField()
+    dropboxFiles = models.PositiveIntegerField()

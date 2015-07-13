@@ -5,4 +5,4 @@ from ..models import DailyGlobalStats
 class DailyGlobalStatsSerializer(serializers.ModelSerializer):
     class Meta:
         model = DailyGlobalStats
-        fields = ('date', 'tasksOpen', 'eventsScheduled')
+        fields = ('date', 'tasksOpen', 'eventsScheduled', 'dropboxFiles')

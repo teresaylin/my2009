@@ -12,3 +12,4 @@ class DailyTeamStats(models.Model):
 
     tasksOpen = models.PositiveIntegerField()       # Number of tasks uncompleted at the start of the day
     eventsScheduled = models.PositiveIntegerField() # Number of events scheduled for this day
+    dropboxFiles = models.PositiveIntegerField()   # Total number of Dropbox files in the team folder
