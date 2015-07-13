@@ -7,7 +7,7 @@ from apps.users.models import Team, User, TaskForce
 from apps.events.models import Event
 from apps.tasks.models import Task
 
-from ...models import DailyTeamStats, DailyUserStats, DailyTaskForceStats
+from ...models import DailyTeamStats, DailyUserStats, DailyTaskForceStats, DailyGlobalStats
 
 class Command(BaseCommand):
     help = 'Gather daily app statistics'
@@ -21,6 +21,7 @@ class Command(BaseCommand):
         self.gatherTeamStats(startTime, endTime)
         self.gatherUserStats(startTime, endTime)
         self.gatherTaskForceStats(startTime, endTime)
+        self.gatherGlobalStats(startTime, endTime)
         
     def gatherTeamStats(self, startTime, endTime):
         for team in Team.objects.all():
@@ -72,3 +73,22 @@ class Command(BaseCommand):
                 date=startTime.date(),
                 defaults=data
             )
+
+    def gatherGlobalStats(self, startTime, endTime):
+        data = {}
+
+        # Get total number of open tasks
+        data['tasksOpen'] = Task.objects.all() \
+            .exclude(state='completed') \
+            .count()
+        
+        # Get total number of events scheduled for today
+        data['eventsScheduled'] = Event.objects.all() \
+            .filter(start__gte=startTime, end__lt=endTime) \
+            .count()
+        
+        # Record stats
+        DailyGlobalStats.objects.update_or_create(
+            date=startTime.date(),
+            defaults=data
+        )

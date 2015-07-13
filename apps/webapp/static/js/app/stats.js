@@ -48,6 +48,9 @@ stats.factory('StatsService', function($http) {
             return $http.get(baseUrl+'taskforce-daily/', { params: {
                 taskforce: taskforceId
             }});
+        },
+        getDailyGlobalStats: function() {
+            return $http.get(baseUrl+'global-daily/');
         }
     };
 });
@@ -295,11 +298,74 @@ stats.controller('StatsTfUserCtrl', function($scope, StatsService, NavFilterServ
         }
     }
 
-    // Watch for nav filter team changes
+    // Watch for nav filter user/taskforce changes
     $scope.$on('navFilterChanged', function(event, changed) {
         if('user' in changed || 'taskforce' in changed) {
             update();
         }
     });
+    update();
+});
+
+stats.controller('StatsGlobalCtrl', function($scope, StatsService, NavFilterService) {
+    function initChart() {
+        $scope.chartReady = false;
+        $scope.chartObject = {
+            "type": "AnnotationChart",
+            "displayed": true,
+            "data": {
+                "cols": [
+                    {
+                    "id": "date",
+                    "label": "Date",
+                    "type": "date",
+                    "p": {}
+                    },
+                    {
+                    "id": "tasksOpen",
+                    "label": "Open Tasks",
+                    "type": "number",
+                    "p": {}
+                    },
+                    {
+                    "id": "eventsScheduled",
+                    "label": "Scheduled events",
+                    "type": "number",
+                    "p": {}
+                    }
+                ],
+                "rows": []
+            },
+            "options": {
+                "displayExactValues": true,
+                "hAxis": {
+                    "title": "Date"
+                }
+            },
+            "formatters": {}
+        }
+    }
+
+    var addRow = function(date, tasksOpen, eventsScheduled) {
+        $scope.chartObject.data.rows.push({
+            c: [
+                { v: date },
+                { v: tasksOpen },
+                { v: eventsScheduled }
+            ]
+        });
+    }
+
+    var update = function() {
+        // Clear chart and retrieve data
+        initChart();
+        StatsService.getDailyGlobalStats()
+            .success(function(data) {
+                angular.forEach(data, function(stat) {
+                    addRow(new Date(stat.date), stat.tasksOpen, stat.eventsScheduled);
+                });
+                $scope.chartReady = true;
+            });
+    }
     update();
 });

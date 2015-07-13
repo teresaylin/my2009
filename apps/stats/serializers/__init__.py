@@ -1,3 +1,4 @@
+from .DailyGlobalStatsSerializer import DailyGlobalStatsSerializer
 from .DailyTaskForceStatsSerializer import DailyTaskForceStatsSerializer
 from .DailyTeamStatsSerializer import DailyTeamStatsSerializer
 from .DailyUserStatsSerializer import DailyUserStatsSerializer
