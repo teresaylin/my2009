@@ -3,11 +3,11 @@ from datetime import datetime, timedelta
 from django.core.management.base import BaseCommand, CommandError
 from django.utils import timezone
 
-from apps.users.models import Team, User
+from apps.users.models import Team, User, TaskForce
 from apps.events.models import Event
 from apps.tasks.models import Task
 
-from ...models import DailyTeamStats, DailyUserStats
+from ...models import DailyTeamStats, DailyUserStats, DailyTaskForceStats
 
 class Command(BaseCommand):
     help = 'Gather daily app statistics'
@@ -20,6 +20,7 @@ class Command(BaseCommand):
 
         self.gatherTeamStats(startTime, endTime)
         self.gatherUserStats(startTime, endTime)
+        self.gatherTaskForceStats(startTime, endTime)
         
     def gatherTeamStats(self, startTime, endTime):
         for team in Team.objects.all():
@@ -56,6 +57,18 @@ class Command(BaseCommand):
             # Record stats
             DailyUserStats.objects.update_or_create(
                 user=user,
+                date=startTime.date(),
+                defaults=data
+            )
+
+    def gatherTaskForceStats(self, startTime, endTime):
+        for taskforce in TaskForce.objects.all():
+            data = {}
+            data['tasksAssigned'] = taskforce.assigned_tasks.all().count()
+
+            # Record stats
+            DailyTaskForceStats.objects.update_or_create(
+                taskforce=taskforce,
                 date=startTime.date(),
                 defaults=data
             )

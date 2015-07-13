@@ -43,6 +43,11 @@ stats.factory('StatsService', function($http) {
             return $http.get(baseUrl+'user-daily/', { params: {
                 user: userId
             }});
+        },
+        getDailyTaskForceStats: function(taskforceId) {
+            return $http.get(baseUrl+'taskforce-daily/', { params: {
+                taskforce: taskforceId
+            }});
         }
     };
 });
@@ -152,7 +157,7 @@ stats.controller('StatsTeamCtrl', function($scope, StatsService, NavFilterServic
 });
 
 stats.controller('StatsTfUserCtrl', function($scope, StatsService, NavFilterService) {
-    function initChart() {
+    function initChartUser() {
         $scope.chartReady = false;
         $scope.chartObject = {
             "type": "AnnotationChart",
@@ -202,7 +207,39 @@ stats.controller('StatsTfUserCtrl', function($scope, StatsService, NavFilterServ
         }
     }
 
-    var addRow = function(date, tasksOwned, tasksAssigned, eventsOwned, eventsAttending) {
+    function initChartTf() {
+        $scope.chartReady = false;
+        $scope.chartObject = {
+            "type": "AnnotationChart",
+            "displayed": true,
+            "data": {
+                "cols": [
+                    {
+                    "id": "date",
+                    "label": "Date",
+                    "type": "date",
+                    "p": {}
+                    },
+                    {
+                    "id": "tasksAssigned",
+                    "label": "Tasks assigned",
+                    "type": "number",
+                    "p": {}
+                    }
+                ],
+                "rows": []
+            },
+            "options": {
+                "displayExactValues": true,
+                "hAxis": {
+                    "title": "Date"
+                }
+            },
+            "formatters": {}
+        }
+    }
+
+    var addRowUser = function(date, tasksOwned, tasksAssigned, eventsOwned, eventsAttending) {
         $scope.chartObject.data.rows.push({
             c: [
                 { v: date },
@@ -210,6 +247,15 @@ stats.controller('StatsTfUserCtrl', function($scope, StatsService, NavFilterServ
                 { v: tasksAssigned },
                 { v: eventsOwned },
                 { v: eventsAttending }
+            ]
+        });
+    }
+
+    var addRowTf = function(date, tasksAssigned) {
+        $scope.chartObject.data.rows.push({
+            c: [
+                { v: date },
+                { v: tasksAssigned }
             ]
         });
     }
@@ -223,12 +269,12 @@ stats.controller('StatsTfUserCtrl', function($scope, StatsService, NavFilterServ
         if($scope.user) {
             $scope.title = NavFilterService.user.full_name;
 
-            initChart();
+            initChartUser();
 
             StatsService.getDailyUserStats(NavFilterService.user.id)
                 .success(function(data) {
                     angular.forEach(data, function(stat) {
-                        addRow(new Date(stat.date), stat.tasksOwned, stat.tasksAssigned, stat.eventsOwned, stat.eventsAttending);
+                        addRowUser(new Date(stat.date), stat.tasksOwned, stat.tasksAssigned, stat.eventsOwned, stat.eventsAttending);
                     });
                     $scope.chartReady = true;
                 });
@@ -236,7 +282,16 @@ stats.controller('StatsTfUserCtrl', function($scope, StatsService, NavFilterServ
         } else if($scope.taskforce) {
             $scope.title = NavFilterService.taskforce.name;
 
-            initChart();
+            initChartTf();
+
+            StatsService.getDailyTaskForceStats(NavFilterService.taskforce.id)
+                .success(function(data) {
+                    angular.forEach(data, function(stat) {
+                        addRowTf(new Date(stat.date), stat.tasksAssigned);
+                    });
+                    $scope.chartReady = true;
+                });
+
         }
     }
 
