@@ -11,4 +11,4 @@ class DailyTaskForceStats(models.Model):
     date = models.DateField()
 
     tasksAssigned = models.PositiveIntegerField()
-    #eventsAttending = models.PositiveIntegerField()
+    eventsAttending = models.PositiveIntegerField()

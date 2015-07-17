@@ -235,6 +235,12 @@ stats.controller('StatsTfUserCtrl', function($scope, StatsService, NavFilterServ
                         "label": "Tasks assigned",
                         "type": "number",
                         "p": {}
+                    },
+                    {
+                        "id": "eventsAttending",
+                        "label": "Events attending",
+                        "type": "number",
+                        "p": {}
                     }
                 ],
                 "rows": []
@@ -261,11 +267,12 @@ stats.controller('StatsTfUserCtrl', function($scope, StatsService, NavFilterServ
         });
     }
 
-    var addRowTf = function(date, tasksAssigned) {
+    var addRowTf = function(date, tasksAssigned, eventsAttending) {
         $scope.chartObject.data.rows.push({
             c: [
                 { v: date },
-                { v: tasksAssigned }
+                { v: tasksAssigned },
+                { v: eventsAttending }
             ]
         });
     }
@@ -297,7 +304,7 @@ stats.controller('StatsTfUserCtrl', function($scope, StatsService, NavFilterServ
             StatsService.getDailyTaskForceStats(NavFilterService.taskforce.id)
                 .success(function(data) {
                     angular.forEach(data, function(stat) {
-                        addRowTf(new Date(stat.date), stat.tasksAssigned);
+                        addRowTf(new Date(stat.date), stat.tasksAssigned, stat.eventsAttending);
                     });
                     $scope.chartReady = true;
                 });

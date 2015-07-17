@@ -71,7 +71,9 @@ class Command(BaseCommand):
     def gatherTaskForceStats(self, startTime, endTime):
         for taskforce in TaskForce.objects.all():
             data = {}
+
             data['tasksAssigned'] = taskforce.assigned_tasks.all().count()
+            data['eventsAttending'] = taskforce.events_attending.all().count()
 
             # Record stats
             DailyTaskForceStats.objects.update_or_create(

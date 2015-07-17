@@ -113,6 +113,9 @@ class EventViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
             except IntegrityError:
                 # Ignore members of the taskforce that are already attendees
                 pass
+
+        # Add TaskForce to attending list
+        event.attending_taskforces.add(taskforce)
             
         # Return updated event
         return Response(EventSerializer(event, context={'request': request}).data)

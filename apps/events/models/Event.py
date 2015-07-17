@@ -7,6 +7,7 @@ from django.utils import timezone
 from libs.softdelete.models import SoftDeleteableModel
 from apps.users.models import CommentThread
 from apps.files.models import FileAppData
+from apps.users.models import TaskForce
 
 class Event(SoftDeleteableModel):
     class Meta:
@@ -22,6 +23,7 @@ class Event(SoftDeleteableModel):
     comment_thread = models.OneToOneField(CommentThread, editable=False)
 
     attendees = models.ManyToManyField(User, through='EventAttendee', related_name='events_attending')
+    attending_taskforces = models.ManyToManyField(TaskForce, related_name='events_attending', blank=True)
 
     files = models.ManyToManyField(FileAppData, blank=True)
     
