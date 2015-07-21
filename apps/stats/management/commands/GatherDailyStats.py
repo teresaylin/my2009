@@ -57,9 +57,16 @@ class Command(BaseCommand):
             data = {}
 
             data['tasksOwned'] = user.owned_tasks.all().count()
-            data['tasksAssigned'] = user.assigned_tasks.all().count()
+            data['tasksAssigned'] = user.assigned_tasks.all() \
+                .exclude(state='completed') \
+                .count()
             data['eventsOwned'] = user.events_owned.all().count()
-            data['eventsAttending'] = user.events_attending.all().count()
+            data['eventsAttending'] = user.events_attending.all() \
+                .exclude(end__lt=startTime) \
+                .count()
+
+            data['totalTasksAssigned'] = user.events_attending.all().count()
+            data['totalEventsAttending'] = user.events_attending.all().count()
 
             # Record stats
             DailyUserStats.objects.update_or_create(
@@ -72,8 +79,15 @@ class Command(BaseCommand):
         for taskforce in TaskForce.objects.all():
             data = {}
 
-            data['tasksAssigned'] = taskforce.assigned_tasks.all().count()
-            data['eventsAttending'] = taskforce.events_attending.all().count()
+            data['tasksAssigned'] = taskforce.assigned_tasks.all() \
+                .exclude(state='completed') \
+                .count()
+            data['eventsAttending'] = taskforce.events_attending.all() \
+                .exclude(end__lt=startTime) \
+                .count()
+
+            data['totalTasksAssigned'] = taskforce.events_attending.all().count()
+            data['totalEventsAttending'] = taskforce.events_attending.all().count()
 
             # Record stats
             DailyTaskForceStats.objects.update_or_create(

@@ -14,3 +14,6 @@ class DailyUserStats(models.Model):
     tasksAssigned = models.PositiveIntegerField()
     eventsOwned = models.PositiveIntegerField()
     eventsAttending = models.PositiveIntegerField()
+
+    totalTasksAssigned = models.PositiveIntegerField()
+    totalEventsAttending = models.PositiveIntegerField()
