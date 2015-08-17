@@ -8,11 +8,10 @@ if __name__ == '__main__':
     import os
     sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
-import django
-django.setup()
-from django.conf import settings
+appKey = input('Dropbox app key: ').strip()
+appSecret = input('Dropbox app secret: ').strip()
 
-auth_flow = DropboxOAuth2FlowNoRedirect(settings.DROPBOX_APP_KEY, settings.DROPBOX_APP_SECRET)
+auth_flow = DropboxOAuth2FlowNoRedirect(appKey, appSecret)
 
 authorize_url = auth_flow.start()
 print("1. Go to: " + authorize_url)
