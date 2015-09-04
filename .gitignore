@@ -7,5 +7,4 @@ __pycache__
 
 db.sqlite3
 apps/users/fixtures/*
-apps/webapp/static/img/profile-photos/*
 my2009/settings/dropbox.py
