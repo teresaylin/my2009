@@ -221,6 +221,11 @@ module.controller('TaskDialogCtrl', function($rootScope, $scope, $modalInstance,
         // Create a copy of the task for editing
         $scope.task = angular.copy($scope.task);
     };
+
+    $scope.removeDueTime = function(form) {
+        $scope.task.due_time = null;
+        form.$setDirty();
+    }
     
     $scope.create = function(form) {
         // Create task

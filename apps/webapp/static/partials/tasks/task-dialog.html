@@ -27,7 +27,7 @@
                     <timepicker ng-if="editing" ng-model="task.due_time"></timepicker>
                 </div>
             </div>
-            <button ng-if="editing" class="btn btn-sm btn-danger" ng-click="task.due_time = null" ng-disabled="!task.due_time">Remove due time</button>
+            <button ng-if="editing" class="btn btn-sm btn-danger" ng-click="removeDueTime(form)" ng-disabled="!task.due_time">Remove due time</button>
         </fieldset>
     </form>
     <tabset ng-if="!creating">
