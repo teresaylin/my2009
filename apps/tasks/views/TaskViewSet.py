@@ -1,3 +1,4 @@
+from django.db.models import Count
 from django.contrib.auth.models import User
 from rest_framework import viewsets
 from rest_framework.decorators import action
@@ -20,7 +21,6 @@ class TaskViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
     queryset = Task.objects.all().exclude(state='completed')
     serializer_class = TaskSerializer
     filter_fields = ('parent',)
-    ordering = ('due_time',)
     
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -46,6 +46,11 @@ class TaskViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
                 raise TaskForceNotFound()
             
             queryset = queryset.filter(assigned_taskforces__in=[taskforce])
+
+        # Sort by due time; tasks with no due time are last in the list
+        queryset = queryset \
+            .annotate(null_due_time=Count('due_time')) \
+            .order_by('-null_due_time', 'due_time')
         
         return queryset
     
