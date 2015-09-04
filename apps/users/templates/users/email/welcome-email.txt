@@ -1,6 +1,6 @@
-{% autoescape off %}Welcome to your 2.009 Project Management site.
+{% autoescape off %}Welcome to your custom 2.009 Project Management website.
 
-An account has been created for you. Follow the link below to log in:
+A user account has been created for you. Follow the link below to log in:
 {{ appUrl }}
 
 Your account information:
@@ -8,4 +8,10 @@ Username: {{ user.username }}
 Password: {{ password }}
 
 Once you've logged in, you can change your password in the Settings page. 
+
+Project management is a critical part of successful product design. There are nearly an infinite number of effective project management tools in use today, but this tool has been designed specifically for your use in 2.009 this fall!
+
+We have pre-populated several important elements of this tool so it already has information relevant to you and your team. 
+
+Welcome to 2.009!
 {% endautoescape %}
