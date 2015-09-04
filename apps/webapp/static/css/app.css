@@ -197,6 +197,10 @@ hr {
   box-shadow: none;
   -webkit-box-shadow: none; }
 
+.panel-body.no-lr-padding {
+  padding-left: 0;
+  padding-right: 0; }
+
 /*---------- Files ----------*/
 .filebrowser .filebrowser-header {
   line-height: 30px; }
@@ -294,12 +298,14 @@ hr {
 .task-list .task {
   border-bottom: 1px dashed #eaeaea; }
   .task-list .task .task-header {
-    padding: 4px 0; }
+    padding: 4px 15px; }
     .task-list .task .task-header .task-header-left {
       width: 60%;
       text-overflow: ellipsis;
       overflow: hidden;
       white-space: nowrap; }
+      .task-list .task .task-header .task-header-left a {
+        color: inherit; }
       .task-list .task .task-header .task-header-left .task-header-checkbox {
         display: inline-block;
         width: 16px; }

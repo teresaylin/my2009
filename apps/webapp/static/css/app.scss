@@ -195,6 +195,11 @@ hr {
     -webkit-box-shadow: none;
 }
 
+.panel-body.no-lr-padding {
+    padding-left: 0;
+    padding-right: 0;
+}
+
 /*---------- Files ----------*/
 
 .filebrowser {
@@ -364,13 +369,17 @@ hr {
         border-bottom: 1px dashed #eaeaea;
         
         .task-header {
-            padding: 4px 0;
+            padding: 4px 15px;
 
             .task-header-left {
                 width: 60%;
                 text-overflow: ellipsis;
                 overflow: hidden;
                 white-space: nowrap;
+
+                a {
+                    color: inherit;
+                }
 
                 .task-header-checkbox {
                     display: inline-block;
