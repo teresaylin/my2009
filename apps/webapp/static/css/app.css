@@ -313,6 +313,16 @@ hr {
       background-color: #f7f7f7; }
       .task-list .task .task-header:hover ~ .task-body {
         background-color: #f7f7f7; }
+    .task-list .task .task-header.task-due-overdue {
+      background: #fc5050;
+      color: white;
+      font-weight: bold; }
+    .task-list .task .task-header.task-due-today .app-checkbox > span {
+      color: red; }
+    .task-list .task .task-header.task-due-week .app-checkbox > span {
+      color: #c0c000; }
+    .task-list .task .task-header.task-due-month .app-checkbox > span {
+      color: green; }
   .task-list .task .task-body {
     border-left: 1px solid #eaeaea;
     margin: 4px 0 4px 16px;

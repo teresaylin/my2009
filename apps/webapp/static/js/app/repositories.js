@@ -98,13 +98,40 @@ module.factory('RoleRepository', function($http) {
 
 module.factory('TaskRepository', function($http) {
     var baseUrl = '/api/tasks/';
+
+    function annotateTasks(tasks) {
+        var now = moment(); 
+        var oneWeek = now.clone().add(1, 'week');
+        var oneMonth = now.clone().add(1, 'month');
+
+        angular.forEach(tasks, function(task) {
+            var dueTime = moment(task.due_time);
+
+            if(dueTime.isSame(now, 'day')) {
+                task.due = 'today';
+            } else {
+                if(dueTime.isBefore(oneMonth, 'day')) {
+                    task.due = 'month';
+                }
+                if(dueTime.isBefore(oneWeek, 'day')) {
+                    task.due = 'week';
+                }
+                if(dueTime.isBefore(now, 'day')) {
+                    task.due = 'overdue';
+                }
+            }
+        });
+    }
     
     return {
         get: function(id) {
             return $http.get(baseUrl+id+'/');
         },
         list: function(params) {
-            return $http.get(baseUrl, { params: params });
+            return $http.get(baseUrl, { params: params })
+                .success(function(data) {
+                    annotateTasks(data);
+                });
         },
         create: function(data) {
             return $http.post(baseUrl, data);

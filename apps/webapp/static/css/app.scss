@@ -391,6 +391,30 @@ hr {
                     background-color: #f7f7f7;
                 }
             }
+
+            &.task-due-overdue {
+                background: #fc5050;
+                color: white;
+                font-weight: bold;
+            }
+
+            &.task-due-today {
+                .app-checkbox > span {
+                    color: red;
+                }
+            }
+
+            &.task-due-week {
+                .app-checkbox > span {
+                    color: #c0c000;
+                }
+            }
+
+            &.task-due-month {
+                .app-checkbox > span {
+                    color: green;
+                }
+            }
         }
         
         .task-body {

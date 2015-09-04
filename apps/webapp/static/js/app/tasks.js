@@ -68,23 +68,7 @@ module.controller('TaskListCtrl', function($rootScope, $scope, $modal, TaskRepos
     
     // Listen for taskUpdated signal
     $scope.$on('taskUpdated', function(event, updatedTask) {
-        // Find task in tree
-        var result = findTask($scope.tasks, updatedTask.id);
-        if(result) {
-            var list = result[0];
-            var listIdx = result[1];
-            var task = list[listIdx];
-
-            // Remove completed tasks
-            if(updatedTask.state == 'completed') {
-                list.splice(listIdx, 1);
-            }
-
-            // Only copy the task data if they aren't referencing the same object
-            if(task != updatedTask) {
-                angular.copy(updatedTask, task);
-            }
-        }
+        refreshTasks();
     });
 
     // Listen for taskDeleted signal

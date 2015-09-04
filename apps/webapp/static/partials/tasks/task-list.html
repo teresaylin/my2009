@@ -1,5 +1,5 @@
 <script type="text/ng-template" id="task-list-task.html">
-    <div class="task-header" ng-init="isOpen = task.subtasks.length > 0">
+    <div class="task-header" ng-init="isOpen = task.subtasks.length > 0" ng-class="task.due ? 'task-due-'+task.due : ''">
         <div class="task-header-right pull-right">
             <em task-assignees="task"></em>
         </div>
