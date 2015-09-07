@@ -1,8 +1,10 @@
 from django.db.models import Q
+from django.core.exceptions import PermissionDenied
 from django.contrib.auth.models import User
 from apps.events.models import Event
 from apps.tasks.models import Task
 from apps.users.models import Comment, Milestone, Role, TaskForce, Team, UserProfile
+from apps.stats.models import DailyGlobalStats, DailyTaskForceStats, DailyTeamStats, DailyUserStats
 
 def filterQueryset(queryset, user):
     """This function performs permission checks and filters querysets appropriately, before they are serialized and sent out as API responses."""
@@ -40,6 +42,16 @@ def filterQueryset(queryset, user):
     elif cls == UserProfile:
         # User profiles visible to all users
         return queryset
+    elif (cls == DailyGlobalStats or \
+        cls == DailyTaskForceStats or \
+        cls == DailyTeamStats or \
+        cls == DailyUserStats) \
+    :
+        # Stats have a Django permission to determine whether the user can see them
+        if user.has_perm('stats.can_view_stats'):
+            return queryset
+        else:
+            raise PermissionDenied()
     else:
         raise PermissionDenied()
 

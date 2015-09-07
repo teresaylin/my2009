@@ -126,7 +126,7 @@
                         <i class="fa fa-folder"></i> <span>Files</span>
                     </a>
                 </li>
-                {% if user.is_superuser %}
+                {% if perms.stats.can_view_stats %}
                 <li>
                     <a ui-sref="stats">
                         <i class="fa fa-bar-chart-o"></i> <span>Stats</span>
