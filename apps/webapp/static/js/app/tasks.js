@@ -26,6 +26,9 @@ module.controller('TaskListCtrl', function($rootScope, $scope, $modal, TaskRepos
         if($scope.filterTaskforce) {
             query.taskforce = $scope.filterTaskforce.id;
         }
+        if($scope.filterUserOwned) {
+            query['user-owned'] = $scope.filterUserOwned.id;
+        }
         
         if(!jQuery.isEmptyObject(query)) {
             query.tree = true;
@@ -36,8 +39,8 @@ module.controller('TaskListCtrl', function($rootScope, $scope, $modal, TaskRepos
         }
     };
 
-    // Refresh tasks if filterUser or filterTaskforce attribute changes
-    $scope.$watchCollection('[filterUser, filterTaskforce]', function(val) {
+    // Refresh tasks if filters change
+    $scope.$watchCollection('[filterUser, filterTaskforce, filterUserOwned]', function(val) {
         if(val) {
             refreshTasks();
         }
@@ -186,7 +189,8 @@ module.directive('taskList', function() {
         restrict: 'E',
         scope: {
             'filterUser': '=',
-            'filterTaskforce': '='
+            'filterTaskforce': '=',
+            'filterUserOwned': '='
         },
         templateUrl: partial('tasks/task-list.html'),
         controller: 'TaskListCtrl'

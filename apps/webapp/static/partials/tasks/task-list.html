@@ -36,14 +36,20 @@
     </div>
 </script>
 
-<section class="content-panel">
+<section class="content-panel mt">
     <div class="panel-heading">
         <div class="pull-left">
             <h5>
-                <span class="fa fa-tasks"></span> Tasks assigned to
-                <span ng-if="filterUser && filterUser.id != $parent.currentUser.id">{{ filterUser.full_name }}</span>
-                <span ng-if="filterUser && filterUser.id == $parent.currentUser.id">me</span>
-                <span ng-if="filterTaskforce">{{ filterTaskforce.name }}</span>
+                <span class="fa fa-tasks"></span>
+                <span ng-if="!filterUserOwned">Tasks assigned to
+                    <span ng-if="filterUser && filterUser.id != $parent.$parent.currentUser.id">{{ filterUser.full_name }}</span>
+                    <span ng-if="filterUser && filterUser.id == $parent.$parent.currentUser.id">me</span>
+                    <span ng-if="filterTaskforce">{{ filterTaskforce.name }}</span>
+                </span>
+                <span ng-if="filterUserOwned">Tasks owned by
+                    <span ng-if="filterUserOwned.id != $parent.$parent.currentUser.id">{{ filterUserOwned.full_name }}</span>
+                    <span ng-if="filterUserOwned.id == $parent.$parent.currentUser.id">me</span>
+                </span>
             </h5>
         </div>
         <br>
@@ -51,7 +57,8 @@
     <div class="panel-body no-lr-padding">
         <div class="task-content">
             <p class="text-info" ng-if="tasks.length == 0">
-                No tasks assigned.
+                <span ng-if="!filterUserOwned">No tasks assigned.</span>
+                <span ng-if="filterUserOwned">No tasks owned.</span>
             </p>
             <ul class="task-list list-unstyled">
                 <li class="task" ng-repeat="task in tasks" ng-class="{ 'task-done': task.state == 'completed' }"

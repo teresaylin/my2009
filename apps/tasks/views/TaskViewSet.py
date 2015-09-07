@@ -47,6 +47,17 @@ class TaskViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
             
             queryset = queryset.filter(assigned_taskforces__in=[taskforce])
 
+        # Filter by user ownership
+        userOwnedId = self.request.QUERY_PARAMS.get('user-owned', None)
+        if userOwnedId:
+            # Get User object
+            try:
+                user = User.objects.get(id=userOwnedId)
+            except User.DoesNotExist:
+                raise UserNotFound()
+            
+            queryset = queryset.filter(owner=user)
+
         # Sort by due time; tasks with no due time are last in the list
         queryset = queryset \
             .annotate(null_due_time=Count('due_time')) \
@@ -105,10 +116,6 @@ class TaskViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
                 raise PermissionDenied()
         
     def post_save(self, obj, created=False):
-        # Assign task to owner when object is created
-        if created:
-            obj.assigned_users.add(obj.owner)
-
         # Track task creation
         if created:
             tracking.trackTaskCreated(obj)
