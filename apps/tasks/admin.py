@@ -8,7 +8,7 @@ from django.contrib import admin
 
 from .models import Task
 
-from apps.users.models import User
+from apps.users.models import User, Team
 
 class TaskAdmin(admin.ModelAdmin):
     list_display = ('name', 'owner', 'prototype')
@@ -23,6 +23,7 @@ class TaskAdmin(admin.ModelAdmin):
 
     class CloneTasksForm(forms.Form):
         tasks = forms.ModelMultipleChoiceField(queryset=Task.objects.all())
+        teams = forms.ModelMultipleChoiceField(queryset=Team.objects.all())
     
     class CloneTasksView(TemplateView):
         template_name = 'tasks/admin/clone-tasks.html'
@@ -32,7 +33,8 @@ class TaskAdmin(admin.ModelAdmin):
             
             if form.is_valid():
                 tasks = form.cleaned_data['tasks']
-                users = User.objects.all().exclude(teams=None)
+                teams = form.cleaned_data['teams']
+                users = User.objects.all().filter(teams__in=teams)
                 
                 tasksCreated = 0
                 for task in tasks:
