@@ -28,6 +28,10 @@
             <th>Car</th>
             <td>{{ user.profile.car }}</td>
         </tr>
+        <tr>
+            <th>My course load for the term is</th>
+            <td>{{ user.profile.course_load|courseLoad }}</td>
+        </tr>
     </tbody></table>
 </div>
 

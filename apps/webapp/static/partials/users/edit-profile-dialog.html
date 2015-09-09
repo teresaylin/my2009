@@ -22,6 +22,14 @@
                 </select>
             </div>
         </div>
+        <div class="form-group">
+            <div class="col-sm-3">
+                <label class="control-label" for="user-edit-profile-courseload">My course load for the term is</label>
+            </div>
+            <div class="col-sm-9">
+                <select class="form-control" ng-model="profile.course_load" ng-options="item[0] as item[1] for item in courseLoadOptions track by item[0]" required></select>
+            </div>
+        </div>
     </form>
 </div>
 <div class="modal-footer">

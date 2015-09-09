@@ -8,7 +8,7 @@ from .models import UserProfile, Role, UserRoleMapping, TaskForce, Team, Milesto
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
-        fields = ('picture_filename', 'phone_number', 'car')
+        fields = ('picture_filename', 'phone_number', 'car', 'course_load')
         read_only_fields = ('picture_filename',)
         
 class RoleSerializer(serializers.ModelSerializer):

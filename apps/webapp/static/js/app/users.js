@@ -1,6 +1,14 @@
 var module = angular.module('users', []);
 
-module.controller('UserDetailStateCtrl', function($scope, $stateParams, $modal, UserRepository, RoleRepository) {
+module.constant('COURSELOAD_OPTIONS', [
+    ['L', 'Light'],
+    ['M', 'Medium'],
+    ['H', 'Heavy']
+]);
+
+module.controller('UserDetailStateCtrl', function($scope, $stateParams, $modal, UserRepository, RoleRepository, COURSELOAD_OPTIONS) {
+    $scope.courseLoadOptions = COURSELOAD_OPTIONS;
+    
     // Get user
     UserRepository.get($stateParams.userId)
         .success(function(user) {
@@ -22,6 +30,7 @@ module.controller('UserDetailStateCtrl', function($scope, $stateParams, $modal, 
             backdrop: 'static',
             templateUrl: partial('users/edit-profile-dialog.html'),
             controller: function($scope, $modalInstance, user) {
+                $scope.courseLoadOptions = COURSELOAD_OPTIONS;
                 if(user.profile) {
                     // Copy existing profile
                     $scope.profile = angular.copy(user.profile);
@@ -388,4 +397,16 @@ module.directive('commentsSection', function($http, CommentRepository) {
             };
         }
     };
+});
+
+module.filter('courseLoad', function(COURSELOAD_OPTIONS) {
+    return function(val) {
+        for(var i = 0; i < COURSELOAD_OPTIONS.length; i++) {
+            var item = COURSELOAD_OPTIONS[i];
+            if(val == item[0]) {
+                return item[1];
+            }
+        }
+        return 'Not specified';
+    }
 });

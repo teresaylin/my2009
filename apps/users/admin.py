@@ -42,7 +42,7 @@ class UserRoleMappingAdmin(admin.ModelAdmin):
 admin.site.register(UserRoleMapping, UserRoleMappingAdmin)
 
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'phone_number' , 'car')
+    list_display = ('user', 'phone_number' , 'car', 'course_load')
 
 admin.site.register(UserProfile, UserProfileAdmin)
 
