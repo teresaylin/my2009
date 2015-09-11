@@ -137,6 +137,23 @@ class EventViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
         return Response({})
 
     @action(methods=['PUT'])
+    def remove_attendee_taskforce(self, request, pk=None):
+        event = self.get_object()
+
+        # Get TaskForce object
+        try:
+            taskforceId = request.DATA.get('taskforce_id', None)
+            taskforce = TaskForce.objects.get(id=taskforceId)
+        except TaskForce.DoesNotExist:
+            raise TaskForceNotFound()
+        
+        # Remove TaskForce from attendee list
+        event.attending_taskforces.remove(taskforce)
+        event.save()
+        
+        return Response({})
+
+    @action(methods=['PUT'])
     def repeat(self, request, pk=None):
         event = self.get_object()
         

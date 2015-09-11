@@ -50,6 +50,11 @@ module.factory('EventRepository', function($http) {
                 'user_id': userId
             });
         },
+        removeAttendeeTaskforce: function(id, taskforceId) {
+            return $http.put(baseUrl+id+'/remove_attendee_taskforce/', {
+                'taskforce_id': taskforceId
+            });
+        },
         addFile: function(id, path) {
             return $http.put(baseUrl+id+'/add_file/', {
                 'path': path

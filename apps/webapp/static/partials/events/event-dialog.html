@@ -73,35 +73,48 @@
         </tab>
         <tab>
             <tab-heading><span class="fa fa-users"></span></tab-heading>
-            <h4>Attendees</h4>
 
-            <form class="form-inline" ng-if="event._permissions.update">
-                <p>Add user</p>
-                <user-picker user="newAttendeeUser"></user-picker>
-                <button class="btn btn-sm btn-primary"
-                    ng-click="addAttendee(newAttendeeUser); newAttendeeUser = null"
-                    ng-disabled="!newAttendeeUser">
-                Add</button>
-            </form> 
+            <h4>Individuals attending</h4>
+            <div>
+                <form class="form-inline" ng-if="event._permissions.update">
+                    <user-picker user="newAttendeeUser"></user-picker>
+                    <button class="btn btn-sm btn-primary"
+                        ng-click="addAttendee(newAttendeeUser); newAttendeeUser = null"
+                        ng-disabled="!newAttendeeUser">
+                    Add</button>
+                </form> 
 
-            <form class="form-inline" ng-if="event._permissions.update">
-                <p>Add task force</p>
-                <taskforce-picker taskforce="newAttendeeTaskforce"></taskforce-picker>
-                <button class="btn btn-sm btn-primary"
-                    ng-click="addAttendeeTaskforce(newAttendeeTaskforce); newAttendeeTaskforce = null"
-                    ng-disabled="!newAttendeeTaskforce">
-                Add</button>
-            </form> 
+                <p ng-if="event.attendees.length == 0">No individuals are attending this event.</p>
+                <ul class="list-group">
+                    <li class="list-group-item" ng-repeat="user in event.attendees">
+                        <a href ng-click="removeAttendee(user)" ng-if="event._permissions.update">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </a>
+                        <a ui-sref="users.detail({ userId: user.id })">{{ user.full_name }}</a>
+                    </li>
+                </ul>
+            </div>
             
-            <p ng-if="event.attendees.length == 0">No-one is attending this event.</p>
-            <ul class="list-group">
-                <li class="list-group-item" ng-repeat="user in event.attendees">
-                    <a href ng-click="removeAttendee(user)" ng-if="event._permissions.update">
-                        <span class="glyphicon glyphicon-remove"></span>
-                    </a>
-                    <a ui-sref="users.detail({ userId: user.id })">{{ user.full_name }}</a>
-                </li>
-            </ul>
+            <h4>Task forces attending</h4>
+            <div>
+                <form class="form-inline" ng-if="event._permissions.update">
+                    <taskforce-picker taskforce="newAttendeeTaskforce"></taskforce-picker>
+                    <button class="btn btn-sm btn-primary"
+                        ng-click="addAttendeeTaskforce(newAttendeeTaskforce); newAttendeeTaskforce = null"
+                        ng-disabled="!newAttendeeTaskforce">
+                    Add</button>
+                </form> 
+
+                <p ng-if="event.attending_taskforces.length == 0">No task forces are attending this event.</p>
+                <ul class="list-group">
+                    <li class="list-group-item" ng-repeat="taskforce in event.attending_taskforces">
+                        <a href ng-click="removeAttendeeTaskforce(taskforce)" ng-if="event._permissions.update">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </a>
+                        {{ taskforce.name }}
+                    </li>
+                </ul>
+            </div> 
         </tab>
         <tab>
             <tab-heading><span class="fa fa-comments"></span></tab-heading>

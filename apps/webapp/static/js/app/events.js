@@ -105,7 +105,7 @@ module.controller('EventDialogCtrl', function($scope, $modalInstance, EventRepos
     $scope.addAttendeeTaskforce = function(taskforce) {
         EventRepository.addAttendeeTaskforce($scope.event.id, taskforce.id)
             .success(function(data) {
-                $scope.event.attendees = data.attendees;
+                $scope.event.attending_taskforces = data.attending_taskforces;
                 changesMade = true;
             });
     };
@@ -115,6 +115,15 @@ module.controller('EventDialogCtrl', function($scope, $modalInstance, EventRepos
             .success(function() {
                 var attendees = $scope.event.attendees;
                 attendees.splice(attendees.indexOf(user), 1);
+                changesMade = true;
+            });
+    };
+
+    $scope.removeAttendeeTaskforce = function(taskforce) {
+        EventRepository.removeAttendeeTaskforce($scope.event.id, taskforce.id)
+            .success(function() {
+                var tfs = $scope.event.attending_taskforces;
+                tfs.splice(tfs.indexOf(taskforce), 1);
                 changesMade = true;
             });
     };
