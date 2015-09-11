@@ -365,6 +365,10 @@ hr {
         white-space: normal;
     }
 
+    &.fc-time-grid-event .fc-bg {
+        display: none;
+    }
+
     &.event-global {
         background-color: #aaa;
         border-color: #aaa;
@@ -372,7 +376,7 @@ hr {
     }
 
     &.event-no-attendees {
-        background-color: transparent;
+        background-color: white;
         border-color: black;
         color: black;
 

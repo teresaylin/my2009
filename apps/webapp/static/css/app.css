@@ -295,12 +295,14 @@ hr {
   cursor: pointer; }
   .fc-event.fc-day-grid-event > .fc-content {
     white-space: normal; }
+  .fc-event.fc-time-grid-event .fc-bg {
+    display: none; }
   .fc-event.event-global {
     background-color: #aaa;
     border-color: #aaa;
     color: white; }
   .fc-event.event-no-attendees {
-    background-color: transparent;
+    background-color: white;
     border-color: black;
     color: black; }
     .fc-event.event-no-attendees:hover {
