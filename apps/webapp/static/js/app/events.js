@@ -270,9 +270,24 @@ module.controller('CalendarCtrl', function($scope, $modal, $state, EventReposito
             EventRepository.list(query)
                 .success(function(events) {
                     angular.forEach(events, function(event) {
-                        // Mark global events as different colour
+                        // Add classes to distinguish global events, types of attendees etc
+                        event.className = [];
+                        var classes = event.className;
+
                         if(event.is_global) {
-                            event.color = 'red';
+                            classes.push('event-global');
+                        } else {
+                            if(event.attending_taskforces.length > 0) {
+                                classes.push('event-taskforces-attending');
+                            } else if(event.attendees.length > 0) {
+                                classes.push('event-users-attending');
+                            } else {
+                                classes.push('event-no-attendees');
+                            }
+                        }
+
+                        if(NavFilterService.user && NavFilterService.user.id == event.owner.id) {
+                            classes.push('event-owner');
                         }
                     });
                     
@@ -282,7 +297,7 @@ module.controller('CalendarCtrl', function($scope, $modal, $state, EventReposito
     };
     
     $scope.$on('navFilterChanged', function(event, changed) {
-        if('team' in changed && 'calendar' in $scope) {
+        if('calendar' in $scope) {
             // Reload events
             $scope.calendar.fullCalendar('refetchEvents');
         }

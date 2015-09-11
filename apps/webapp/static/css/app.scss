@@ -31,7 +31,7 @@ $teamAccentColors: (
     $col: nth(map-values($teamColors), $i);
     $accentCol: nth(map-values($teamAccentColors), $i);
 
-    .header.team-#{$name} {
+    .team-#{$name} .header {
         background-color: $col;
         border-bottom: 1px solid darken($col, 5%);
 
@@ -360,6 +360,50 @@ hr {
 
 .fc-event {
     cursor: pointer;
+
+    &.fc-day-grid-event > .fc-content {
+        white-space: normal;
+    }
+
+    &.event-global {
+        background-color: #aaa;
+        border-color: #aaa;
+        color: white;
+    }
+
+    &.event-no-attendees {
+        background-color: transparent;
+        border-color: black;
+        color: black;
+
+        &:hover {
+            color: black;
+        }
+    }
+
+    &.event-owner {
+        font-style: oblique;
+    }
+}
+
+@for $i from 1 to length($teamColors)+1 {
+    $name: nth(map-keys($teamColors), $i);
+    $col: nth(map-values($teamColors), $i);
+    $accentCol: nth(map-values($teamAccentColors), $i);
+
+    $colLight: lighten($accentCol, 25%);
+
+    .team-#{$name} .fc-event.event-taskforces-attending {
+        background-color: $col;
+        border-color: $col;
+        color: $colLight;
+    }
+
+    .team-#{$name} .fc-event.event-users-attending {
+        background-color: $colLight;
+        border-color: $colLight;
+        color: $col;
+    }
 }
 
 /*---------- Tasks ----------*/

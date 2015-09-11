@@ -142,6 +142,12 @@ app.controller('AppCtrl', function($rootScope, $scope, $modal, NavFilterService,
         });
     });
 
+    $scope.$on('navFilterChanged', function(event, changed) {
+        if('team' in changed) {
+            $scope.teamColor = NavFilterService.team.color;
+        }
+    });
+
     // Get current user
     UserRepository.getCurrentUser()
         .success(function(data) {

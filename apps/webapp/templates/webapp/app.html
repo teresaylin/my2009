@@ -19,9 +19,9 @@
 {% endblock %}
 
 {% block pageContent %}
-<section id="container">
+<section id="container" ng-class="teamColor ? 'team-'+teamColor : null">
     <!-- Top bar -->
-    <header class="header black-bg" ng-class="activeTeam.color ? 'team-'+activeTeam.color : null" ng-controller="NavFilterCtrl">
+    <header class="header black-bg" ng-controller="NavFilterCtrl">
         <div class="sidebar-toggle-box">
             <div class="fa fa-bars" tooltip="Toggle navigation" tooltip-placement="right" ng-click="toggleSidebar()"></div>
         </div>
