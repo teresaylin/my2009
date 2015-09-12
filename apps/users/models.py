@@ -56,6 +56,7 @@ class UserProfile(models.Model):
     )
 
     COURSELOAD_CHOICES = (
+        ('N', 'N/A'),
         ('L', 'Light'),
         ('M', 'Medium'),
         ('H', 'Heavy'),
@@ -65,7 +66,7 @@ class UserProfile(models.Model):
     picture_filename = models.CharField(max_length=20, blank=True)
     phone_number = models.CharField(max_length=12)
     car = models.CharField(max_length=1, choices=CAR_CHOICES)
-    course_load = models.CharField(max_length=1, choices=COURSELOAD_CHOICES, blank=True, default='')
+    course_load = models.CharField(max_length=1, choices=COURSELOAD_CHOICES, blank=True, default='N')
 
     def __str__(self):
         return str(self.user)

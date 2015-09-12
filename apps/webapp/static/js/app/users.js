@@ -1,6 +1,7 @@
 var module = angular.module('users', []);
 
 module.constant('COURSELOAD_OPTIONS', [
+    ['N', 'N/A'],
     ['L', 'Light'],
     ['M', 'Medium'],
     ['H', 'Heavy']
