@@ -267,6 +267,15 @@ module.controller('CalendarCtrl', function($scope, $modal, $state, EventReposito
                 team: NavFilterService.team.id
             };
 
+            if($scope.filterNav) {
+                if(NavFilterService.user) {
+                    query.user = NavFilterService.user.id;
+                }
+                if(NavFilterService.taskforce) {
+                    query.taskforce = NavFilterService.taskforce.id;
+                }
+            }
+
             EventRepository.list(query)
                 .success(function(events) {
                     angular.forEach(events, function(event) {
@@ -295,12 +304,16 @@ module.controller('CalendarCtrl', function($scope, $modal, $state, EventReposito
                 });
         };
     };
-    
-    $scope.$on('navFilterChanged', function(event, changed) {
+
+    function reloadEvents() {
+        // Reload events
         if('calendar' in $scope) {
-            // Reload events
             $scope.calendar.fullCalendar('refetchEvents');
         }
+    }
+    
+    $scope.$on('navFilterChanged', function(event, changed) {
+        reloadEvents();
     });
 
     // Event click handler
@@ -352,19 +365,18 @@ module.controller('CalendarCtrl', function($scope, $modal, $state, EventReposito
             }
         });
     };
-    
+
     $scope.$on('refreshEvents', function() {
-        // Reload events
-        if('calendar' in $scope) {
-            $scope.calendar.fullCalendar('refetchEvents');
-        }
+        reloadEvents();
     });
 });
 
 module.directive('calendar', function() {
     return {
         restrict: 'E',
-        scope: {},
+        scope: {
+            filterNav: '='
+        },
         templateUrl: 'events/calendar.html',
         controller: 'CalendarCtrl'
     };

@@ -53,6 +53,32 @@ class EventViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
             except Team.DoesNotExist:
                 raise TeamNotFound()
             queryset = queryset.filter(Q(owner__teams__in=[team]) | Q(is_global=True))
+
+        # Filter by user
+        userId = self.request.QUERY_PARAMS.get('user', None)
+        if userId:
+            try:
+                user = User.objects.get(id=userId)
+            except ValueError:
+                raise ParseError('Invalid user ID')
+            except User.DoesNotExist:
+                raise UserNotFound()
+            queryset = queryset.filter(
+                Q(owner=user) | \
+                Q(attendees__in=[user]) | \
+                Q(attending_taskforces__in=user.taskforces.all())
+            )
+
+        # Filter by taskforce
+        taskforceId = self.request.QUERY_PARAMS.get('taskforce', None)
+        if taskforceId:
+            try:
+                taskforce = TaskForce.objects.get(id=taskforceId)
+            except ValueError:
+                raise ParseError('Invalid taskforce ID')
+            except TaskForce.DoesNotExist:
+                raise TaskForceNotFound()
+            queryset = queryset.filter(attending_taskforces__in=[taskforce])
         
         return queryset
     
