@@ -1,0 +1,31 @@
+{% extends 'admin/base_site.html' %}
+
+{% block content %}
+
+<h1>Assign group</h1>
+
+<p>The selected group will be assigned to the following users:</p>
+<ul>
+    {% for user in users %}
+        <li>{{ user.username }}</li>
+    {% endfor %}
+</ul>
+
+<form action="{% url 'admin:assign-group' %}" method="post">
+    {% csrf_token %}
+    {{ form.users.as_hidden }}
+    <p>
+        {{ form.errors }}
+    </p>
+    <p>
+        {{ form.group.label }}
+        {{ form.group }}
+    </p>
+    <p>
+        {{ form.unassign.label }}
+        {{ form.unassign }}
+    </p>
+    <input type="submit" value="Assign">
+</form>
+
+{% endblock %}
