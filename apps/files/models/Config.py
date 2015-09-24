@@ -7,7 +7,7 @@ class Config(models.Model):
     def getMinTime():
         return Config.MIN_TIME
 
-    deltaCursor = models.CharField(max_length=512, null=True)
+    deltaCursor = models.CharField(max_length=4096, null=True)
     lastDeltaSync = models.DateTimeField(default=getMinTime)
     
     def save(self, *args, **kwargs):
