@@ -1,4 +1,4 @@
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.contrib.auth.models import User
 from rest_framework import viewsets
 from rest_framework.decorators import action
@@ -34,7 +34,10 @@ class TaskViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
             except User.DoesNotExist:
                 raise UserNotFound()
             
-            queryset = queryset.filter(assigned_users__in=[user])
+            queryset = queryset.filter(
+                Q(assigned_users__in=[user]) |
+                Q(assigned_taskforces__in=user.taskforces.all())
+            )
 
         # Filter by taskforce
         taskforceId = self.request.QUERY_PARAMS.get('taskforce', None)
