@@ -1,7 +1,8 @@
 -r common.txt
 dj-database-url==0.3.0
 dj-static==0.0.6
-gunicorn==19.1.1
+gunicorn>=19.3.0
+aiohttp>=0.17.3
 static3==0.5.1
 psycopg2==2.5.4
 redis==2.10.3
