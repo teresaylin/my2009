@@ -42,7 +42,7 @@ class EventViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
                 queryset = queryset.filter(start__lt=end)
         except ValidationError:
             raise ParseError('Invalid date')
-        
+
         # Filter by team
         teamId = self.request.QUERY_PARAMS.get('team', None)
         if teamId:
@@ -79,7 +79,10 @@ class EventViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
             except TaskForce.DoesNotExist:
                 raise TaskForceNotFound()
             queryset = queryset.filter(attending_taskforces__in=[taskforce])
-        
+
+        # Remove duplicate results from joins
+        queryset = queryset.distinct()
+
         return queryset
     
     def pre_save(self, obj):

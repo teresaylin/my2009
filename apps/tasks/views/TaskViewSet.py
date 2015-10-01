@@ -65,7 +65,10 @@ class TaskViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
         queryset = queryset \
             .annotate(null_due_time=Count('due_time')) \
             .order_by('-null_due_time', 'due_time')
-        
+
+        # Remove duplicate results from joins
+        queryset = queryset.distinct()
+
         return queryset
     
     def list(self, request, *args, **kwargs):
