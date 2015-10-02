@@ -48,10 +48,16 @@
                     <span ng-if="taskforces.length > 1">{{ taskforces[0].active.name }}</span>
                 </a>
                 <ul class="dropdown-menu">
-                    <li class="dropdown-header">Users</li>
-                    <li ng-repeat="user in users">
-                        <a href ng-click="selectUser(user)">{{ user.full_name }}</a>
+                    <li ng-if="users[0].id == currentUser.id">
+                        <a href ng-click="selectUser(users[0])">{{ users[0].full_name }}</a>
                     </li>
+                    <li ng-if="users[0].id == currentUser.id" class="divider"></li>
+
+                    <li class="dropdown-header">Team members</li>
+                    <li ng-repeat="user in users">
+                        <a href ng-click="selectUser(user)" ng-if="!($first && user.id == currentUser.id)">{{ user.full_name }}</a>
+                    </li>
+
                     <li class="divider"></li>
                     <li class="dropdown-header">Task forces</li>
                     <li ng-repeat="taskforce in taskforces[0].list">
