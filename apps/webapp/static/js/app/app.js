@@ -163,6 +163,12 @@ app.controller('AppCtrl', function($rootScope, $scope, $modal, NavFilterService,
     $scope.showSidebar = true;
 });
 
+app.controller('NavCtrl', function($scope) {
+    $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){
+        $scope.stateName = toState.name;
+    });
+});
+
 app.controller('TeamMembersListCtrl', function($scope, $timeout, NavFilterService, UserRepository) {
     var timeoutDelay = 60*1000; // Update every 60 seconds
     var timeoutPromise = null;

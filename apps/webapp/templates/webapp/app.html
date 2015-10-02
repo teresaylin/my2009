@@ -94,7 +94,7 @@
     
     <!-- Sidebar -->
     <aside>
-        <div id="sidebar" class="nav-collapse" ng-show="showSidebar">
+        <div id="sidebar" class="nav-collapse" ng-show="showSidebar" ng-controller="NavCtrl">
             <ul class="sidebar-menu list-unstyled" id="nav-accordion">
                 <p class="centered">
                     <a ui-sref="users.detail({userId:currentUser.id})">
@@ -105,46 +105,46 @@
                 <h5 class="centered">{% verbatim %}{{ currentUser.full_name }}{% endverbatim %}</h5>
                   
                 <li class="mt">
-                    <a ui-sref="dashboard">
-                        <i class="fa fa-dashboard"></i> <span>Dashboard</span>
+                    <a ui-sref="dashboard" ng-class="{ active: stateName == 'dashboard' }">
+                        <span class="fa fa-dashboard"></span> <span>Dashboard</span>
                     </a>
                 </li>
                 <li>
-                    <a ui-sref="tasks">
-                        <i class="fa fa-tasks"></i> <span>Tasks</span>
+                    <a ui-sref="tasks" ng-class="{ active: stateName == 'tasks' }">
+                        <span class="fa fa-tasks"></span> <span>Tasks</span>
                     </a>
                 </li>
                 <li>
-                    <a ui-sref="team">
-                        <i class="fa fa-users"></i> <span>Team</span>
+                    <a ui-sref="team" ng-class="{ active: stateName == 'team' }">
+                        <span class="fa fa-users"></span> <span>Team</span>
                     </a>
                 </li>
                 <li>
-                    <a ui-sref="events">
-                        <i class="fa fa-calendar"></i> <span>Events</span>
+                    <a ui-sref="events" ng-class="{ active: stateName == 'events' }">
+                        <span class="fa fa-calendar"></span> <span>Events</span>
                     </a>
                 </li>
                 <li>
-                    <a ui-sref="files">
-                        <i class="fa fa-folder"></i> <span>Files</span>
+                    <a ui-sref="files" ng-class="{ active: stateName == 'files' }">
+                        <span class="fa fa-folder"></span> <span>Files</span>
                     </a>
                 </li>
                 {% if perms.stats.can_view_stats %}
                 <li>
-                    <a ui-sref="stats">
-                        <i class="fa fa-bar-chart-o"></i> <span>Stats</span>
+                    <a ui-sref="stats" ng-class="{ active: stateName == 'stats' }">
+                        <span class="fa fa-bar-chart-o"></span> <span>Stats</span>
                     </a>
                 </li>
                 {% endif %}
                 <!-- Mobile only -->
                 <li class="visible-xs">
-                    <a ui-sref="settings">
-                	    <i class="fa fa-cog"></i> <span>Settings</span>
+                    <a ui-sref="settings" ng-class="{ active: stateName == 'settings' }">
+                        <span class="fa fa-cog"></span> <span>Settings</span>
                     </a>
                 </li>
                 <li class="visible-xs">
                     <a class="logout" href="{% url 'webapp:logout' %}">
-                	    <i class="fa fa-sign-out"></i> <span>Logout</span>
+                        <span class="fa fa-sign-out"></span> <span>Logout</span>
                     </a>
                 </li>
             </ul>
