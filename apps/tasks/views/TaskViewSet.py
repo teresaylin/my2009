@@ -8,8 +8,8 @@ from rest_framework.exceptions import PermissionDenied
 from libs.permissions.user_permissions import getUserObjectPermissions
 from libs import tracking
 
-from apps.users.exceptions import UserNotFound, TaskForceNotFound
-from apps.users.models import TaskForce
+from apps.users.exceptions import UserNotFound, TaskForceNotFound, TeamNotFound
+from apps.users.models import TaskForce, Team
 
 from apps.files.views import ModelWithFilesViewSetMixin
 
@@ -24,6 +24,17 @@ class TaskViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
     
     def get_queryset(self):
         queryset = super().get_queryset()
+
+        # Filter by team
+        teamId = self.request.QUERY_PARAMS.get('team', None)
+        if teamId:
+            try:
+                team = Team.objects.get(id=teamId)
+            except ValueError:
+                raise ParseError('Invalid team ID')
+            except Team.DoesNotExist:
+                raise TeamNotFound()
+            queryset = queryset.filter(owner__teams__in=[team])
         
         # Filter by user
         userId = self.request.QUERY_PARAMS.get('user', None)
