@@ -267,13 +267,12 @@ module.controller('CalendarCtrl', function($scope, $modal, $state, EventReposito
                 team: NavFilterService.team.id
             };
 
-            if($scope.filterNav) {
-                if(NavFilterService.user) {
-                    query.user = NavFilterService.user.id;
-                }
-                if(NavFilterService.taskforce) {
-                    query.taskforce = NavFilterService.taskforce.id;
-                }
+            if($scope.filterUser) {
+                query.user = $scope.filterUser.id;
+            }
+
+            if($scope.filterTaskforce) {
+                query.taskforce = $scope.filterTaskforce.id;
             }
 
             EventRepository.list(query)
@@ -299,7 +298,7 @@ module.controller('CalendarCtrl', function($scope, $modal, $state, EventReposito
                             classes.push('event-owner');
                         }
                     });
-                    
+
                     callback(events);
                 });
         };
@@ -312,8 +311,10 @@ module.controller('CalendarCtrl', function($scope, $modal, $state, EventReposito
         }
     }
     
-    $scope.$on('navFilterChanged', function(event, changed) {
-        reloadEvents();
+    $scope.$watchCollection('[filterUser, filterTaskforce]', function(val) {
+        if(val) {
+            reloadEvents();
+        }
     });
 
     // Event click handler
@@ -347,6 +348,7 @@ module.controller('CalendarCtrl', function($scope, $modal, $state, EventReposito
             },
             allDaySlot: false,
             timezone: 'local',
+            defaultView: 'agendaWeek',
             eventClick: onEventClick,
             eventDrop: onEventDrop,
             eventResize: onEventResize
@@ -375,7 +377,8 @@ module.directive('calendar', function() {
     return {
         restrict: 'E',
         scope: {
-            filterNav: '='
+            filterUser: '=',
+            filterTaskforce: '='
         },
         templateUrl: 'events/calendar.html',
         controller: 'CalendarCtrl'

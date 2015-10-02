@@ -4,10 +4,14 @@
 <div class="row mt">
     <div class="col-md-6">
         <task-list filter-user="navUser" filter-taskforce="navTaskforce"></task-list>
-        <task-list filter-user-owned="navUser" ng-if="navUser"></task-list>
+        <div class="mt">
+            <task-list filter-user-owned="navUser" ng-if="navUser"></task-list>
+        </div>
     </div>
     <div class="col-md-6">
         <task-list filter-user="currentUser"></task-list>
-        <task-list filter-user-owned="currentUser"></task-list>
+        <div class="mt">
+            <task-list filter-user-owned="currentUser"></task-list>
+        </div>
     </div>
 </div>

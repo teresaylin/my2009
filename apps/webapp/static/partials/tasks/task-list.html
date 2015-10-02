@@ -36,12 +36,12 @@
     </div>
 </script>
 
-<section class="content-panel mt">
+<section class="content-panel">
     <div class="panel-heading">
         <div class="pull-left">
             <h5>
                 <span class="fa fa-tasks"></span>
-                <span ng-if="!filterUserOwned">Tasks assigned to
+                <span ng-if="!filterUserOwned && (filterUser || filterTaskforce)">Tasks assigned to
                     <span ng-if="filterUser && filterUser.id != $parent.$parent.currentUser.id">{{ filterUser.full_name }}</span>
                     <span ng-if="filterUser && filterUser.id == $parent.$parent.currentUser.id">me</span>
                     <span ng-if="filterTaskforce">{{ filterTaskforce.name }}</span>
@@ -49,6 +49,9 @@
                 <span ng-if="filterUserOwned">Tasks owned by
                     <span ng-if="filterUserOwned.id != $parent.$parent.currentUser.id">{{ filterUserOwned.full_name }}</span>
                     <span ng-if="filterUserOwned.id == $parent.$parent.currentUser.id">me</span>
+                </span>
+                <span ng-if="!filterUserOwned && !filterUser && !filterTaskforce">
+                    {{ navTeam.name }} team tasks
                 </span>
             </h5>
         </div>

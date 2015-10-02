@@ -64,8 +64,9 @@ class EventViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
             except User.DoesNotExist:
                 raise UserNotFound()
             queryset = queryset.filter(
-                Q(owner=user) | \
-                Q(attendees__in=[user]) | \
+                Q(owner=user) |
+                Q(is_global=True) |
+                Q(attendees__in=[user]) |
                 Q(attending_taskforces__in=user.taskforces.all())
             )
 
@@ -78,7 +79,11 @@ class EventViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
                 raise ParseError('Invalid taskforce ID')
             except TaskForce.DoesNotExist:
                 raise TaskForceNotFound()
-            queryset = queryset.filter(attending_taskforces__in=[taskforce])
+            queryset = queryset.filter(
+                Q(attending_taskforces__in=[taskforce]) |
+                Q(is_global=True) |
+                Q(attendees__in=taskforce.members.all())
+            )
 
         # Remove duplicate results from joins
         queryset = queryset.distinct()

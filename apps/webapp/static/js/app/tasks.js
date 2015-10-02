@@ -1,24 +1,20 @@
 var module = angular.module('tasks', []);
 
 module.controller('TasksStateCtrl', function($scope, $modal, NavFilterService, TaskDialogService) {
-    $scope.$on('navFilterChanged', function(event, changed) {
-        if('user' in changed || 'taskforce' in changed) {
-            $scope.navUser = NavFilterService.user;
-            $scope.navTaskforce = NavFilterService.taskforce;
-        }
-    });
-    $scope.navUser = NavFilterService.user;
-    $scope.navTaskforce = NavFilterService.taskforce;
-
     $scope.newTask = function() {
         var dlg = TaskDialogService.newTask();
     };
 });
 
-module.controller('TaskListCtrl', function($rootScope, $scope, $modal, TaskRepository, TaskDialogService) {
+module.controller('TaskListCtrl', function($rootScope, $scope, $modal, TaskRepository, TaskDialogService, NavFilterService) {
     var refreshTasks = function() {
+        if(!NavFilterService.team) return;
+
         // Get list of tasks
-        var query = {};
+        var query = {
+            tree: true,
+            team: NavFilterService.team.id
+        };
 
         if($scope.filterUser) {
             query.user = $scope.filterUser.id;
@@ -30,14 +26,18 @@ module.controller('TaskListCtrl', function($rootScope, $scope, $modal, TaskRepos
             query['user-owned'] = $scope.filterUserOwned.id;
         }
         
-        if(!jQuery.isEmptyObject(query)) {
-            query.tree = true;
-            TaskRepository.list(query)
-                .success(function(tasks) {
-                    $scope.tasks = tasks;
-                });
-        }
+        TaskRepository.list(query)
+            .success(function(tasks) {
+                $scope.tasks = tasks;
+            });
     };
+
+    $scope.$on('navFilterChanged', function(event, changed) {
+        if('team' in changed) {
+            $scope.navTeam = NavFilterService.team;
+        }
+    });
+    $scope.navTeam = NavFilterService.team;
 
     // Refresh tasks if filters change
     $scope.$watchCollection('[filterUser, filterTaskforce, filterUserOwned]', function(val) {

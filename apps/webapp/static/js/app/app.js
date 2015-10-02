@@ -145,6 +145,11 @@ app.controller('AppCtrl', function($rootScope, $scope, $modal, NavFilterService,
     $scope.$on('navFilterChanged', function(event, changed) {
         if('team' in changed) {
             $scope.teamColor = NavFilterService.team.color;
+            $scope.navTeam = NavFilterService.team;
+        }
+        if('user' in changed || 'taskforce' in changed) {
+            $scope.navUser = NavFilterService.user;
+            $scope.navTaskforce = NavFilterService.taskforce;
         }
     });
 
