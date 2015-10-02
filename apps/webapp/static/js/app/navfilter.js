@@ -91,13 +91,22 @@ module.controller('NavFilterCtrl', function($scope, NavFilterService, TeamReposi
         UserRepository.list({ teams: team.id })
             .success(function(users) {
                 $scope.users = users;
-                
-                // Show current user if member of selected team, otherwise show the first member
-                if(userInTeam) {
-                    NavFilterService.setUser($scope.currentUser);
-                } else {
-                    NavFilterService.setUser(users[0]);
+
+                // Move current user to top of lise (if applicable)
+                var curUserIdx = null;
+                for(var i = 0; i < users.length; i++) {
+                    if(users[i].id == $scope.currentUser.id) {
+                        curUserIdx = i;
+                        break;
+                    }
                 }
+                if(curUserIdx) {
+                    var curUser = users.splice(curUserIdx, 1);
+                    users.unshift(curUser[0]);
+                }
+                
+                // Show first member of team
+                NavFilterService.setUser(users[0]);
             });
             
         // Get root task forces for this team
