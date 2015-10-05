@@ -33,50 +33,57 @@
         <!-- Nav Filter -->
         {% verbatim %}
         <div class="nav-filter">
+            <a ng-click="selectHome()" ng-class="{ selected: homeSelected }" href class="home-button">
+                <span class="fa fa-home"></span>
+            </a>
+            &raquo;
             <span class="dropdown">
-                <a href class="dropdown-toggle">{{ activeTeam.name }}</a>
+                <a href class="dropdown-toggle">{{ homeSelected ? '...' : activeTeam.name }}</a>
                 <ul class="dropdown-menu" ng-visible="teamSelectOpen">
                     <li ng-repeat="team in teams">
                         <a href ng-click="selectTeam(team)">{{ team.name }}</a>
                     </li>
                 </ul>
             </span>
-            &raquo;
-            <span class="dropdown">
-                <a href class="dropdown-toggle">
-                    <span ng-if="activeUser">{{ activeUser.full_name }}</span>
-                    <span ng-if="taskforces.length > 1">{{ taskforces[0].active.name }}</span>
-                </a>
-                <ul class="dropdown-menu">
-                    <li ng-if="users[0].id == currentUser.id">
-                        <a href ng-click="selectUser(users[0])">{{ users[0].full_name }}</a>
-                    </li>
-                    <li ng-if="users[0].id == currentUser.id" class="divider"></li>
-
-                    <li class="dropdown-header">Team members</li>
-                    <li ng-repeat="user in users">
-                        <a href ng-click="selectUser(user)" ng-if="!($first && user.id == currentUser.id)">{{ user.full_name }}</a>
-                    </li>
-
-                    <li class="divider"></li>
-                    <li class="dropdown-header">Task forces</li>
-                    <li ng-repeat="taskforce in taskforces[0].list">
-                        <a href ng-click="selectTaskforce(taskforce, 0)">{{ taskforce.name }}</a>
-                    </li>
-                </ul>
-            </span>
-            <span ng-repeat="level in taskforces" ng-if="!$first && level.list.length > 0">
+            <span ng-hide="homeSelected">
                 &raquo;
                 <span class="dropdown">
                     <a href class="dropdown-toggle">
-                        <span ng-if="level.active">{{ level.active.name }}</span>
-                        <span ng-if="!level.active">...</span>
+                        <span ng-if="activeUser">{{ activeUser.full_name }}</span>
+                        <span ng-if="!activeUser">...</span>
+                        <span ng-if="taskforces.length > 1">{{ taskforces[0].active.name }}</span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li ng-repeat="taskforce in level.list">
-                            <a href ng-click="selectTaskforce(taskforce, level.idx)">{{ taskforce.name }}</a>
+                        <li ng-if="users[0].id == currentUser.id">
+                            <a href ng-click="selectUser(users[0])">{{ users[0].full_name }}</a>
+                        </li>
+                        <li ng-if="users[0].id == currentUser.id" class="divider"></li>
+
+                        <li class="dropdown-header">Team members</li>
+                        <li ng-repeat="user in users">
+                            <a href ng-click="selectUser(user)" ng-if="!($first && user.id == currentUser.id)">{{ user.full_name }}</a>
+                        </li>
+
+                        <li class="divider"></li>
+                        <li class="dropdown-header">Task forces</li>
+                        <li ng-repeat="taskforce in taskforces[0].list">
+                            <a href ng-click="selectTaskforce(taskforce, 0)">{{ taskforce.name }}</a>
                         </li>
                     </ul>
+                </span>
+                <span ng-repeat="level in taskforces" ng-if="!$first && level.list.length > 0">
+                    &raquo;
+                    <span class="dropdown">
+                        <a href class="dropdown-toggle">
+                            <span ng-if="level.active">{{ level.active.name }}</span>
+                            <span ng-if="!level.active">...</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li ng-repeat="taskforce in level.list">
+                                <a href ng-click="selectTaskforce(taskforce, level.idx)">{{ taskforce.name }}</a>
+                            </li>
+                        </ul>
+                    </span>
                 </span>
             </span>
         </div>

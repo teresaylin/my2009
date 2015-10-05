@@ -49,11 +49,19 @@ $teamAccentColors: (
 
 .header {
     color: white;
-    
+        
     a.dropdown-toggle {
         color: #eee;
         &:hover {
             color: #ccc;
+        }
+    }
+
+    a.home-button {
+        color: #ccc;
+
+        &.selected {
+            color: #eee;
         }
     }
     

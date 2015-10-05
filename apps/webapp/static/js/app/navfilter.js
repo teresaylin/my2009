@@ -6,8 +6,8 @@ module.factory('NavFilterService', function($rootScope) {
         user: null,
         taskforce: null,
 
-        setTeam: function(team) {
-            if(this.team != team) {
+        setTeam: function(team, refresh) {
+            if(this.team != team || refresh) {
                 this.team = team;
                 $rootScope.$broadcast('navFilterChanged', {
                     'team': true
@@ -47,7 +47,7 @@ module.factory('NavFilterService', function($rootScope) {
             if(!jQuery.isEmptyObject(changed)) {
                 $rootScope.$broadcast('navFilterChanged', changed);
             }
-        },
+        }
     };
 });
 
@@ -105,8 +105,12 @@ module.controller('NavFilterCtrl', function($scope, NavFilterService, TeamReposi
                     users.unshift(curUser[0]);
                 }
                 
-                // Show first member of team
-                NavFilterService.setUser(users[0]);
+                // Select current user if in home view
+                if($scope.homeSelected) {
+                    NavFilterService.setUser(users[0]);
+                } else {
+                    NavFilterService.setUser(null);
+                }
             });
             
         // Get root task forces for this team
@@ -131,13 +135,28 @@ module.controller('NavFilterCtrl', function($scope, NavFilterService, TeamReposi
     
     // Select team click handler
     $scope.selectTeam = function(team) {
+        $scope.homeSelected = false;
         NavFilterService.setTeam(team);
+        NavFilterService.setUser(null);
     };
 
     // Select user click handler
     $scope.selectUser = function(user) {
+        $scope.homeSelected = false;
         NavFilterService.setUser(user);
     };
+
+    // Home button handler
+    $scope.selectHome = function() {
+        $scope.homeSelected = true;
+
+        // Select the current user's first team. This will also select the current user as well.
+        angular.forEach($scope.teams, function(team) {
+            if(team.id == $scope.currentUser.teams[0].id) {
+                NavFilterService.setTeam(team, true);
+            }
+        });
+    }
     
     $scope.selectTaskforce = function(taskforce, level) {
         $scope.taskforces[level].active = taskforce;
@@ -201,4 +220,5 @@ module.controller('NavFilterCtrl', function($scope, NavFilterService, TeamReposi
     $scope.activeTeam = null;
     $scope.activeUser = null;
     $scope.taskforces = [];
+    $scope.homeSelected = true;
 });

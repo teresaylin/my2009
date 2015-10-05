@@ -105,6 +105,10 @@
     color: #eee; }
     .header a.dropdown-toggle:hover {
       color: #ccc; }
+  .header a.home-button {
+    color: #ccc; }
+    .header a.home-button.selected {
+      color: #eee; }
   .header a.logo {
     margin-top: 0;
     line-height: 60px; }
