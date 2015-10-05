@@ -1,1 +1,1 @@
-web: gunicorn my2009.wsgi --log-file - --worker-class gaiohttp
+web: ./start_waitress.py
