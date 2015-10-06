@@ -1,21 +1,13 @@
 {% extends 'webapp/page.html' %}
 
 {% load staticfiles %}
+{% load pipeline %}
 
 {% block htmlAttr %} ng-app="app"{% endblock %}
 {% block bodyAttr %} ng-controller="AppCtrl"{% endblock %}
 
 {% block pageScriptHead %}
-    <script src="{% static 'js/app/events.js' %}"></script>
-    <script src="{% static 'js/app/files.js' %}"></script>
-    <script src="{% static 'js/app/navfilter.js' %}"></script>
-    <script src="{% static 'js/app/repositories.js' %}"></script>
-    <script src="{% static 'js/app/tasks.js' %}"></script>
-    <script src="{% static 'js/app/users.js' %}"></script>
-
-    <script src="{% static 'js/app/stats.js' %}"></script>
-
-    <script src="{% static 'js/app/app.js' %}"></script>
+    {% javascript 'app' %}
 {% endblock %}
 
 {% block pageContent %}

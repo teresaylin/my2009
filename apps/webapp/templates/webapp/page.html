@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load pipeline %}
 
 <!DOCTYPE html>
 <html lang="en"{% block htmlAttr %}{% endblock %}>
@@ -10,13 +11,8 @@
 
         <title>My2009{% block pageTitle %}{% endblock %}</title>
 
-        <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
-        <link href="{% static 'font-awesome/css/font-awesome.css' %}" rel="stylesheet">
-
-        <link href="{% static 'css/style.css' %}" rel="stylesheet">
-        <link href="{% static 'css/style-responsive.css' %}" rel="stylesheet">
-
-        <link href="{% static 'css/app.css' %}" rel="stylesheet">
+        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Ruda:400,700,900">
+        {% stylesheet 'app' %}
 
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
@@ -28,7 +24,6 @@
 
         <script src="{% static 'js/fullcalendar-2.1.1/lib/moment.min.js' %}"></script>
         <script src="{% static 'js/fullcalendar-2.1.1/fullcalendar.min.js' %}"></script>
-        <link href="{% static 'js/fullcalendar-2.1.1/fullcalendar.min.css' %}" rel="stylesheet">
         
         <script src="{% static 'js/angular-1.2.19.min.js' %}"></script>
         <script src="{% static 'js/angular-cookies-1.2.19.min.js' %}"></script>

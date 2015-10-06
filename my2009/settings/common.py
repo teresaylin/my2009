@@ -92,5 +92,67 @@ REST_FRAMEWORK = {
     'PAGINATE_BY_PARAM': 'page_size',
 }
 
+# django-pipeline config
+INSTALLED_APPS += (
+    'pipeline',
+)
+
+STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
+from django.conf.global_settings import STATICFILES_FINDERS as STATICFILES_FINDERS_DEFAULT
+STATICFILES_FINDERS = STATICFILES_FINDERS_DEFAULT + (
+    'pipeline.finders.PipelineFinder',
+)
+
+PIPELINE_JS_COMPRESSOR = 'pipeline.compressors.jsmin.JSMinCompressor'
+PIPELINE_CSS_COMPRESSOR = 'pipeline.compressors.cssmin.CSSMinCompressor'
+PIPELINE_CSSMIN_BINARY = 'cssmin'
+
+PIPELINE_JS = {
+    'app': {
+        'source_filenames': (
+          'js/app/app.js',
+          'js/app/events.js',
+          'js/app/files.js',
+          'js/app/navfilter.js',
+          'js/app/repositories.js',
+          'js/app/stats.js',
+          'js/app/tasks.js',
+          'js/app/users.js',
+        ),
+        'output_filename': 'js/app.js',
+    },
+    'vendor': {
+        'source_filenames': (
+            'js/jquery-1.11.1.min.js',
+            'js/fullcalendar-2.1.1/lib/moment.min.js',
+            'js/fullcalendar-2.1.1/fullcalendar.min.js',
+            'js/angular-1.2.19.min.js',
+            'js/angular-cookies-1.2.19.min.js',
+            'js/angular-ui-router-0.2.10.min.js',
+            'js/ui-bootstrap-tpls-0.10.0.min.js',
+            'js/calendar.js',
+            'js/angular-file-upload-1.1.1/angular-file-upload.min.js',
+            'js/ng-google-chart.js',
+        ),
+        'output_filename': 'js/vendor.js',
+    }
+}
+
+PIPELINE_CSS = {
+    'app': {
+        'source_filenames': (
+            'css/bootstrap.css',
+            'font-awesome/css/font-awesome.css',
+            'css/style.css',
+            'css/style-responsive.css',
+            'js/fullcalendar-2.1.1/fullcalendar.min.css',
+            'css/app.css',
+        ),
+        'output_filename': 'css/app_all.css'
+    }
+}
+
+# Other settings
+
 FILE_THUMBNAIL_CACHE_TIMEOUT = 5*60    # Number of seconds to cache Dropbox thumbnails
 FILE_METADATA_CACHE_TIMEOUT = 60*60    # Number of seconds to cache Dropbox file metadata

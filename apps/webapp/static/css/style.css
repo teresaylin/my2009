@@ -6,9 +6,6 @@ Website: http://blacktie.co
 Premium: http://www.gridgum.com
 */
 
-/* Import fonts */
-@import url(http://fonts.googleapis.com/css?family=Ruda:400,700,900);
-
 /* BASIC THEME CONFIGURATION */
 body {
     color: #797979;
@@ -247,27 +244,6 @@ ul.top-menu > li > .logout {
 #sidebar .sub-menu > .sub li:last-child {
     padding-bottom: 10px;
 }
-
-/*LEFT NAVIGATION ICON*/
-.dcjq-icon {
-    height:17px;
-    width:17px;
-    display:inline-block;
-    background: url("../img/nav-expand.png") no-repeat top;
-    border-radius:3px;
-    -moz-border-radius:3px;
-    -webkit-border-radius:3px;
-    position:absolute;
-    right:10px;
-    top:15px;
-}
-.active .dcjq-icon {
-    background: url("../img/nav-expand.png") no-repeat bottom;
-    border-radius:3px;
-    -moz-border-radius:3px;
-    -webkit-border-radius:3px;
-}
-/*---*/
 
 .nav-collapse.collapse {
     display: inline;
@@ -688,15 +664,6 @@ ul.top-menu > li > a:hover, ul.top-menu > li > a:focus {
 .top-nav ul.top-menu > li > a:hover .caret {
     border-bottom-color: #000;
     border-top-color: #000;
-}
-
-.log-arrow-up {
-    background: url("../img/arrow-up.png") no-repeat;
-    width: 20px;
-    height: 11px;
-    position: absolute;
-    right: 20px;
-    top: -10px;
 }
 
 /*----*/
@@ -1160,96 +1127,6 @@ PANELS CONFIGURATIONS
 	margin-left: 10px;
 }
 
-/*WEATHER PANELS*/
-
-/* Weather 1 */
-.weather {
-	background: url(../img/weather.jpg) no-repeat center top;
-	text-align: center;
-	background-position: center center;
-}
-.weather i {
-	color: white;
-	margin-top: 45px;
-}
-.weather h2 {
-	color: white;
-	font-weight: 900;
-}
-.weather h4 {
-	color: white;
-	font-weight: 900;
-	letter-spacing: 1px;
-}
-
-/* Weather 2 */
-.weather-2 {
-	background: #e9f0f4;
-}
-.weather-2 .weather-2-header {
-	background: #54bae6;
-	padding-top: 5px;
-	margin-bottom: 5px;
-}
-.weather-2 .weather-2-header p {
-	color: white;
-	margin-left: 5px;
-	margin-right: 5px;
-}
-.weather-2 .weather-2-header p small {
-	font-size: 10px;
-}
-.weather-2 .data {
-	margin-right: 10px;
-	margin-left: 10px;
-	color: #272b34;
-}
-.weather-2 .data h5 {
-	margin-top: 0px;
-	font-weight: lighter;
-}
-.weather-2 .data h1{
-	margin-top: 2px;
-}
-
-/* Weather 3 */
-.weather-3 {
-	background: #ffcf00;
-}
-
-.weather-3 i {
-	color: white;
-	margin-top: 30px;
-	font-size: 70px;
-}
-.weather-3 h1 {
-	margin-top: 10px;
-	color: white;
-	font-weight: 900;
-}
-.weather-3 .info {
-	background: #f2f2f2;
-}
-.weather-3 .info i {
-	font-size: 15px;
-	color: #c2c2c2;
-	margin-bottom: 0px;
-	margin-top: 10px;
-}
-.weather-3 .info h3 {
-	font-weight: 900;
-	margin-bottom: 0px;
-}
-.weather-3 .info p {
-	margin-left: 10px;
-	margin-right: 10px;
-	margin-bottom: 16px;
-	color: #c2c2c2;
-	font-size: 15px;
-	font-weight: 700;
-}
-
-
 /*Twitter Panel*/
 .twitter-panel {
 	background: #4fc1e9;
@@ -1266,22 +1143,6 @@ PANELS CONFIGURATIONS
 .twitter-panel .user {
 	color: white;
 	font-weight: 900;
-}
-
-
-/* Instagram Panel*/
-.instagram-panel {
-	background: url(../img/instagram.jpg) no-repeat center top;
-	text-align: center;
-	background-position: center center;
-}
-.instagram-panel i {
-	color: white;
-	margin-top: 35px;
-}
-.instagram-panel p {
-	margin: 5px;
-	color: white;
 }
 
 /* Product Panel */
@@ -1313,53 +1174,8 @@ PANELS CONFIGURATIONS
 	border-radius: 100%;
 }
 
-/* Soptify Panel */
-#spotify {
-	background: url(../img/lorde.jpg) no-repeat center top;
-	margin-top: -15px;
-	background-attachment: relative;
-	background-position: center center;
-	min-height: 220px;
-	width: 100%;
-    -webkit-background-size: 100%;
-    -moz-background-size: 100%;
-    -o-background-size: 100%;
-    background-size: 100%;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-}
-#spotify .btn-clear-g {
-	top: 15%;
-	right: 10px;
-	position: absolute;
-	margin-top: 5px;
-}
-#spotify .sp-title {
-	bottom: 15%;
-	left: 25px;
-	position: absolute;
-	color: #efefef;
-}
-#spotify .sp-title h3 {
-	font-weight: 900;
-}
-#spotify .play{
-	bottom: 18%;
-	right: 25px;
-	position: absolute;
-	color: #efefef;
-	font-size: 20px
-}
-.followers {
-	margin-left: 5px;
-	margin-top: 5px;
-}
-
 /* BLOG PANEL */
 #blog-bg {
-	background: url(../img/blog-bg.jpg) no-repeat center top;
 	margin-top: -15px;
 	background-attachment: relative;
 	background-position: center center;
@@ -1484,7 +1300,6 @@ PANELS CONFIGURATIONS
 /* PROFILE PANELS */
 /* Profile 01*/
 #profile-01 {
-	background: url(../img/profile-01.jpg) no-repeat center top;
 	margin-top: -15px;
 	background-attachment: relative;
 	background-position: center center;
@@ -1532,7 +1347,6 @@ PANELS CONFIGURATIONS
 
 /* Profile 02*/
 #profile-02 {
-	background: url(../img/profile-02.jpg) no-repeat center top;
 	margin-top: -15px;
 	background-attachment: relative;
 	background-position: center center;
