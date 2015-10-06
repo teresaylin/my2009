@@ -6,6 +6,6 @@
         <task-list filter-user="navUser" filter-taskforce="navTaskforce"></task-list>
     </div>
     <div class="col-md-6">
-        <task-list filter-user-owned="navUser" ng-if="navUser"></task-list>
+        <task-list filter-taskforce="navTaskforce" filter-user-owned="navTaskforce ? currentUser : navUser" ng-if="navUser || navTaskforce"></task-list>
     </div>
 </div>

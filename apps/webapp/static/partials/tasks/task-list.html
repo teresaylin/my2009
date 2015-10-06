@@ -49,6 +49,7 @@
                 <span ng-if="filterUserOwned">Tasks owned by
                     <span ng-if="filterUserOwned.id != $parent.$parent.currentUser.id">{{ filterUserOwned.full_name }}</span>
                     <span ng-if="filterUserOwned.id == $parent.$parent.currentUser.id">me</span>
+                    <span ng-if="filterTaskforce"> and assigned to {{ filterTaskforce.name }}</span>
                 </span>
                 <span ng-if="!filterUserOwned && !filterUser && !filterTaskforce">
                     {{ navTeam.name }} team tasks
