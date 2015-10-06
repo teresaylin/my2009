@@ -88,6 +88,14 @@ class EventViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
         # Remove duplicate results from joins
         queryset = queryset.distinct()
 
+        # Optimizations
+        queryset = queryset \
+            .select_related('owner') \
+            .select_related('comment_thread') \
+            .prefetch_related('attendees') \
+            .prefetch_related('attending_taskforces') \
+            .prefetch_related('files')
+
         return queryset
     
     def pre_save(self, obj):
@@ -152,7 +160,7 @@ class EventViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
         event.attending_taskforces.add(taskforce)
             
         # Return updated event
-        return Response(EventSerializer(event, context={'request': request}).data)
+        return Response({})
 
     @action(methods=['PUT'])
     def remove_attendee(self, request, pk=None):

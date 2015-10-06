@@ -105,7 +105,7 @@ module.controller('EventDialogCtrl', function($scope, $modalInstance, EventRepos
     $scope.addAttendeeTaskforce = function(taskforce) {
         EventRepository.addAttendeeTaskforce($scope.event.id, taskforce.id)
             .success(function(data) {
-                $scope.event.attending_taskforces = data.attending_taskforces;
+                $scope.event.attending_taskforces.push(taskforce);
                 changesMade = true;
             });
     };
