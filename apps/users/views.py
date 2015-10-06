@@ -54,6 +54,13 @@ class UserViewSet(viewsets.ModelViewSet):
             else:
                 # Search first name or last name
                 queryset = queryset.filter(Q(first_name__icontains=searchName) | Q(last_name__icontains=searchName))
+
+        # Query optimizations
+        queryset = queryset \
+            .select_related('profile') \
+            .select_related('tracking') \
+            .prefetch_related('teams') \
+            .prefetch_related('user_roles')
             
         return queryset
 
