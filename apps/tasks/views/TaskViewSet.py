@@ -80,6 +80,15 @@ class TaskViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
         # Remove duplicate results from joins
         queryset = queryset.distinct()
 
+        # Optimizations
+        queryset = queryset \
+            .select_related('owner') \
+            .select_related('completed_by') \
+            .select_related('comment_thread') \
+            .prefetch_related('assigned_taskforces') \
+            .prefetch_related('assigned_users') \
+            .prefetch_related('files')
+
         return queryset
     
     def list(self, request, *args, **kwargs):

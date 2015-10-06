@@ -28,7 +28,17 @@ class TeamSerializer(serializers.ModelSerializer):
         model = Team
         fields = ('id', 'name', 'team_email', 'color', 'logo_filename')
 
-class UserSerializer(serializers.ModelSerializer):
+class BasicUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'full_name', 'is_superuser')
+        
+    full_name = serializers.SerializerMethodField('getFullName')
+    
+    def getFullName(self, obj):
+        return obj.first_name + ' ' + obj.last_name
+
+class UserSerializer(BasicUserSerializer):
     class Meta:
         model = User
         fields = ('id', 'username', 'email', 'first_name', 'last_name', 'full_name', 'is_superuser', 'profile', 'user_roles', 'teams', 'is_online')
@@ -36,11 +46,7 @@ class UserSerializer(serializers.ModelSerializer):
     profile = UserProfileSerializer()
     user_roles = UserRoleMappingSerializer()
     teams = TeamSerializer()
-    full_name = serializers.SerializerMethodField('getFullName')
     is_online = serializers.SerializerMethodField('getIsOnline')
-    
-    def getFullName(self, obj):
-        return obj.first_name + ' ' + obj.last_name
 
     def getIsOnline(self, obj):
         try:
@@ -52,6 +58,11 @@ class MilestoneSerializer(serializers.ModelSerializer):
     class Meta:
         model = Milestone
         fields = ('id', 'name', 'end_date')
+
+class BasicTaskForceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TaskForce
+        fields = ('id', 'name', 'team', 'parent_task_force')
 
 class ChildTaskForceSerializer(serializers.ModelSerializer):
     class Meta:
