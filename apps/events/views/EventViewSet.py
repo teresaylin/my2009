@@ -10,7 +10,7 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError
 from rest_framework.response import Response
 
-from apps.users.exceptions import UserNotFound, TeamNotFound, TaskForceNotFound
+from apps.users.exceptions import UserNotFound, TeamNotFound, TaskForceNotFound, UserNotInTeam
 from apps.users.models import Team, TaskForce
 
 from apps.files.views import ModelWithFilesViewSetMixin
@@ -102,6 +102,10 @@ class EventViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
         # Set owner when object is created
         if not obj.pk:
             obj.owner = self.request.user
+
+        # Check user belongs to team (accept if user is superuser)
+        if not is_superuser and not obj.team in self.request.user.teams.all():
+            raise UserNotInTeam()
         
         # Check start time precedes end time
         if obj.end < obj.start:

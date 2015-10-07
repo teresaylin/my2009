@@ -9,10 +9,11 @@ from ..models import Task
 class TaskSerializer(ObjectPermissionsSerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = Task
-        fields = ('id', 'name', 'parent', 'owner', 'completed_by', 'description', 'due_time', 'state', 'comment_thread', 'assigned_taskforces', 'assigned_users', 'files')
+        fields = ('id', 'name', 'parent', 'owner', 'team', 'completed_by', 'description', 'due_time', 'state', 'comment_thread', 'assigned_taskforces', 'assigned_users', 'files')
         read_only_fields = ('state',)
         
     owner = BasicUserSerializer(read_only=True)
+    team = serializers.PrimaryKeyRelatedField()
     completed_by = BasicUserSerializer(read_only=True)
     assigned_taskforces = BasicTaskForceSerializer(read_only=True)
     assigned_users = BasicUserSerializer(read_only=True)

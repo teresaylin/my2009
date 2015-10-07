@@ -23,7 +23,7 @@ module.controller('EventDetailStateCtrl', function($scope, $stateParams, EventRe
     };
 });
 
-module.controller('EventDialogCtrl', function($scope, $modalInstance, EventRepository, EventDialogService, FileRepository, FileDialogService, event) {
+module.controller('EventDialogCtrl', function($scope, $modalInstance, EventRepository, EventDialogService, FileRepository, FileDialogService, NavFilterService, event) {
     var changesMade = false; // This is set when an event is created/edited
     
     var loadEvent = function(eventData) {
@@ -59,6 +59,8 @@ module.controller('EventDialogCtrl', function($scope, $modalInstance, EventRepos
     };
     
     $scope.create = function(form) {
+        $scope.event.team = NavFilterService.team.id;
+
         // Create event
         EventRepository.create($scope.event)
             .success(function(data) {

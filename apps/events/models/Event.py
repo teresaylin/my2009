@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 
 from libs.softdelete.models import SoftDeleteableModel
-from apps.users.models import CommentThread
+from apps.users.models import CommentThread, Team
 from apps.files.models import FileAppData
 from apps.users.models import TaskForce
 
@@ -15,6 +15,7 @@ class Event(SoftDeleteableModel):
 
     title = models.CharField(max_length=100)
     owner = models.ForeignKey(User, related_name='events_owned')
+    team = models.ForeignKey(Team, related_name='events', null=True, blank=True)
     start = models.DateTimeField()
     end = models.DateTimeField()
     is_global = models.BooleanField(default=False)

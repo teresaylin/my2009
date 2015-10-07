@@ -11,7 +11,7 @@ from .models import Task
 from apps.users.models import User, Team
 
 class TaskAdmin(admin.ModelAdmin):
-    list_display = ('name', 'owner', 'prototype')
+    list_display = ('name', 'owner', 'team', 'prototype')
     actions = ['cloneTasks']
 
     def get_urls(self):

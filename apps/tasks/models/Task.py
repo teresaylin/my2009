@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 from libs.softdelete.models import SoftDeleteableModel
-from apps.users.models import CommentThread, TaskForce
+from apps.users.models import CommentThread, TaskForce, Team
 from apps.files.models import FileAppData
 
 class Task(SoftDeleteableModel):
@@ -19,6 +19,7 @@ class Task(SoftDeleteableModel):
     name = models.CharField(max_length=50, blank=False)
     parent = models.ForeignKey('Task', blank=True, null=True, related_name='subtasks')
     owner = models.ForeignKey(User, related_name='owned_tasks')
+    team = models.ForeignKey(Team, related_name='tasks', null=True, blank=True)
     description = models.TextField(blank=True)
     due_time = models.DateTimeField(null=True, blank=True)
     state = models.CharField(max_length=50, choices=STATES, blank=True)

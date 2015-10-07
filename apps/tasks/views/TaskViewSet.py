@@ -8,7 +8,7 @@ from rest_framework.exceptions import PermissionDenied
 from libs.permissions.user_permissions import getUserObjectPermissions
 from libs import tracking
 
-from apps.users.exceptions import UserNotFound, TaskForceNotFound, TeamNotFound
+from apps.users.exceptions import UserNotFound, TaskForceNotFound, TeamNotFound, UserNotInTeam
 from apps.users.models import TaskForce, Team
 
 from apps.files.views import ModelWithFilesViewSetMixin
@@ -142,7 +142,11 @@ class TaskViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
         # Set owner when object is created
         if not obj.pk:
             obj.owner = self.request.user
-            
+
+        # Check user belongs to team (accept if user is superuser)
+        if not is_superuser and not obj.team in self.request.user.teams.all():
+            raise UserNotInTeam()
+        
         # Only allow subtask creation if user has update permission on parent
         if obj.parent:
             perm = getUserObjectPermissions(self.request.user, obj.parent)

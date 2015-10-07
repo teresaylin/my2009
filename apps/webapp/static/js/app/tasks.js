@@ -197,7 +197,7 @@ module.directive('taskList', function() {
     };
 });
 
-module.controller('TaskDialogCtrl', function($rootScope, $scope, $modalInstance, TaskRepository, TaskDialogService, FileRepository, FileDialogService, task, parent) {
+module.controller('TaskDialogCtrl', function($rootScope, $scope, $modalInstance, TaskRepository, TaskDialogService, FileRepository, FileDialogService, NavFilterService, task, parent) {
     var loadTask = function(taskData) {
         $scope.task = taskData;
         $scope.creating = false;
@@ -232,6 +232,8 @@ module.controller('TaskDialogCtrl', function($rootScope, $scope, $modalInstance,
     }
     
     $scope.create = function(form) {
+        $scope.task.team = NavFilterService.team.id;
+
         // Create task
         TaskRepository.create($scope.task)
             .success(function(data) {

@@ -7,6 +7,6 @@ class EventAttendeeInline(admin.TabularInline):
     extra = 1
 
 class EventAdmin(admin.ModelAdmin):
-    list_display = ('title', 'owner')
+    list_display = ('title', 'owner', 'team')
     inlines = (EventAttendeeInline,)
 admin.site.register(Event, EventAdmin)

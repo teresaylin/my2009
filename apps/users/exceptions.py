@@ -23,3 +23,7 @@ class TeamNotFound(APIException):
 class CommentThreadNotFound(APIException):
     status_code = 404
     default_detail = 'Thread not found'
+
+class UserNotInTeam(APIException):
+    status_code = 400
+    default_detail = 'You are not a member of this team'
