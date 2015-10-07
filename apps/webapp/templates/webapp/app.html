@@ -42,7 +42,7 @@
                 <span class="dropdown">
                     <a href class="dropdown-toggle">
                         <span ng-if="activeUser">{{ activeUser.full_name }}</span>
-                        <span ng-if="!activeUser">...</span>
+                        <span ng-if="!activeUser && !(taskforces.length > 1)">...</span>
                         <span ng-if="taskforces.length > 1">{{ taskforces[0].active.name }}</span>
                     </a>
                     <ul class="dropdown-menu">
