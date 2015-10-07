@@ -38,6 +38,7 @@ class TaskViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
         
         # Filter by user
         userId = self.request.QUERY_PARAMS.get('user', None)
+        userIncludeOwned = self.request.QUERY_PARAMS.get('user-include-owned', False)
         if userId:
             # Get User object
             try:
@@ -45,10 +46,17 @@ class TaskViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
             except User.DoesNotExist:
                 raise UserNotFound()
             
-            queryset = queryset.filter(
-                Q(assigned_users__in=[user]) |
-                Q(assigned_taskforces__in=user.taskforces.all())
-            )
+            if userIncludeOwned:
+                queryset = queryset.filter(
+                    Q(assigned_users__in=[user]) |
+                    Q(assigned_taskforces__in=user.taskforces.all()) |
+                    Q(owner=user)
+                )
+            else:
+                queryset = queryset.filter(
+                    Q(assigned_users__in=[user]) |
+                    Q(assigned_taskforces__in=user.taskforces.all())
+                )
 
         # Filter by taskforce
         taskforceId = self.request.QUERY_PARAMS.get('taskforce', None)
