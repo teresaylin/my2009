@@ -3,10 +3,10 @@
 .team-red .header {
   background-color: #d32f2f;
   border-bottom: 1px solid #c02929; }
-  .team-red .header ul.top-menu > li > .logout {
+  .team-red .header ul.top-menu > li a {
     background-color: #ff1744;
     border: 1px solid #fc0031; }
-    .team-red .header ul.top-menu > li > .logout:hover {
+    .team-red .header ul.top-menu > li a:hover {
       background-color: #ff3159;
       border-color: #ff1744;
       color: white; }
@@ -14,10 +14,10 @@
 .team-green .header {
   background-color: #388e3c;
   border-bottom: 1px solid #317c34; }
-  .team-green .header ul.top-menu > li > .logout {
+  .team-green .header ul.top-menu > li a {
     background-color: #4caf50;
     border: 1px solid #449d48; }
-    .team-green .header ul.top-menu > li > .logout:hover {
+    .team-green .header ul.top-menu > li a:hover {
       background-color: #5cb860;
       border-color: #4caf50;
       color: white; }
@@ -25,10 +25,10 @@
 .team-blue .header {
   background-color: #1976d2;
   border-bottom: 1px solid #1669bb; }
-  .team-blue .header ul.top-menu > li > .logout {
+  .team-blue .header ul.top-menu > li a {
     background-color: #03a9f4;
     border: 1px solid #0398db; }
-    .team-blue .header ul.top-menu > li > .logout:hover {
+    .team-blue .header ul.top-menu > li a:hover {
       background-color: #14b4fc;
       border-color: #03a9f4;
       color: white; }
@@ -36,10 +36,10 @@
 .team-yellow .header {
   background-color: #f9ce1d;
   border-bottom: 1px solid #f6c707; }
-  .team-yellow .header ul.top-menu > li > .logout {
+  .team-yellow .header ul.top-menu > li a {
     background-color: #ffeb3b;
     border: 1px solid #ffe821; }
-    .team-yellow .header ul.top-menu > li > .logout:hover {
+    .team-yellow .header ul.top-menu > li a:hover {
       background-color: #ffee55;
       border-color: #ffeb3b;
       color: white; }
@@ -47,10 +47,10 @@
 .team-pink .header {
   background-color: #e91e63;
   border-bottom: 1px solid #d81557; }
-  .team-pink .header ul.top-menu > li > .logout {
+  .team-pink .header ul.top-menu > li a {
     background-color: #ff4081;
     border: 1px solid #ff2670; }
-    .team-pink .header ul.top-menu > li > .logout:hover {
+    .team-pink .header ul.top-menu > li a:hover {
       background-color: #ff5a92;
       border-color: #ff4081;
       color: white; }
@@ -58,10 +58,10 @@
 .team-orange .header {
   background-color: #ff5722;
   border-bottom: 1px solid #ff4408; }
-  .team-orange .header ul.top-menu > li > .logout {
+  .team-orange .header ul.top-menu > li a {
     background-color: #ff9800;
     border: 1px solid #e68900; }
-    .team-orange .header ul.top-menu > li > .logout:hover {
+    .team-orange .header ul.top-menu > li a:hover {
       background-color: #ffa21a;
       border-color: #ff9800;
       color: white; }
@@ -69,10 +69,10 @@
 .team-purple .header {
   background-color: #9c27b0;
   border-bottom: 1px solid #89229b; }
-  .team-purple .header ul.top-menu > li > .logout {
+  .team-purple .header ul.top-menu > li a {
     background-color: #d500f9;
     border: 1px solid #bf00e0; }
-    .team-purple .header ul.top-menu > li > .logout:hover {
+    .team-purple .header ul.top-menu > li a:hover {
       background-color: #dd14ff;
       border-color: #d500f9;
       color: white; }
@@ -80,10 +80,10 @@
 .team-silver .header {
   background-color: #757575;
   border-bottom: 1px solid #686868; }
-  .team-silver .header ul.top-menu > li > .logout {
+  .team-silver .header ul.top-menu > li a {
     background-color: #9e9e9e;
     border: 1px solid #919191; }
-    .team-silver .header ul.top-menu > li > .logout:hover {
+    .team-silver .header ul.top-menu > li a:hover {
       background-color: #ababab;
       border-color: #9e9e9e;
       color: white; }
@@ -91,10 +91,10 @@
 .team-black .header {
   background-color: #212121;
   border-bottom: 1px solid #141414; }
-  .team-black .header ul.top-menu > li > .logout {
+  .team-black .header ul.top-menu > li a {
     background-color: #434343;
     border: 1px solid #363636; }
-    .team-black .header ul.top-menu > li > .logout:hover {
+    .team-black .header ul.top-menu > li a:hover {
       background-color: #505050;
       border-color: #434343;
       color: white; }
@@ -114,16 +114,18 @@
     line-height: 60px; }
 
 /* Yellow team styling has black text */
-.header.team-yellow a.dropdown-toggle {
+.team-yellow .header {
   color: #212121; }
-  .header.team-yellow a.dropdown-toggle:hover {
-    color: #434343; }
-.header.team-yellow ul.top-menu > li > .logout {
-  color: #212121; }
-  .header.team-yellow ul.top-menu > li > .logout:hover {
+  .team-yellow .header a.dropdown-toggle,
+  .team-yellow .header ul.top-menu > li a,
+  .team-yellow .header .nav-filter .home-button {
     color: #212121; }
-.header.team-yellow a.logo {
-  color: #212121; }
+    .team-yellow .header a.dropdown-toggle:hover,
+    .team-yellow .header ul.top-menu > li a:hover,
+    .team-yellow .header .nav-filter .home-button:hover {
+      color: #434343; }
+  .team-yellow .header a.logo {
+    color: #212121; }
 
 .nav-filter {
   float: left;
@@ -402,6 +404,11 @@ hr {
 .team-black .fc-event.event-users-attending {
   background-color: #838383;
   border-color: #838383;
+  color: #212121; }
+
+/* Yellow team styling has black text */
+.team-yellow .fc-event.event-taskforces-attending,
+.team-yellow .fc-event.event-users-attending {
   color: #212121; }
 
 /*---------- Tasks ----------*/

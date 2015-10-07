@@ -35,7 +35,7 @@ $teamAccentColors: (
         background-color: $col;
         border-bottom: 1px solid darken($col, 5%);
 
-        ul.top-menu > li > .logout {
+        ul.top-menu > li a {
             background-color: $accentCol;
             border: 1px solid darken($accentCol, 5%);
             &:hover {
@@ -72,18 +72,15 @@ $teamAccentColors: (
 }
 
 /* Yellow team styling has black text */
-.header.team-yellow {
-    a.dropdown-toggle {
+.team-yellow .header {
+    color: #212121;
+
+    a.dropdown-toggle,
+    ul.top-menu > li a,
+    .nav-filter .home-button {
         color: #212121;
         &:hover {
             color: #434343;
-        }
-    }
-
-    ul.top-menu > li > .logout {
-        color: #212121;
-        &:hover {
-            color: #212121;
         }
     }
     
@@ -416,6 +413,12 @@ hr {
         border-color: $colLight;
         color: $col;
     }
+}
+
+/* Yellow team styling has black text */
+.team-yellow .fc-event.event-taskforces-attending,
+.team-yellow .fc-event.event-users-attending {
+    color: #212121;
 }
 
 /*---------- Tasks ----------*/
