@@ -104,7 +104,7 @@ class EventViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
             obj.owner = self.request.user
 
         # Check user belongs to team (accept if user is superuser)
-        if not is_superuser and not obj.team in self.request.user.teams.all():
+        if not self.request.user.is_superuser and not obj.team in self.request.user.teams.all():
             raise UserNotInTeam()
         
         # Check start time precedes end time
