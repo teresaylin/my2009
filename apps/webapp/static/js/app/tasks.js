@@ -10,6 +10,8 @@ module.controller('TaskListCtrl', function($rootScope, $scope, $modal, TaskRepos
     var refreshTasks = function() {
         if(!NavFilterService.team) return;
 
+        $scope.loading = true;
+
         // Get list of tasks
         var query = {
             tree: true,
@@ -29,6 +31,9 @@ module.controller('TaskListCtrl', function($rootScope, $scope, $modal, TaskRepos
         TaskRepository.list(query)
             .success(function(tasks) {
                 $scope.tasks = tasks;
+            })
+            .finally(function() {
+                $scope.loading = false;
             });
     };
 

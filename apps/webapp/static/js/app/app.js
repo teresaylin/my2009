@@ -285,3 +285,10 @@ app.directive('ngSrcdoc', function() {
         }
     };
 });
+
+app.directive('spinner', function() {
+    return {
+        restrict: 'E',
+        templateUrl: 'components/spinner.html'
+    }
+});

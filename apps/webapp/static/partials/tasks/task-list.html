@@ -59,17 +59,20 @@
         <br>
     </div>
     <div class="panel-body no-lr-padding">
-        <div class="task-content">
-            <p class="text-info" ng-if="tasks.length == 0">
-                <span ng-if="!filterUserOwned">No tasks assigned.</span>
-                <span ng-if="filterUserOwned">No tasks owned.</span>
-            </p>
-            <ul class="task-list list-unstyled">
-                <li class="task" ng-repeat="task in tasks" ng-class="{ 'task-done': task.state == 'completed' }"
-                    ng-init="completed = task.state == 'completed'" ng-include="'task-list-task.html'">
-                </li>
-            </ul>
+        <spinner ng-show="loading"></spinner>
+        <div ng-hide="loading">
+            <div class="task-content">
+                <p class="text-info" ng-if="tasks.length == 0">
+                    <span ng-if="!filterUserOwned">No tasks assigned.</span>
+                    <span ng-if="filterUserOwned">No tasks owned.</span>
+                </p>
+                <ul class="task-list list-unstyled">
+                    <li class="task" ng-repeat="task in tasks" ng-class="{ 'task-done': task.state == 'completed' }"
+                        ng-init="completed = task.state == 'completed'" ng-include="'task-list-task.html'">
+                    </li>
+                </ul>
+            </div>
+            <button class="btn btn-success btn-sm" ng-if="filterUser && filterUser.id == $parent.currentUser.id" ng-click="newTask()">New task</button>
         </div>
-        <button class="btn btn-success btn-sm" ng-if="filterUser && filterUser.id == $parent.currentUser.id" ng-click="newTask()">New task</button>
     </div>
 </section>

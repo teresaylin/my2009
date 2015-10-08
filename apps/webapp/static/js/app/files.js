@@ -229,20 +229,30 @@ module.controller('FileBrowserCtrl', function($scope, $modal, NavFilterService, 
     ];
     
     $scope.refresh = function() {
+        $scope.loading = true;
+
         // Retrieve metadata
         FileRepository.metadata($scope.directory.path)
             .success(function(data) {
                 $scope.directory = data;
                 $scope.clearSelection();
+            })
+            .finally(function() {
+                //$scope.loading = false;
             });
     };
 
     $scope.setDirectory = function(path) {
+        $scope.loading = true;
+
         // Retrieve metadata
         FileRepository.metadata(path)
             .success(function(data) {
                 $scope.directory = data;
                 $scope.clearSelection();
+            })
+            .finally(function() {
+                $scope.loading = false;
             });
     };
     

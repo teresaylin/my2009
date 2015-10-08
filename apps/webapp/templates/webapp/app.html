@@ -236,9 +236,12 @@
 <script type="text/ng-template" id="events/calendar.html">
     <div class="content-panel" ng-controller="CalendarCtrl">
         <div class="panel-body">
-            <div ui-calendar="uiConfig.calendar" class="span8 calendar" ng-model="eventSources" calendar="calendar"></div> 
-            <div class="mt">
-                <button class="btn btn-sm btn-success" ng-click="newEvent()">New event</button>
+            <spinner ng-show="loading"></spinner>
+            <div ng-hide="loading">
+                <div ui-calendar="uiConfig.calendar" class="span8 calendar" ng-model="eventSources" calendar="calendar"></div> 
+                <div class="mt">
+                    <button class="btn btn-sm btn-success" ng-click="newEvent()">New event</button>
+                </div>
             </div>
         </div>
     </div>
@@ -270,6 +273,12 @@
         <div class="progress-bar progress-bar-invisible" ng-style="{ width: remainPct+'%' }">
             <span>{{ remain }}</span>
         </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="components/spinner.html">
+    <div class="spinner">
+        <span class="fa fa-spinner fa-pulse"></span>
     </div>
 </script>
 

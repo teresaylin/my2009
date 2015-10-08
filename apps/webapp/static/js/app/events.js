@@ -261,6 +261,8 @@ module.factory('EventDialogService', function($modal) {
 
 module.controller('CalendarCtrl', function($scope, $modal, $state, EventRepository, EventDialogService, NavFilterService) {
     $scope.eventsSource = function(start, end, timezone, callback) {
+        $scope.loading = true;
+
         // Get events within date range
         if(NavFilterService.team) {
             var query = {
@@ -302,6 +304,9 @@ module.controller('CalendarCtrl', function($scope, $modal, $state, EventReposito
                     });
 
                     callback(events);
+                })
+                .finally(function() {
+                    $scope.loading = false;
                 });
         };
     };
