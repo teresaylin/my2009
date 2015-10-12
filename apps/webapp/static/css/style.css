@@ -760,19 +760,23 @@ ul.top-menu > li > a:hover, ul.top-menu > li > a:focus {
 	width: 100%;
 }
 
+.ds .desc.fade {
+    opacity: 0.5;
+}
+
 .ds .desc:hover {
 	background: #f2f2f2;
 }
 
 .ds .thumb {
-	width: 30px;
-	margin: 0 10px 0 20px;
+	width: 15%;
+    text-align: center;
 	display: block;
 	float: left;
 }
 
 .ds .details {
-	width: 170px;
+	width: 85%;
 	float: left;
 }
 

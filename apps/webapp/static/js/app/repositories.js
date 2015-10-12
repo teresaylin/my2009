@@ -257,3 +257,22 @@ module.factory('UserRepository', function($http) {
         }
     };
 });
+
+module.factory('NotificationRepository', function($http) {
+    var baseUrl = '/api/notifications/';
+    
+    return {
+        get: function(id) {
+            return $http.get(baseUrl+id+'/');
+        },
+        list: function(params) {
+            return $http.get(baseUrl, { params: params });
+        },
+        markRead: function(id, notificationId) {
+            return $http.put(baseUrl+id+'/mark_read/', {});
+        },
+        markUnread: function(id, notificationId) {
+            return $http.put(baseUrl+id+'/mark_unread/', {});
+        },
+    };
+});

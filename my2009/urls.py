@@ -8,6 +8,7 @@ admin.autodiscover()
 from apps.users import views as userViews
 from apps.events import views as eventViews
 from apps.tasks import views as taskViews
+from apps.notifications_api import views as notificationsViews
 
 from apps.webapp import urls as webappUrls
 from apps.files import urls as filesUrls
@@ -24,6 +25,7 @@ router.register(r'users', userViews.UserViewSet)
 router.register(r'user-profiles', userViews.UserProfileViewSet)
 router.register(r'events', eventViews.EventViewSet)
 router.register(r'tasks', taskViews.TaskViewSet)
+router.register(r'notifications', notificationsViews.NotificationViewSet)
 
 urlpatterns = patterns('',
     # Examples:

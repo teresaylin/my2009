@@ -31,6 +31,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'notifications',
 
     'apps.events',
     'apps.files',
@@ -39,6 +40,7 @@ INSTALLED_APPS = (
     'apps.user_tracking',
     'apps.webapp',
     'apps.stats',
+    'apps.notifications_api',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -114,6 +116,7 @@ PIPELINE_JS = {
           'js/app/events.js',
           'js/app/files.js',
           'js/app/navfilter.js',
+          'js/app/notifications.js',
           'js/app/repositories.js',
           'js/app/stats.js',
           'js/app/tasks.js',

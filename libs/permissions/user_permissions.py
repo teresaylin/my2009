@@ -5,6 +5,7 @@ from apps.events.models import Event
 from apps.tasks.models import Task
 from apps.users.models import Comment, Milestone, Role, TaskForce, Team, UserProfile
 from apps.stats.models import DailyGlobalStats, DailyTaskForceStats, DailyTeamStats, DailyUserStats
+from notifications.models import Notification
 
 def filterQueryset(queryset, user):
     """This function performs permission checks and filters querysets appropriately, before they are serialized and sent out as API responses."""
@@ -52,6 +53,9 @@ def filterQueryset(queryset, user):
             return queryset
         else:
             raise PermissionDenied()
+    elif cls == Notification:
+        # User can only see own notifications
+        return queryset.filter(recipient=user)
     else:
         raise PermissionDenied()
 
@@ -113,6 +117,11 @@ def getUserPermissions(user, cls):
         # Users can see and update profiles
         perms['read'] = True
         perms['update'] = True
+    elif cls == Notification:
+        # Users can read/update/delete notifications
+        perms['read'] = True
+        perms['update'] = True
+        perms['delete'] = True
         
     return perms
 
@@ -168,5 +177,10 @@ def getUserObjectPermissions(user, obj):
         # User can update own profile
         if obj.user == user:
             perms['update'] = True
+    elif cls == Notification:
+        # User can update/delete notifications sent to them
+        if obj.recipient == user:
+            perms['update'] = True
+            perms['delete'] = True
         
     return perms

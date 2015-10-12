@@ -5,6 +5,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied
 
+from notifications import notify
+
 from libs.permissions.user_permissions import getUserObjectPermissions
 from libs import tracking
 
@@ -198,6 +200,16 @@ class TaskViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
             raise TaskAlreadyAssignedToUser()
         else:
             task.assigned_users.add(user)
+
+        if user != request.user:
+            # Generate notification for added user
+            notify.send(request.user,
+                recipient=user,
+                verb='assigned',
+                action_object=user,
+                target=task,
+                description='You have been assigned to a task'
+            )
         
         return Response({})
 

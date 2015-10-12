@@ -10,6 +10,8 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError
 from rest_framework.response import Response
 
+from notifications import notify
+
 from apps.users.exceptions import UserNotFound, TeamNotFound, TaskForceNotFound, UserNotInTeam
 from apps.users.models import Team, TaskForce
 
@@ -135,6 +137,16 @@ class EventViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
             )
         except IntegrityError:
             raise EventAlreadyHasAttendee()
+
+        if user != request.user:
+            # Generate notification for added user
+            notify.send(request.user,
+                recipient=user,
+                verb='invited',
+                action_object=user,
+                target=event,
+                description='You have been invited to an event'
+            )
         
         return Response({})
 

@@ -9,6 +9,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied, ParseError
 
+from notifications import notify
+
 from libs.permissions.user_permissions import getUserObjectPermissions
 
 from .models import TaskForce, Team, UserProfile, Milestone, Comment, CommentThread, Role, UserRoleMapping
@@ -179,6 +181,16 @@ class TaskForceViewSet(viewsets.ModelViewSet):
         
         # Add user to members
         taskforce.members.add(user)
+
+        if user != request.user:
+            # Generate notification for added user
+            notify.send(request.user,
+                recipient=user,
+                verb='added',
+                action_object=user,
+                target=taskforce,
+                description='You have been added to a taskforce'
+            )
         
         return Response({})
 

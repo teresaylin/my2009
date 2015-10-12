@@ -11,6 +11,27 @@
     </div>
 
     <div class="col-md-12 col-lg-3 ds">
+        <div ng-controller="NotificationsController">
+            <h3>Notifications</h3>
+            <spinner ng-show="loading" />
+            <div ng-hide="loading">
+                <div class="desc" ng-repeat="nt in notifications" ng-class="{ 'fade': !nt.unread }">
+                    <div class="thumb">
+                        <span class="badge bg-theme"><span class="fa fa-clock-o"></span></span>
+                    </div>
+                    <div class="details">
+                        <p>
+                            <span class="text-muted"><time-from-now time="nt.timestamp" /></span><br>
+                            <span notification-text="nt" />
+                        </p>
+                        <p>
+                            <a href ng-click="markRead(nt)" ng-if="nt.unread">Mark as read</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div ng-controller="TeamMembersListCtrl">
             <h3>Team Members</h3>
             <div class="desc" ng-repeat="user in users | filter:userFilter | orderBy:['-is_online', 'last_name']">
