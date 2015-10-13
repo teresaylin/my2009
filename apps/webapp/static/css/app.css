@@ -101,6 +101,8 @@
 
 .header {
   color: white; }
+  .header a {
+    color: #f2f2f2; }
   .header a.dropdown-toggle {
     color: #eee; }
     .header a.dropdown-toggle:hover {
@@ -112,6 +114,8 @@
   .header a.logo {
     margin-top: 0;
     line-height: 60px; }
+  .header .badge {
+    background-color: #f00000; }
 
 /* Yellow team styling has black text */
 .team-yellow .header {
@@ -126,6 +130,11 @@
       color: #434343; }
   .team-yellow .header a.logo {
     color: #212121; }
+
+/* Red team badges are white */
+.team-red .header .badge {
+  background-color: white;
+  color: black; }
 
 .nav-filter {
   float: left;

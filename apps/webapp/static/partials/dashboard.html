@@ -12,10 +12,13 @@
 
     <div class="col-md-12 col-lg-3 ds">
         <div ng-controller="NotificationsController">
-            <h3>Notifications</h3>
+            <h3>Notifications
+                <span class="badge bg-theme" ng-show="unreadNts.length > 0">{{ unreadNts.length }}</span>
+            </h3>
             <spinner ng-show="loading" />
             <div ng-hide="loading">
-                <div class="desc" ng-repeat="nt in notifications" ng-class="{ 'fade': !nt.unread }">
+                <!-- Unread notifications -->
+                <div class="desc" ng-repeat="nt in unreadNts" ng-class="{ 'fade': !nt.unread }">
                     <div class="thumb">
                         <span class="badge bg-theme"><span class="fa fa-clock-o"></span></span>
                     </div>
@@ -26,9 +29,31 @@
                         </p>
                         <p>
                             <a href ng-click="markRead(nt)" ng-if="nt.unread">Mark as read</a>
+                            <a href ng-click="markUnread(nt)" ng-if="!nt.unread">Mark as unread</a>
                         </p>
                     </div>
                 </div>
+                <p ng-if="unreadNts.length == 0">You have no unread notifications.</p>
+
+                <!-- Read notifications -->
+                <hr ng-if="readNts.length > 0">
+                <div class="desc" ng-repeat="nt in readNts" ng-class="{ 'fade': !nt.unread }">
+                    <div class="thumb">
+                        <span class="badge bg-theme"><span class="fa fa-clock-o"></span></span>
+                    </div>
+                    <div class="details">
+                        <p>
+                            <span class="text-muted"><time-from-now time="nt.timestamp" /></span><br>
+                            <span notification-text="nt" />
+                        </p>
+                        <p>
+                            <a href ng-click="markRead(nt)" ng-if="nt.unread">Mark as read</a>
+                            <a href ng-click="markUnread(nt)" ng-if="!nt.unread">Mark as unread</a>
+                        </p>
+                    </div>
+                </div>
+
+                <a href ng-click="more(10)">More...</a>
             </div>
         </div>
 

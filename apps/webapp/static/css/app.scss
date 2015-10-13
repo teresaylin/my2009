@@ -49,7 +49,7 @@ $teamAccentColors: (
 
 .header {
     color: white;
-        
+
     a.dropdown-toggle {
         color: #eee;
         &:hover {
@@ -69,6 +69,10 @@ $teamAccentColors: (
         margin-top: 0;
         line-height: 60px;
     }
+
+    .badge {
+        background-color: #f00000;
+    }
 }
 
 /* Yellow team styling has black text */
@@ -86,6 +90,14 @@ $teamAccentColors: (
     
     a.logo {
         color: #212121;
+    }
+}
+
+/* Red team badges are white */
+.team-red .header {
+    .badge {
+        background-color: white;
+        color: black;
     }
 }
 

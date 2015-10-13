@@ -21,9 +21,21 @@
         <a ui-sref="dashboard" class="logo hidden-xs">
             <img ng-src="{% static 'img/logos/' %}{% verbatim %}{{ activeTeam.logo_filename ? activeTeam.logo_filename : 'logo.png' }}{% endverbatim %}">
         </a>
+
+        {% verbatim %}
+        <!-- Notifications -->
+        <div class="nav notify-row" id="top_menu" ng-controller="NotificationsController">
+            <ul class="nav top-menu">
+                <li class="dropdown">
+                    <a ui-sref="dashboard">
+                        <span class="fa fa-globe"></span>
+                        <span class="badge" ng-show="unreadNts.length > 0">{{ unreadNts.length }}</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
         
         <!-- Nav Filter -->
-        {% verbatim %}
         <div class="nav-filter">
             <a ng-click="selectHome()" ng-class="{ selected: homeSelected }" href class="home-button">
                 <span class="fa fa-home"></span>

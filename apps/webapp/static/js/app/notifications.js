@@ -1,12 +1,14 @@
-module.controller('NotificationsController', function($scope, $timeout, NotificationRepository) {
+module.controller('NotificationsController', function($scope, $rootScope, $timeout, NotificationRepository) {
     var timeoutDelay = 60*1000; // Update every 60 seconds
     var timeoutPromise = null;
 
     var update = function() {
         $scope.loading = true;
+
+        // Get unread notifications
         NotificationRepository.list({ unread: true })
             .success(function(data) {
-                $scope.notifications = data;
+                $scope.unreadNts = data;
             })
             .finally(function() {
                 $scope.loading = false;
@@ -23,10 +25,20 @@ module.controller('NotificationsController', function($scope, $timeout, Notifica
         }
     });
 
+    $scope.$on('userNotificationRead', function(evt, nt) {
+        if(!$scope.unreadNts) return;
+
+        // Remove notification from unread list
+        $scope.unreadNts = _.reject($scope.unreadNts, function(obj) {
+            return obj.id == nt.id;
+        });
+    });
+
     $scope.markRead = function(notification) {
         NotificationRepository.markRead(notification.id)
             .success(function() {
                 notification.unread = false;
+                $rootScope.$broadcast('userNotificationRead', notification);
             });
     }
 
@@ -34,6 +46,17 @@ module.controller('NotificationsController', function($scope, $timeout, Notifica
         NotificationRepository.markUnread(notification.id)
             .success(function() {
                 notification.unread = true;
+            });
+    }
+
+    $scope.more = function(count) {
+        // Get read notifications
+        NotificationRepository.list({ read: true })
+            .success(function(data) {
+                $scope.readNts = data;
+            })
+            .finally(function() {
+                $scope.loading = false;
             });
     }
 });
