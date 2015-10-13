@@ -24,6 +24,37 @@ $teamAccentColors: (
     black: #434343
 );
 
+/*---------- Generic team styles ----------*/
+
+@for $i from 1 to length($teamColors)+1 {
+    $name: nth(map-keys($teamColors), $i);
+    $col: nth(map-values($teamColors), $i);
+    $accentCol: nth(map-values($teamAccentColors), $i);
+
+    .team-#{$name} {
+        .bg-team {
+            background-color: $col;
+            color: white;
+        }
+    }
+}
+
+/* Yellow team styling has black text */
+.team-yellow {
+    .bg-team {
+        color: black;
+    }
+}
+
+/* Red team badges are white. The rest are red. */
+.badge-team {
+    background-color: #f00000;
+}
+.team-red .badge-team {
+    background-color: white;
+    color: black;
+}
+
 /*---------- Header styling ----------*/
 
 @for $i from 1 to length($teamColors)+1 {
@@ -69,10 +100,6 @@ $teamAccentColors: (
         margin-top: 0;
         line-height: 60px;
     }
-
-    .badge {
-        background-color: #f00000;
-    }
 }
 
 /* Yellow team styling has black text */
@@ -90,14 +117,6 @@ $teamAccentColors: (
     
     a.logo {
         color: #212121;
-    }
-}
-
-/* Red team badges are white */
-.team-red .header {
-    .badge {
-        background-color: white;
-        color: black;
     }
 }
 

@@ -12,8 +12,8 @@
 
     <div class="col-md-12 col-lg-3 ds">
         <div ng-controller="NotificationsController">
-            <h3>Notifications
-                <span class="badge bg-theme" ng-show="unreadNts.length > 0">{{ unreadNts.length }}</span>
+            <h3 class="bg-team">Notifications
+                <span class="badge badge-team" ng-show="unreadNts.length > 0">{{ unreadNts.length }}</span>
             </h3>
             <spinner ng-show="loading" />
             <div ng-hide="loading">
@@ -58,7 +58,7 @@
         </div>
 
         <div ng-controller="TeamMembersListCtrl">
-            <h3>Team Members</h3>
+            <h3 class="bg-team">Team Members</h3>
             <div class="desc" ng-repeat="user in users | filter:userFilter | orderBy:['-is_online', 'last_name']">
                 <div class="thumb">
                     <img class="img-circle" height="40" user-picture="user" size="small">

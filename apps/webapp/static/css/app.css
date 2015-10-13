@@ -1,4 +1,53 @@
 /*---------- Color definitions ----------*/
+/*---------- Generic team styles ----------*/
+.team-red .bg-team {
+  background-color: #d32f2f;
+  color: white; }
+
+.team-green .bg-team {
+  background-color: #388e3c;
+  color: white; }
+
+.team-blue .bg-team {
+  background-color: #1976d2;
+  color: white; }
+
+.team-yellow .bg-team {
+  background-color: #f9ce1d;
+  color: white; }
+
+.team-pink .bg-team {
+  background-color: #e91e63;
+  color: white; }
+
+.team-orange .bg-team {
+  background-color: #ff5722;
+  color: white; }
+
+.team-purple .bg-team {
+  background-color: #9c27b0;
+  color: white; }
+
+.team-silver .bg-team {
+  background-color: #757575;
+  color: white; }
+
+.team-black .bg-team {
+  background-color: #212121;
+  color: white; }
+
+/* Yellow team styling has black text */
+.team-yellow .bg-team {
+  color: black; }
+
+/* Red team badges are white. The rest are red. */
+.badge-team {
+  background-color: #f00000; }
+
+.team-red .badge-team {
+  background-color: white;
+  color: black; }
+
 /*---------- Header styling ----------*/
 .team-red .header {
   background-color: #d32f2f;
@@ -101,8 +150,6 @@
 
 .header {
   color: white; }
-  .header a {
-    color: #f2f2f2; }
   .header a.dropdown-toggle {
     color: #eee; }
     .header a.dropdown-toggle:hover {
@@ -114,8 +161,6 @@
   .header a.logo {
     margin-top: 0;
     line-height: 60px; }
-  .header .badge {
-    background-color: #f00000; }
 
 /* Yellow team styling has black text */
 .team-yellow .header {
@@ -130,11 +175,6 @@
       color: #434343; }
   .team-yellow .header a.logo {
     color: #212121; }
-
-/* Red team badges are white */
-.team-red .header .badge {
-  background-color: white;
-  color: black; }
 
 .nav-filter {
   float: left;
