@@ -13,8 +13,8 @@ from notifications import notify
 
 from libs.permissions.user_permissions import getUserObjectPermissions
 
-from .models import TaskForce, Team, UserProfile, Milestone, Comment, CommentThread, Role, UserRoleMapping
-from .serializers import TaskForceSerializer, TeamSerializer, UserSerializer, UserProfileSerializer, MilestoneSerializer, CommentSerializer, RoleSerializer, UserRoleMappingSerializer
+from .models import TaskForce, Team, UserProfile, UserSetting, Milestone, Comment, CommentThread, Role, UserRoleMapping
+from .serializers import TaskForceSerializer, TeamSerializer, UserSerializer, UserProfileSerializer, UserSettingSerializer, MilestoneSerializer, CommentSerializer, RoleSerializer, UserRoleMappingSerializer
 from .exceptions import UserNotFound, UserAlreadyHasRole, CommentThreadNotFound
 
 class TeamViewSet(viewsets.ModelViewSet):
@@ -122,6 +122,21 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
     filter_fields = ('user',)
+
+class UserSettingViewSet(viewsets.ModelViewSet):
+    queryset = UserSetting.objects.all()
+    serializer_class = UserSettingSerializer
+    lookup_field = 'name'
+    lookup_value_regex = r'[a-zA-Z0-9.]+'
+
+    def get_queryset(self):
+        # Only show settings for current user
+        queryset = super().get_queryset()
+        return queryset.filter(user=self.request.user)
+
+    def pre_save(self, obj):
+        # Ensure user field is set to current user
+        obj.user = self.request.user
     
 class TaskForceViewSet(viewsets.ModelViewSet):
     queryset = TaskForce.objects.all()

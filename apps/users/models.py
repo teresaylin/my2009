@@ -2,6 +2,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.db import IntegrityError
 from django.contrib.auth.models import User
+from django.core.validators import RegexValidator
 
 from libs.softdelete.models import SoftDeleteableModel
 
@@ -83,6 +84,21 @@ class UserProfile(models.Model):
                 car='N'
             )
 post_save.connect(UserProfile.onUserSave, sender=User)
+
+class UserSetting(models.Model):
+    class Meta:
+        index_together = unique_together = (
+            ('user', 'name'),
+        )
+
+    NAME_REGEX = r'^[a-zA-Z0-9.]+$'
+
+    user = models.ForeignKey(User, related_name='settings')
+    name = models.CharField(max_length=128, blank=False, validators=[
+        RegexValidator(regex=NAME_REGEX)
+    ])
+    version = models.PositiveIntegerField()
+    value = models.TextField()
 
 class Milestone(models.Model):
     name = models.CharField(max_length=50)

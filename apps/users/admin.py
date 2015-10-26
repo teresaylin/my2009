@@ -8,7 +8,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.messages import ERROR, WARNING
 from django.shortcuts import render_to_response, redirect
 
-from apps.users.models import Team, UserTeamMapping, Role, UserRoleMapping, UserProfile, Milestone, TaskForce, UserTaskForceMapping
+from apps.users.models import Team, UserTeamMapping, Role, UserRoleMapping, UserProfile, UserSetting, Milestone, TaskForce, UserTaskForceMapping
 
 class TeamAdmin(admin.ModelAdmin):
     list_display = ('name', 'team_email')
@@ -45,6 +45,11 @@ class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'phone_number' , 'car', 'course_load')
 
 admin.site.register(UserProfile, UserProfileAdmin)
+
+class UserSettingAdmin(admin.ModelAdmin):
+    list_display = ('user', 'name' , 'version', 'value')
+
+admin.site.register(UserSetting, UserSettingAdmin)
 
 #new, incomplete table columns
 

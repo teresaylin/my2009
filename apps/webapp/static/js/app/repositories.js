@@ -258,6 +258,20 @@ module.factory('UserRepository', function($http) {
     };
 });
 
+module.factory('UserSettingRepository', function($http) {
+    var baseUrl = '/api/user-settings/';
+    
+    return {
+        get: function(name, config) {
+            return $http.get(baseUrl+name+'/', config);
+        },
+        set: function(name, data) {
+            data.name = name;
+            return $http.put(baseUrl+name+'/', data);
+        },
+    };
+});
+
 module.factory('NotificationRepository', function($http) {
     var baseUrl = '/api/notifications/';
     

@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from rest_framework import serializers
 
 from apps.user_tracking.models import UserTracking
-from .models import UserProfile, Role, UserRoleMapping, TaskForce, Team, Milestone, Comment, CommentThread
+from .models import UserProfile, UserSetting, Role, UserRoleMapping, TaskForce, Team, Milestone, Comment, CommentThread
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -53,6 +53,11 @@ class UserSerializer(BasicUserSerializer):
             return obj.tracking.isOnline()
         except UserTracking.DoesNotExist:
             return False
+
+class UserSettingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserSetting
+        fields = ('name', 'version', 'value')
     
 class MilestoneSerializer(serializers.ModelSerializer):
     class Meta:

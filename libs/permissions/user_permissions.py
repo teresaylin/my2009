@@ -3,7 +3,7 @@ from django.core.exceptions import PermissionDenied
 from django.contrib.auth.models import User
 from apps.events.models import Event
 from apps.tasks.models import Task
-from apps.users.models import Comment, Milestone, Role, TaskForce, Team, UserProfile
+from apps.users.models import Comment, Milestone, Role, TaskForce, Team, UserProfile, UserSetting
 from apps.stats.models import DailyGlobalStats, DailyTaskForceStats, DailyTeamStats, DailyUserStats
 from notifications.models import Notification
 
@@ -43,6 +43,9 @@ def filterQueryset(queryset, user):
     elif cls == UserProfile:
         # User profiles visible to all users
         return queryset
+    elif cls == UserSetting:
+        # User can only see their own settings
+        return queryset.filter(user=user)
     elif (cls == DailyGlobalStats or \
         cls == DailyTaskForceStats or \
         cls == DailyTeamStats or \
@@ -117,6 +120,12 @@ def getUserPermissions(user, cls):
         # Users can see and update profiles
         perms['read'] = True
         perms['update'] = True
+    elif cls == UserSetting:
+        # Users can create/read/update/delete settings
+        perms['create'] = True
+        perms['read'] = True
+        perms['update'] = True
+        perms['delete'] = True
     elif cls == Notification:
         # Users can read/update/delete notifications
         perms['read'] = True
@@ -177,6 +186,11 @@ def getUserObjectPermissions(user, obj):
         # User can update own profile
         if obj.user == user:
             perms['update'] = True
+    elif cls == UserSetting:
+        # User can update/delete own settings
+        if obj.user == user:
+            perms['update'] = True
+            perms['delete'] = True
     elif cls == Notification:
         # User can update/delete notifications sent to them
         if obj.recipient == user:
