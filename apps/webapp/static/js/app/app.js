@@ -16,8 +16,12 @@ var app = angular.module('app', [
 app.factory('HttpErrorInterceptor', function($q, $rootScope) {
     return {
         'responseError': function(response) {
-            if(response.status >= 400) {
-                $rootScope.$broadcast('serverError', response);
+            if(!response.config.errorsHandled ||
+               !_.contains(response.config.errorsHandled, response.status)
+            ) {
+                if(response.status >= 400) {
+                    $rootScope.$broadcast('serverError', response);
+                }
             }
 
             return $q.reject(response);
