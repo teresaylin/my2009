@@ -65,19 +65,11 @@ module.controller('NavFilterCtrl', function($scope, NavFilterService, TeamReposi
             .success(function(teams) {
                 $scope.teams = teams;
                 
-                // Select first team by default
-                NavFilterService.setTeam(teams[0]);
+                // Default to home page
+                $scope.selectHome();
             });
     };
     
-    // If we already have the currentUser object, initialize; otherwise wait for event to be fired
-    if('currentUser' in $scope && $scope.currentUser) {
-        initUser($scope.currentUser);
-    }
-    $scope.$on('gotCurrentUser', function(event, user) {
-        initUser(user);
-    });
-
     var setTeam = function(team) {
         // Check if the current user is in this team
         var userInTeam = false;
@@ -220,5 +212,13 @@ module.controller('NavFilterCtrl', function($scope, NavFilterService, TeamReposi
     $scope.activeTeam = null;
     $scope.activeUser = null;
     $scope.taskforces = [];
-    $scope.homeSelected = true;
+
+    // If we already have the currentUser object, initialize; otherwise wait for event to be fired
+    if('currentUser' in $scope && $scope.currentUser) {
+        initUser($scope.currentUser);
+    }
+    $scope.$on('gotCurrentUser', function(event, user) {
+        initUser(user);
+    });
+
 });
