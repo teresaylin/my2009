@@ -93,6 +93,7 @@ module.controller('TaskListCtrl', function($rootScope, $scope, $modal, TaskRepos
     });
     
     $scope.completeTask = function(task) {
+        /*
         // Show confirm dialog
         var modal = $modal.open({
             backdrop: 'static',
@@ -111,14 +112,16 @@ module.controller('TaskListCtrl', function($rootScope, $scope, $modal, TaskRepos
         });
         
         modal.result.then(function() {
-            // Mark task as completed
-            TaskRepository.complete(task.id)
-                .success(function(data) {
-                    // Update task
-                    angular.copy(data, task);
-                    $rootScope.$broadcast('taskUpdated', data);
-                });
         });
+        */
+
+        // Mark task as completed
+        TaskRepository.complete(task.id)
+            .success(function(data) {
+                // Update task
+                angular.copy(data, task);
+                $rootScope.$broadcast('taskUpdated', data);
+            });
     };
 
     $scope.openTask = function(task) {
