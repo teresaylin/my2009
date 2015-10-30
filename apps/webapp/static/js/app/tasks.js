@@ -249,6 +249,8 @@ module.controller('TaskDialogCtrl', function($rootScope, $scope, $modalInstance,
                 // Refresh task with returned data
                 loadTask(data);
                 form.$setPristine();
+
+                $scope.assigneeTabActive = true;
             });
     };
 

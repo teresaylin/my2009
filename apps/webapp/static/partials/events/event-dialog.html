@@ -48,30 +48,10 @@
     <hr>
     <tabset ng-if="!creating">
         <tab>
-            <tab-heading><span class="fa fa-paperclip"></span></tab-heading>
-
-            <h4>Files</h4>
-            <div>
-                <form class="form-inline" ng-if="event._permissions.update">
-                    <file-picker file="newFile"></file-picker>
-                    <button class="btn btn-sm btn-primary"
-                        ng-click="addFile(newFile.path); newFile = null"
-                        ng-disabled="!newFile">
-                    Add</button>
-                </form> 
-
-                <p ng-if="event.files.length == 0">There are no files associated with this event.</p>
-                <ul class="list-group">
-                    <li class="list-group-item" ng-repeat="file in event.files">
-                        <a href ng-click="removeFile(file)" ng-if="event._permissions.update">
-                            <span class="glyphicon glyphicon-remove"></span>
-                        </a>
-                        <a href title="{{ file }}" ng-click="openFile(file)">{{ file|basename }}</a>
-                    </li>
-                </ul>
-            </div>
+            <tab-heading><span class="fa fa-comments"></span></tab-heading>
+            <comments-section thread-id="event.comment_thread"></comments-section>
         </tab>
-        <tab>
+        <tab active="attendeeTabActive">
             <tab-heading><span class="fa fa-users"></span></tab-heading>
 
             <h4>Individuals attending</h4>
@@ -117,8 +97,28 @@
             </div> 
         </tab>
         <tab>
-            <tab-heading><span class="fa fa-comments"></span></tab-heading>
-            <comments-section thread-id="event.comment_thread"></comments-section>
+            <tab-heading><span class="fa fa-paperclip"></span></tab-heading>
+
+            <h4>Files</h4>
+            <div>
+                <form class="form-inline" ng-if="event._permissions.update">
+                    <file-picker file="newFile"></file-picker>
+                    <button class="btn btn-sm btn-primary"
+                        ng-click="addFile(newFile.path); newFile = null"
+                        ng-disabled="!newFile">
+                    Add</button>
+                </form> 
+
+                <p ng-if="event.files.length == 0">There are no files associated with this event.</p>
+                <ul class="list-group">
+                    <li class="list-group-item" ng-repeat="file in event.files">
+                        <a href ng-click="removeFile(file)" ng-if="event._permissions.update">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </a>
+                        <a href title="{{ file }}" ng-click="openFile(file)">{{ file|basename }}</a>
+                    </li>
+                </ul>
+            </div>
         </tab>
     </tabset>
 </div>

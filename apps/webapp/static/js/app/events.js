@@ -68,6 +68,8 @@ module.controller('EventDialogCtrl', function($scope, $modalInstance, EventRepos
                 // Refresh event with returned data
                 loadEvent(data);
                 form.$setPristine();
+
+                $scope.attendeeTabActive = true;
             });
     };
 
