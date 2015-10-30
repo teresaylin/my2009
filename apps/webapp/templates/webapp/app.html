@@ -200,6 +200,7 @@
             typeahead="user as user.full_name for user in search($viewValue) | filter:{full_name:$viewValue}"
             typeahead-min-length="2"
             typeahead-editable="false" 
+            typeahead-on-select="onSelectHandler($item, $model, $label)"
             class="form-control">
     </div>
 </script>
@@ -210,6 +211,7 @@
             typeahead="taskforce as taskforce.name for taskforce in search($viewValue) | filter:{name:$viewValue}"
             typeahead-min-length="2"
             typeahead-editable="false" 
+            typeahead-on-select="onSelectHandler($item, $model, $label)"
             class="form-control">
     </div>
 </script>

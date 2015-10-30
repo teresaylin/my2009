@@ -50,7 +50,7 @@
             
             <h3>Members</h3>
             <form class="form-inline">
-                <user-picker user="newMember" restrict-team="team"></user-picker>
+                <user-picker user="newMember" restrict-team="team" on-select="addTaskForceMember(taskForce, $model)"></user-picker>
                 <button class="btn btn-sm btn-primary"
                     ng-click="addTaskForceMember(taskForce, newMember); newMember = null"
                     ng-disabled="!newMember">

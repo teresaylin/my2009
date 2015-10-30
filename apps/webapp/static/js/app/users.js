@@ -294,7 +294,8 @@ module.directive('userPicker', function(NavFilterService, UserRepository) {
         restrict: 'E',
         scope: {
             user: '=',
-            restrictTeam: '='
+            restrictTeam: '=',
+            onSelect: '&'
         },
         templateUrl: 'components/user-picker.html',
         link: function(scope, element, attrs) {
@@ -317,6 +318,10 @@ module.directive('userPicker', function(NavFilterService, UserRepository) {
                         return res.data.results;
                     });
             };
+
+            scope.onSelectHandler = function(item, model, label) {
+                scope.onSelect({ '$model': model });
+            }
         }
     };
 });
@@ -325,7 +330,8 @@ module.directive('taskforcePicker', function(TaskForceRepository, NavFilterServi
     return {
         restrict: 'E',
         scope: {
-            taskforce: '='
+            taskforce: '=',
+            onSelect: '&'
         },
         templateUrl: 'components/taskforce-picker.html',
         link: function(scope, element, attrs) {
@@ -341,6 +347,10 @@ module.directive('taskforcePicker', function(TaskForceRepository, NavFilterServi
                         });
                 }
             };
+
+            scope.onSelectHandler = function(item, model, label) {
+                scope.onSelect({ '$model': model });
+            }
         }
     };
 });

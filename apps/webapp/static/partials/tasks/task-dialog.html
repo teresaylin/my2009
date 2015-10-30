@@ -42,7 +42,7 @@
             <h4>Assigned task forces</h4>
             <div>
                 <form class="form-inline" ng-if="task._permissions.update">
-                    <taskforce-picker taskforce="newAssignedTaskforce"></taskforce-picker>
+                    <taskforce-picker taskforce="newAssignedTaskforce" on-select="addAssignedTaskforce($model)"></taskforce-picker>
                     <button class="btn btn-sm btn-primary"
                         ng-click="addAssignedTaskforce(newAssignedTaskforce); newAssignedTaskforce = null"
                         ng-disabled="!newAssignedTaskforce">
@@ -63,7 +63,7 @@
             <h4>Assigned users</h4>
             <div>
                 <form class="form-inline" ng-if="task._permissions.update">
-                    <user-picker user="newAssignedUser"></user-picker>
+                    <user-picker user="newAssignedUser" on-select="addAssignedUser($model)"></user-picker>
                     <button class="btn btn-sm btn-primary"
                         ng-click="addAssignedUser(newAssignedUser); newAssignedUser = null"
                         ng-disabled="!newAssignedUser">
