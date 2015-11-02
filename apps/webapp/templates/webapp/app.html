@@ -221,30 +221,43 @@
 </script>
 
 <script type="text/ng-template" id="components/comments-section.html">
-    <form>
-        <textarea class="form-control" type="text" ng-model="newCommentBody"></textarea>
-        <button class="btn btn-sm btn-primary"
-            ng-click="postComment(newCommentBody); newCommentBody = ''"
-            ng-disabled="!newCommentBody">
-        Post</button>
-    </form>
-
-    <div class="comment clearfix" ng-repeat="comment in comments">
-        <figure>
-            <img user-picture="comment.user" size="small">
-        </figure>
-        <div>
-            <div>
-                <a ui-sref="users.detail({ userId: comment.user.id })">{{ comment.user.full_name }}</a>
-                <span class="text-muted">&bull;
-                    <time-from-now time="comment.time"></time-from-now>
-                </span>
-            </div>
-            <div class="body">{{ comment.body }}</div>
+    <div class="comments">
+        <div class="spinner-overlay" ng-show="loading > 0">
+            <spinner></spinner>
         </div>
-    </div>
+        <form>
+            <textarea class="form-control" type="text" ng-model="newCommentBody"></textarea>
+            <button class="btn btn-sm btn-primary"
+                ng-click="postComment(newCommentBody); newCommentBody = ''"
+                ng-disabled="!newCommentBody">
+            Post</button>
+        </form>
 
-    <a href ng-click="more()" ng-hide="!nextPageUrl">More...</a>
+        <hr>
+
+        <button ng-if="!subscription" ng-click="subscribe()" class="btn btn-default">Subscribe</button>
+        <button ng-if="subscription" ng-click="unsubscribe()" class="btn btn-warning">Unsubscribe</button>
+
+        <p ng-if="comments.length === 0">
+            No-one has commented in this thread yet.
+        </p>
+        <div class="comment clearfix" ng-repeat="comment in comments">
+            <figure>
+                <img user-picture="comment.user" size="small">
+            </figure>
+            <div>
+                <div>
+                    <a ui-sref="users.detail({ userId: comment.user.id })">{{ comment.user.full_name }}</a>
+                    <span class="text-muted">&bull;
+                        <time-from-now time="comment.time"></time-from-now>
+                    </span>
+                </div>
+                <div class="body">{{ comment.body }}</div>
+            </div>
+        </div>
+
+        <a href ng-click="more()" ng-hide="!nextPageUrl">More...</a>
+    </div>
 </script>
 
 <script type="text/ng-template" id="events/calendar.html">

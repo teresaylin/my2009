@@ -362,14 +362,16 @@ hr {
     margin: 0 auto; }
 
 /*---------- Comments ----------*/
-.comment {
-  margin-bottom: 24px; }
-  .comment figure {
-    float: left;
-    margin-right: 12px; }
-  .comment .body {
-    overflow: hidden;
-    white-space: pre-wrap; }
+.comments {
+  position: relative; }
+  .comments .comment {
+    margin-bottom: 24px; }
+    .comments .comment figure {
+      float: left;
+      margin-right: 12px; }
+    .comments .comment .body {
+      overflow: hidden;
+      white-space: pre-wrap; }
 
 /*---------- Calendar ----------*/
 .calendar-container {

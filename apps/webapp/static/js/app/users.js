@@ -355,7 +355,7 @@ module.directive('taskforcePicker', function(TaskForceRepository, NavFilterServi
     };
 });
 
-module.directive('commentsSection', function($http, CommentRepository) {
+module.directive('commentsSection', function($http, CommentRepository, CommentThreadSubscriptionRepository) {
     return {
         restrict: 'E',
         scope: {
@@ -365,12 +365,29 @@ module.directive('commentsSection', function($http, CommentRepository) {
             var threadId = null;
 
             scope.nextPageUrl = null;
+            scope.loading = 0;
+
+            function getSubscription() {
+                // Get user's thread subscription
+                scope.loading++;
+                return CommentThreadSubscriptionRepository.list({
+                    'thread': threadId,
+                })
+                    .success(function(data) {
+                        scope.subscription = data.length > 0 ? data[0] : null;
+                        scope.loading--;
+                    })
+                    .finally(function() {
+                        scope.loading--;
+                    });
+            }
             
             scope.$parent.$watch(attrs.threadId, function(val) {
                 if(val) {
                     threadId = val;
 
                     // Get most recent comments
+                    scope.loading++;
                     CommentRepository.list({
                         'thread': threadId,
                         'page_size': 10
@@ -378,7 +395,12 @@ module.directive('commentsSection', function($http, CommentRepository) {
                         .success(function(data) {
                             scope.comments = data.results;
                             scope.nextPageUrl = data.next;
+                        })
+                        .finally(function() {
+                            scope.loading--;
                         });
+                    
+                    getSubscription();
                 }
             });
             
@@ -401,11 +423,35 @@ module.directive('commentsSection', function($http, CommentRepository) {
                     'body': body
                 };
 
+                scope.loading++;
                 CommentRepository.create(comment)
                     .success(function(newComment) {
+                        // Show new comment
                         scope.comments.unshift(newComment);
+
+                        // Refresh subscription
+                        getSubscription();
+                    })
+                    .finally(function() {
+                        scope.loading--;
                     });
             };
+
+            scope.subscribe = function() {
+                CommentThreadSubscriptionRepository.create({
+                    thread: threadId
+                })
+                    .success(function(data) {
+                        scope.subscription = data;
+                    });
+            }
+
+            scope.unsubscribe = function() {
+                CommentThreadSubscriptionRepository.delete(threadId)
+                    .success(function(data) {
+                        scope.subscription = null;
+                    });
+            }
         }
     };
 });

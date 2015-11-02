@@ -85,31 +85,55 @@ module.directive('notificationText', function($compile, TaskRepository, TaskDial
             };
 
             scope.$watch('notificationText', function(nt) {
-                function linkUser(id, name) {
-                    return '<a ui-sref="users.detail({ userId: '+id+' })">'+name+'</a>';
+                var linkFuncs = {
+                    event: function (id, name) {
+                        return '<a ng-click="openEvent('+id+')">'+name+'</a>';
+                    },
+                    task: function(id, name) {
+                        return '<a ng-click="openTask('+id+')">'+name+'</a>';
+                    },
+                    user: function(id, name) {
+                        return '<a ui-sref="users.detail({ userId: '+id+' })">'+name+'</a>';
+                    },
+                    _unknown: function(id, name) {
+                        return '<i>'+name+'</i>';
+                    }
+                };
+
+                function showTarget() {
+                    var ct = nt.target_content_type;
+                    var linkFunc = ct in linkFuncs ? linkFuncs[ct] : linkFuncs._unknown;
+                    return ct+' '+linkFunc(nt.target_object_id, nt.target);
                 }
-                function linkTask(id, name) {
-                    return '<a ng-click="openTask('+id+')">'+name+'</a>';
-                }
-                function linkEvent(id, name) {
-                    return '<a ng-click="openEvent('+id+')">'+name+'</a>';
+
+                function byActor() {
+                    // Add (by "user") text
+                    if(nt.actor_object_id) {
+                        return ' <span class="text-muted">(by '+linkFuncs.user(nt.actor_object_id, nt.actor)+')</span>';
+                    } else {
+                        return '';
+                    }
                 }
 
                 var text = '<span class="text-danger"><strong>???</strong></span>';
                 switch(nt.verb) {
                     case 'assigned':
-                        text = 'You have been assigned to task '+linkTask(nt.target_object_id, nt.target)+
-                            ' <span class="text-muted">(by '+linkUser(nt.actor_object_id, nt.actor)+')</span>';
+                        text = 'You have been assigned to '+showTarget();
+                        text += byActor();
                         break;
 
                     case 'invited':
-                        text = 'You have been invited to event '+linkEvent(nt.target_object_id, nt.target)+
-                            ' <span class="text-muted">(by '+linkUser(nt.actor_object_id, nt.actor)+')</span>';
+                        text = 'You have been invited to '+showTarget();
+                        text += byActor();
                         break;
 
                     case 'added':
-                        text = 'You have been added to taskforce <em>'+nt.target+'</em>'+
-                            ' <span class="text-muted">(by '+linkUser(nt.actor_object_id, nt.actor)+')</span>';
+                        text = 'You have been added to '+showTarget();
+                        text += byActor();
+                        break;
+
+                    case 'commented':
+                        text = linkFuncs.user(nt.actor_object_id, nt.actor)+' commented on '+showTarget();
                         break;
                 }
 

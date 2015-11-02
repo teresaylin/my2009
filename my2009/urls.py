@@ -17,6 +17,7 @@ from apps.stats import urls as statsUrls
 # API router
 router = routers.DefaultRouter()
 router.register(r'comments', userViews.CommentViewSet)
+router.register(r'comment-thread-subscriptions', userViews.CommentThreadSubscriptionViewSet)
 router.register(r'milestones', userViews.MilestoneViewSet)
 router.register(r'roles', userViews.RoleViewSet)
 router.register(r'taskforces', userViews.TaskForceViewSet)

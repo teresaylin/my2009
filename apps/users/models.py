@@ -145,6 +145,8 @@ class CommentThread(SoftDeleteableModel):
     content_type = models.ForeignKey(ContentType, null=True)
     object_id = models.PositiveIntegerField(null=True)
     content_object = GenericForeignKey('content_type', 'object_id')
+
+    subscribed_users = models.ManyToManyField(User, through='CommentThreadSubscription', related_name='comment_threads_subscribed')
     
     def save(self, *args, **kwargs):
         if not self.publicId:
@@ -159,7 +161,14 @@ class CommentThread(SoftDeleteableModel):
                     continue
         else:
             super().save(*args, **kwargs)
-    
+
+class CommentThreadSubscription(models.Model):
+    class Meta:
+        unique_together = ('user', 'thread')
+
+    user = models.ForeignKey(User)
+    thread = models.ForeignKey(CommentThread)
+
 class Comment(SoftDeleteableModel):
     thread = models.ForeignKey(CommentThread, related_name='comments')
     time = models.DateTimeField()
