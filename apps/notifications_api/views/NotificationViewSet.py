@@ -15,6 +15,9 @@ class NotificationViewSet(mixins.RetrieveModelMixin, mixins.DestroyModelMixin, m
     def get_queryset(self):
         queryset = super().get_queryset()
 
+        # Only show current user's notifications
+        queryset = queryset.filter(recipient=self.request.user)
+
         unread = self.request.QUERY_PARAMS.get('unread', None)
         if unread:
             queryset = queryset.filter(unread=True)
