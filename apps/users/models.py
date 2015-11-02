@@ -3,6 +3,8 @@ from django.db.models.signals import post_save
 from django.db import IntegrityError
 from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 
 from libs.softdelete.models import SoftDeleteableModel
 
@@ -133,7 +135,16 @@ class UserTaskForceMapping(models.Model):
         return str(self.user) + "- " + str(self.task_force)
 
 class CommentThread(SoftDeleteableModel):
+    class Meta:
+        # Only allow one comment thread to be attached to an object
+        unique_together = ('content_type', 'object_id')
+
     publicId = models.BigIntegerField(unique=True, null=True)
+
+    # Generic object relation
+    content_type = models.ForeignKey(ContentType, null=True)
+    object_id = models.PositiveIntegerField(null=True)
+    content_object = GenericForeignKey('content_type', 'object_id')
     
     def save(self, *args, **kwargs):
         if not self.publicId:

@@ -37,11 +37,20 @@ class Task(SoftDeleteableModel):
 
     def save(self, *args, **kwargs):
         # Create comment thread if it doesn't exist
+        newThread = False
         if not self.comment_thread_id:
             thread = CommentThread.objects.create()
             self.comment_thread = thread
+            newThread = True
             
-        return super().save(*args, **kwargs)
+        ret = super().save(*args, **kwargs)
+
+        # We need to wait until the new object has an ID before assigning the inverse thread relationship
+        if newThread:
+            thread.content_object = self
+            thread.save()
+
+        return ret
         
     def delete(self, *args, **kwargs):
         # Delete comment thread

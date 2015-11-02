@@ -8,7 +8,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.messages import ERROR, WARNING
 from django.shortcuts import render_to_response, redirect
 
-from apps.users.models import Team, UserTeamMapping, Role, UserRoleMapping, UserProfile, UserSetting, Milestone, TaskForce, UserTaskForceMapping
+from apps.users.models import Team, UserTeamMapping, Role, UserRoleMapping, UserProfile, UserSetting, Milestone, TaskForce, UserTaskForceMapping, CommentThread
 
 class TeamAdmin(admin.ModelAdmin):
     list_display = ('name', 'team_email')
@@ -62,6 +62,10 @@ class TaskForceAdmin(admin.ModelAdmin):
     list_display = ('name', 'milestone')
 
 admin.site.register(TaskForce, TaskForceAdmin)
+
+class CommentThreadAdmin(admin.ModelAdmin):
+    list_display = ('publicId', 'content_type', 'object_id', 'content_object')
+admin.site.register(CommentThread, CommentThreadAdmin)
 
 class UserTaskForceMappingAdmin(admin.ModelAdmin):
     list_display = ('user', 'task_force')
