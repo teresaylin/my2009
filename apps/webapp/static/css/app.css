@@ -531,4 +531,16 @@ hr {
 .task-list .more-tasks {
   padding: 3px 16px; }
 
+/*---------- Custom filter ----------*/
+ul.customfilter-tree ul {
+  padding-left: 14px; }
+  ul.customfilter-tree ul > li {
+    padding-left: 14px;
+    border-left: 1px solid #ddd; }
+ul.customfilter-tree li.no-children {
+  padding-left: 16px; }
+ul.customfilter-tree li.spacer {
+  margin: 2px 16px;
+  border-bottom: 1px solid #ddd; }
+
 /*# sourceMappingURL=app.css.map */

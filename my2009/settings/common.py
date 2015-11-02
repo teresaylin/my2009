@@ -113,6 +113,7 @@ PIPELINE_JS = {
     'app': {
         'source_filenames': (
           'js/app/app.js',
+          'js/app/custom_filter.js',
           'js/app/events.js',
           'js/app/files.js',
           'js/app/navfilter.js',
@@ -133,6 +134,7 @@ PIPELINE_JS = {
             'js/angular-cookies-1.2.19.min.js',
             'js/angular-ui-router-0.2.10.min.js',
             'js/ui-bootstrap-tpls-0.10.0.min.js',
+            'js/indeterminate.js',
             'js/calendar.js',
             'js/angular-file-upload-1.1.1/angular-file-upload.min.js',
             'js/ng-google-chart.js',

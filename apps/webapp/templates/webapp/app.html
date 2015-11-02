@@ -257,6 +257,11 @@
                 <div ui-calendar="uiConfig.calendar" class="span8 calendar" ng-model="eventSources" calendar="calendar"></div> 
                 <div class="mt">
                     <button class="btn btn-sm btn-success" ng-click="newEvent()">New event</button>
+                    <div class="pull-right">
+                        <button ng-if="showCustomize" ng-click="onCustomize()" class="btn btn-default">
+                            <span class="fa fa-cog"></span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

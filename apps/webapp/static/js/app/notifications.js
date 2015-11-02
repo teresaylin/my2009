@@ -1,3 +1,5 @@
+var module = angular.module('notifications', []);
+
 module.controller('NotificationsController', function($scope, $rootScope, $timeout, NotificationRepository) {
     var timeoutDelay = 60*1000; // Update every 60 seconds
     var timeoutPromise = null;

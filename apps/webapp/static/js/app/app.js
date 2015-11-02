@@ -1,11 +1,14 @@
 var app = angular.module('app', [
     'ui.router',
     'ui.bootstrap',
+    'ui.indeterminate',
     'ui.calendar',
     
+    'customFilter',
     'events',
     'files',
     'navfilter',
+    'notifications',
     'repositories',
     'tasks',
     'users',
@@ -55,11 +58,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
         .state('dashboard', {
             url: '/',
             templateUrl: partial('dashboard.html'),
-            controller: function($scope, TaskDialogService) {
-                $scope.newTask = function() {
-                    var dlg = TaskDialogService.newTask();
-                };
-            }
+            controller: 'DashboardCtrl'
         })
         // Settings
         .state('settings', {
@@ -161,7 +160,7 @@ app.controller('AppCtrl', function($rootScope, $scope, $modal, NavFilterService,
     UserRepository.getCurrentUser()
         .success(function(data) {
             var user = data[0];
-            $scope.currentUser = user;
+            $rootScope.currentUser = user;
             $rootScope.$broadcast('gotCurrentUser', user);
         });
         
@@ -170,6 +169,38 @@ app.controller('AppCtrl', function($rootScope, $scope, $modal, NavFilterService,
     };
         
     $scope.showSidebar = true;
+});
+
+app.controller('DashboardCtrl', function($scope, TaskDialogService, CustomFilterDialogService, UserSettingRepository) {
+    $scope.newTask = function() {
+        var dlg = TaskDialogService.newTask();
+    };
+
+    $scope.calendarFilterModel = {};
+
+    $scope.openCustomizeCalendar = function() {
+        CustomFilterDialogService.open($scope.calendarFilterModel).result
+            .then(function(data) {
+                $scope.calendarFilterModel = data;
+
+                // Save calendar filter
+                UserSettingRepository.set('dashboard.calendarFilter', {
+                    version: 1,
+                    value: angular.toJson(data)
+                });
+            });
+    };
+
+    // Get calendar filter settings
+    UserSettingRepository.get('dashboard.calendarFilter', { errorsHandled: [404] })
+        .then(function(response) {
+            $scope.calendarFilterModel = angular.fromJson(response.data.value);
+        }, function(response) {
+            if(response.status == 404) {
+                // User doesn't have a filter set up
+                $scope.calendarFilterModel = {};
+            }
+        });
 });
 
 app.controller('NavCtrl', function($scope) {

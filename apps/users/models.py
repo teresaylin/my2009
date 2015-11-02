@@ -110,7 +110,7 @@ class Milestone(models.Model):
 class TaskForce(SoftDeleteableModel):
     name = models.CharField(max_length=50, blank = False)
     milestone = models.ForeignKey('Milestone')
-    team = models.ForeignKey('Team')
+    team = models.ForeignKey('Team', related_name='taskforces')
     parent_task_force = models.ForeignKey('TaskForce', blank = True, null = True, related_name='children')
     members = models.ManyToManyField(User, related_name='taskforces')
     #URL

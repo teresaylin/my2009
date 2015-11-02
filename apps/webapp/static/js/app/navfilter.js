@@ -192,7 +192,6 @@ module.controller('NavFilterCtrl', function($scope, NavFilterService, TeamReposi
     // Remove delete taskforces from taskforce lists
     $scope.$on('taskforceDeleted', function(event, taskforce) {
         if($scope.activeTeam && $scope.activeTeam.id == taskforce.team) {
-            console.log(taskforce);
             angular.forEach($scope.taskforces, function(tf) {
                 if(tf.active && tf.active.id == taskforce.id) {
                     tf.active = null;

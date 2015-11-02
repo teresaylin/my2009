@@ -1,0 +1,76 @@
+<script type="text/ng-template" id="components/custom-filter-tf.html">
+    <a href ng-click="getChildTaskforces(tf); tfOpen = !tfOpen">
+        <span class="glyphicon glyphicon-chevron-right" ng-class="{'glyphicon-chevron-down': tfOpen, 'glyphicon-chevron-right': !tfOpen}"></span>
+    </a>
+    <label>
+        <input type="checkbox" ng-model="tf._selected" ng-change="onSelectTf(team, tf)" ui-indeterminate="tf._selected === null">
+        {{ tf.name }}
+    </label>
+    <p ng-show="tfOpen && tf.children.length === 0">
+        This taskforce has no children
+    </p>
+    <ul ng-show="tfOpen && tf.children.length !== 0" class="list-unstyled">
+        <li ng-repeat="tf in tf.children" ng-include="'components/custom-filter-tf.html'" ng-init="tfOpen = false"></li>
+    </ul>
+</script>
+
+<div class="modal-header">
+    <h3 class="modal-title">Customize</h3>
+</div>
+<div class="modal-body">
+
+    <ul class="customfilter-tree list-unstyled">
+        <li ng-repeat="team in teams" ng-init="isOpen = false">
+            <a href ng-click="isOpen = !isOpen">
+                <span class="glyphicon glyphicon-chevron-right" ng-class="{'glyphicon-chevron-down': isOpen, 'glyphicon-chevron-right': !isOpen}"></span>
+            </a>
+            <label>
+                <input type="checkbox" ng-model="team._selected" ng-change="onSelectTeam(team)" ui-indeterminate="team._selected === null">
+                {{ team.name }}
+            </label>
+            <ul ng-show="isOpen" class="list-unstyled">
+                <li class="no-children">
+                    <label>
+                        <input type="checkbox" ng-model="team._currentUser._selected" ng-change="onSelectCurrentUser(team)">
+                        {{ team._currentUser.full_name }}
+                    </label>
+                </li>
+                <li class="spacer"></li>
+                <li>
+                    <a href ng-click="getTaskforces(team); tfsOpen = !tfsOpen">
+                        <span class="glyphicon glyphicon-chevron-right" ng-class="{'glyphicon-chevron-down': tfsOpen, 'glyphicon-chevron-right': !tfsOpen}"></span>
+                    </a>
+                    <label>
+                        <input type="checkbox" ng-model="team._allTfsSelected" ng-change="selectAllTfs(team)" ui-indeterminate="team._allTfsSelected === null">
+                        Taskforces
+                    </label>
+                    <ul ng-show="tfsOpen" class="list-unstyled">
+                        <li ng-repeat="tf in team.taskforces" ng-include="'components/custom-filter-tf.html'" ng-init="tfOpen = false"></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href ng-click="getUsers(team); usersOpen = !usersOpen">
+                        <span class="glyphicon glyphicon-chevron-right" ng-class="{'glyphicon-chevron-down': usersOpen, 'glyphicon-chevron-right': !usersOpen}"></span>
+                    </a>
+                    <label>
+                        <input type="checkbox" ng-model="team._allUsersSelected" ng-change="selectAllUsers(team, $viewValue)" ui-indeterminate="team._allUsersSelected === null">
+                        Users
+                    </label>
+                    <ul ng-show="usersOpen" class="list-unstyled">
+                        <li ng-repeat="user in team.users">
+                            <label>
+                                <input type="checkbox" ng-model="user._selected" ng-change="onSelectUser(team, user)">
+                                {{ user.full_name }}
+                            </label>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+    </ul>
+
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="ok()">OK</button>
+    <button class="btn btn-warning" ng-click="close()">Cancel</button>
+</div>

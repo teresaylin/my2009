@@ -561,3 +561,25 @@ hr {
         padding: 3px 16px;
     }
 }
+
+/*---------- Custom filter ----------*/
+
+ul.customfilter-tree {
+    ul {
+        padding-left: 14px;
+
+        > li {
+            padding-left: 14px;
+            border-left: 1px solid #ddd;
+        }
+    }
+
+    li.no-children {
+        padding-left: 16px;
+    }
+
+    li.spacer {
+        margin: 2px 16px;
+        border-bottom: 1px solid #ddd;
+    }
+}

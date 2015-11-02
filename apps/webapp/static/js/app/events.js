@@ -270,15 +270,20 @@ module.controller('CalendarCtrl', function($scope, $modal, $state, EventReposito
             var query = {
                 start: start.toJSON(),
                 end: end.toJSON(),
-                team: NavFilterService.team.id
             };
 
-            if($scope.filterUser) {
-                query.user = $scope.filterUser.id;
-            }
+            if($scope.filterCustom && !_.isEmpty($scope.filterCustom)) {
+                query.custom = $scope.filterCustom;
+            } else {
+                query.team = NavFilterService.team.id;
 
-            if($scope.filterTaskforce) {
-                query.taskforce = $scope.filterTaskforce.id;
+                if($scope.filterUser) {
+                    query.user = $scope.filterUser.id;
+                }
+
+                if($scope.filterTaskforce) {
+                    query.taskforce = $scope.filterTaskforce.id;
+                }
             }
 
             EventRepository.list(query)
@@ -320,7 +325,7 @@ module.controller('CalendarCtrl', function($scope, $modal, $state, EventReposito
         }
     }
     
-    $scope.$watchCollection('[filterUser, filterTaskforce]', function(val) {
+    $scope.$watchCollection('[filterUser, filterTaskforce, filterCustom]', function(val) {
         if(val) {
             reloadEvents();
         }
@@ -387,7 +392,10 @@ module.directive('calendar', function() {
         restrict: 'E',
         scope: {
             filterUser: '=',
-            filterTaskforce: '='
+            filterTaskforce: '=',
+            filterCustom: '=',
+            showCustomize: '=',
+            onCustomize: '&'
         },
         templateUrl: 'events/calendar.html',
         controller: 'CalendarCtrl'

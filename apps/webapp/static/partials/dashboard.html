@@ -1,6 +1,12 @@
 <div class="row mt">
     <div class="col-md-7 col-lg-5">
-        <calendar filter-user="navUser.id != currentUser.id ? navUser : null" filter-taskforce="navTaskforce"></calendar>
+        <calendar
+            filter-user="navUser.id != currentUser.id ? navUser : null"
+            filter-taskforce="navTaskforce"
+            filter-custom="navUser.id == currentUser.id ? calendarFilterModel : null"
+            show-customize="navUser.id == currentUser.id"
+            on-customize="openCustomizeCalendar()"
+        />
         <div class="mt">
             <task-list filter-user="currentUser" ng-if="navUser.id == currentUser.id"></task-list>
         </div>

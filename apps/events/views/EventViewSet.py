@@ -1,4 +1,5 @@
 from datetime import timedelta
+import json
 
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
@@ -45,47 +46,58 @@ class EventViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
         except ValidationError:
             raise ParseError('Invalid date')
 
-        # Filter by team
-        teamId = self.request.QUERY_PARAMS.get('team', None)
-        if teamId:
+        # Custom filter
+        customStr = self.request.QUERY_PARAMS.get('custom', None)
+        if customStr:
             try:
-                team = Team.objects.get(id=teamId)
-            except ValueError:
-                raise ParseError('Invalid team ID')
-            except Team.DoesNotExist:
-                raise TeamNotFound()
-            queryset = queryset.filter(Q(owner__teams__in=[team]) | Q(is_global=True))
+                custom = json.loads(customStr)
+                custom['teams']
+            except (ValueError, TypeError):
+                raise ParseError('Invalid custom filter string')
 
-        # Filter by user
-        userId = self.request.QUERY_PARAMS.get('user', None)
-        if userId:
-            try:
-                user = User.objects.get(id=userId)
-            except ValueError:
-                raise ParseError('Invalid user ID')
-            except User.DoesNotExist:
-                raise UserNotFound()
-            queryset = queryset.filter(
-                Q(owner=user) |
-                Q(is_global=True) |
-                Q(attendees__in=[user]) |
-                Q(attending_taskforces__in=user.taskforces.all())
-            )
+            queryset = self.customFilter(queryset, custom)
+        else:
+            # Filter by team
+            teamId = self.request.QUERY_PARAMS.get('team', None)
+            if teamId:
+                try:
+                    team = Team.objects.get(id=teamId)
+                except ValueError:
+                    raise ParseError('Invalid team ID')
+                except Team.DoesNotExist:
+                    raise TeamNotFound()
+                queryset = queryset.filter(Q(owner__teams__in=[team]) | Q(is_global=True))
 
-        # Filter by taskforce
-        taskforceId = self.request.QUERY_PARAMS.get('taskforce', None)
-        if taskforceId:
-            try:
-                taskforce = TaskForce.objects.get(id=taskforceId)
-            except ValueError:
-                raise ParseError('Invalid taskforce ID')
-            except TaskForce.DoesNotExist:
-                raise TaskForceNotFound()
-            queryset = queryset.filter(
-                Q(attending_taskforces__in=[taskforce]) |
-                Q(is_global=True) |
-                Q(attendees__in=taskforce.members.all())
-            )
+            # Filter by user
+            userId = self.request.QUERY_PARAMS.get('user', None)
+            if userId:
+                try:
+                    user = User.objects.get(id=userId)
+                except ValueError:
+                    raise ParseError('Invalid user ID')
+                except User.DoesNotExist:
+                    raise UserNotFound()
+                queryset = queryset.filter(
+                    Q(owner=user) |
+                    Q(is_global=True) |
+                    Q(attendees__in=[user]) |
+                    Q(attending_taskforces__in=user.taskforces.all())
+                )
+
+            # Filter by taskforce
+            taskforceId = self.request.QUERY_PARAMS.get('taskforce', None)
+            if taskforceId:
+                try:
+                    taskforce = TaskForce.objects.get(id=taskforceId)
+                except ValueError:
+                    raise ParseError('Invalid taskforce ID')
+                except TaskForce.DoesNotExist:
+                    raise TaskForceNotFound()
+                queryset = queryset.filter(
+                    Q(attending_taskforces__in=[taskforce]) |
+                    Q(is_global=True) |
+                    Q(attendees__in=taskforce.members.all())
+                )
 
         # Remove duplicate results from joins
         queryset = queryset.distinct()
@@ -99,6 +111,144 @@ class EventViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
             .prefetch_related('files')
 
         return queryset
+
+    def customFilter(self, queryset, filterData):
+        # Always include global events
+        qFilter = Q(is_global=True)
+
+        for teamData in filterData['teams']:
+            # Pull in entire team if array member is a team ID
+            try:
+                teamId = int(teamData)
+                qFilter |= Q(team__id=teamId)
+                continue
+            except TypeError:
+                pass
+
+            # Partial team selection if array member is object
+            try:
+                teamId = int(teamData['id'])
+            except (TypeError, KeyError):
+                pass
+            except ValueError:
+                raise ParseError('Invalid team ID')
+                
+            if teamId:
+                conditions = Q()
+
+                # Get Team object
+                try:
+                    team = Team.objects.get(pk=teamId)
+                except Team.DoesNotExist:
+                    raise ParseError('Invalid team ID')
+
+                # Include current user
+                try:
+                    includeCurUser = bool(teamData['currentUser'])
+                except KeyError:
+                    includeCurUser = False
+                except ValueError:
+                    raise ParseError('Invalid value for "currentUser" field')
+                if includeCurUser:
+                    conditions |= \
+                        Q(owner=self.request.user) | \
+                        Q(attendees__in=[self.request.user]) | \
+                        Q(attending_taskforces__in=self.request.user.taskforces.all())
+
+                # Include users
+                try:
+                    users = teamData['users']
+                except KeyError:
+                    users = None
+                if users:
+                    if users == 'all':
+                        # Include all users
+                        teamUsers = team.users.all()
+                        conditions |= \
+                            Q(attendees__in=teamUsers) | \
+                            Q(attending_taskforces__in=TaskForce.objects.filter(members__in=teamUsers))
+                    else:
+                        # Partial user selection
+                        try:
+                            iter(users)
+                        except TypeError:
+                            raise ParseError('Expected array or string for "users" field')
+
+                        for userId in users:
+                            # Get user
+                            try:
+                                userId = int(userId)
+                                user = User.objects.get(pk=userId)
+                            except (ValueError, User.DoesNotExist):
+                                raise ParseError('Invalid user ID')
+
+                            conditions |= \
+                                Q(attendees__in=[user]) | \
+                                Q(attending_taskforces__in=user.taskforces.all())
+
+                # Include taskforces
+                try:
+                    taskforces = teamData['taskforces']
+                except KeyError:
+                    taskforces = None
+                if taskforces:
+                    if taskforces == 'all':
+                        # Include all taskforces
+                        conditions |= \
+                            Q(attending_taskforces__in=team.taskforces.all())
+                    else:
+                        # Partial taskforce selection
+                        try:
+                            taskforces.keys()
+                        except TypeError:
+                            raise ParseError('Expected object or string for "taskforces" field')
+
+                        def processTfs(taskforces):
+                            queryIds = []
+                            for tfId, selected in taskforces.items():
+                                # Get taskforce
+                                try:
+                                    tfId = int(tfId)
+                                    tf = TaskForce.objects.get(pk=tfId)
+                                except (ValueError, TaskForce.DoesNotExist):
+                                    raise ParseError('Invalid taskforce ID')
+
+                                if type(selected) == bool:
+                                    # Full taskforce included
+                                    queryIds += [tfId]
+
+                                    # Get all descendants of taskforce
+                                    # Note: this is hard-coded to 12 levels of nesting
+                                    tfs = TaskForce.objects.all().filter(
+                                        Q(parent_task_force=tf) |
+                                        Q(parent_task_force__parent_task_force=tf) |
+                                        Q(parent_task_force__parent_task_force__parent_task_force=tf) |
+                                        Q(parent_task_force__parent_task_force__parent_task_force__parent_task_force=tf) |
+                                        Q(parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force=tf) |
+                                        Q(parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force=tf) |
+                                        Q(parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force=tf) |
+                                        Q(parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force=tf) |
+                                        Q(parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force=tf) |
+                                        Q(parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force=tf) |
+                                        Q(parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force=tf) |
+                                        Q(parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force=tf)
+                                    )
+                                    queryIds += [tf.id for tf in tfs]
+
+                                elif type(selected) == dict:
+                                    queryIds += processTfs(selected)
+                                else:
+                                    raise ParseError('Expected boolean or object')
+                            return queryIds
+                        
+                        queryIds = processTfs(taskforces)
+
+                        conditions |= \
+                            Q(attending_taskforces__in=queryIds)
+
+                qFilter |= Q(team__id=teamId) & conditions
+
+        return queryset.filter(qFilter)
     
     def pre_save(self, obj):
         # Set owner when object is created
