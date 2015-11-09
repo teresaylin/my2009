@@ -215,6 +215,24 @@ hr {
         .app-checkbox-glyph-checked {
             visibility: visible;
         }
+
+        &.checked {
+            .app-checkbox-glyph-unchecked {
+                visibility: visible;
+            }
+            .app-checkbox-glyph-checked {
+                visibility: hidden;
+            }
+        }
+    }
+
+    &.checked {
+        .app-checkbox-glyph-unchecked {
+            visibility: hidden;
+        }
+        .app-checkbox-glyph-checked {
+            visibility: visible;
+        }
     }
 }
 

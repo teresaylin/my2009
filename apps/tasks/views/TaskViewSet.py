@@ -20,12 +20,17 @@ from ..models import Task
 from ..serializers import TaskSerializer
 
 class TaskViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
-    queryset = Task.objects.all().exclude(state='completed')
+    queryset = Task.objects.all()
     serializer_class = TaskSerializer
     filter_fields = ('parent',)
     
     def get_queryset(self):
         queryset = super().get_queryset()
+
+        # Exclude completed tasks
+        completed = self.request.QUERY_PARAMS.get('exclude-completed', None)
+        if completed:
+            queryset = queryset.exclude(state='completed')
 
         # Filter by team
         teamId = self.request.QUERY_PARAMS.get('team', None)
@@ -181,6 +186,27 @@ class TaskViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
         # Track task completion
         tracking.trackTaskCompleted(task)
         
+        # Return updated task
+        return Response(TaskSerializer(task, context={'request': request}).data)
+
+    @action(methods=['PUT'])
+    def uncomplete(self, request, pk=None):
+        task = self.get_object()
+
+        def uncompleteTask(task):
+            # Mark subtasks as not completed
+            for subtask in task.subtasks.all():
+                uncompleteTask(subtask)
+
+            # Mark task as not completed
+            if task.state == task.COMPLETED:
+                task.state = ''
+                task.completed_by = None
+                task.save()
+                
+        # Un-complete task and all subtasks
+        uncompleteTask(task)
+
         # Return updated task
         return Response(TaskSerializer(task, context={'request': request}).data)
 

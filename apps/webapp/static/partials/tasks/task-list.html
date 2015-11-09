@@ -5,11 +5,7 @@
         </div>
         <div class="task-header-left">
             <span class="task-header-checkbox">
-                <!--
-                <input type="checkbox" class="list-child" ng-model="completed" ng-change="onCompletedChange(task, completed)"
-                ng-if="task.state != 'completed' && task._permissions.update">
-                -->
-                <a href class="app-checkbox" ng-class="{disabled: !task._permissions.update}" ng-click="task._permissions.update && completeTask(task)">
+                <a href class="app-checkbox" ng-class="{disabled: !task._permissions.update, checked: task.state == 'completed' }" ng-click="task._permissions.update && toggleTaskCompleted(task)">
                     <span class="app-checkbox-glyph-unchecked fa fa-square-o"></span>
                     <span class="app-checkbox-glyph-checked fa fa-check-square-o"></span>
                 </a>
@@ -25,8 +21,7 @@
     <div class="task-body" ng-show="isOpen">
         <p class="text-info" ng-if="task.subtasks && task.subtasks.length == 0">This task has no subtasks.</p>
         <ul class="task-list list-unstyled">
-            <li class="task" ng-repeat="task in task.subtasks" ng-class="{ 'task-done': task.state == 'completed' }"
-                ng-init="completed = task.state == 'completed'" ng-include="'task-list-task.html'">
+            <li class="task" ng-repeat="task in task.subtasks" ng-class="{ 'task-done': task.state == 'completed' }" ng-include="'task-list-task.html'">
             </li>
             <li class="more-tasks" ng-if="task._hasPartialSubtasks">
                 <a href ng-click="moreTasks(task)">More...</a>
@@ -55,6 +50,12 @@
                     {{ navTeam.name }} team tasks
                 </span>
             </h5>
+        </div>
+        <div class="pull-right">
+            <label>
+                <input type="checkbox" ng-model="showCompleted">
+                Show completed
+            </label>
         </div>
         <br>
     </div>

@@ -7,6 +7,8 @@ module.controller('TasksStateCtrl', function($scope, $modal, NavFilterService, T
 });
 
 module.controller('TaskListCtrl', function($rootScope, $scope, $modal, TaskRepository, TaskDialogService, NavFilterService) {
+    $scope.showCompleted = false;
+
     var refreshTasks = function() {
         if(!NavFilterService.team) return;
 
@@ -15,8 +17,12 @@ module.controller('TaskListCtrl', function($rootScope, $scope, $modal, TaskRepos
         // Get list of tasks
         var query = {
             tree: true,
-            team: NavFilterService.team.id
+            team: NavFilterService.team.id,
         };
+
+        if(!$scope.showCompleted) {
+            query['exclude-completed'] = true;
+        }
 
         if($scope.filterUser) {
             query.user = $scope.filterUser.id;
@@ -45,7 +51,7 @@ module.controller('TaskListCtrl', function($rootScope, $scope, $modal, TaskRepos
     $scope.navTeam = NavFilterService.team;
 
     // Refresh tasks if filters change
-    $scope.$watchCollection('[filterUser, filterTaskforce, filterUserOwned]', function(val) {
+    $scope.$watchCollection('[filterUser, filterTaskforce, filterUserOwned, showCompleted]', function(val) {
         if(val) {
             refreshTasks();
         }
@@ -92,7 +98,7 @@ module.controller('TaskListCtrl', function($rootScope, $scope, $modal, TaskRepos
         }
     });
     
-    $scope.completeTask = function(task) {
+    $scope.toggleTaskCompleted = function(task) {
         /*
         // Show confirm dialog
         var modal = $modal.open({
@@ -115,13 +121,23 @@ module.controller('TaskListCtrl', function($rootScope, $scope, $modal, TaskRepos
         });
         */
 
-        // Mark task as completed
-        TaskRepository.complete(task.id)
-            .success(function(data) {
-                // Update task
-                angular.copy(data, task);
-                $rootScope.$broadcast('taskUpdated', data);
-            });
+        if(task.state != 'completed') {
+            // Mark task as completed
+            TaskRepository.complete(task.id)
+                .success(function(data) {
+                    // Update task
+                    angular.copy(data, task);
+                    $rootScope.$broadcast('taskUpdated', data);
+                });
+        } else {
+            // Mark task as not completed
+            TaskRepository.uncomplete(task.id)
+                .success(function(data) {
+                    // Update task
+                    angular.copy(data, task);
+                    $rootScope.$broadcast('taskUpdated', data);
+                });
+        }
     };
 
     $scope.openTask = function(task) {

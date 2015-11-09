@@ -150,6 +150,9 @@ module.factory('TaskRepository', function($http) {
         complete: function(id) {
             return $http.put(baseUrl+id+'/complete/');
         },
+        uncomplete: function(id) {
+            return $http.put(baseUrl+id+'/uncomplete/');
+        },
         addAssignedUser: function(id, userId) {
             return $http.put(baseUrl+id+'/add_assigned_user/', {
                 'user_id': userId

@@ -241,6 +241,14 @@ hr {
       visibility: hidden; }
     .app-checkbox:not(.disabled):hover .app-checkbox-glyph-checked {
       visibility: visible; }
+    .app-checkbox:not(.disabled):hover.checked .app-checkbox-glyph-unchecked {
+      visibility: visible; }
+    .app-checkbox:not(.disabled):hover.checked .app-checkbox-glyph-checked {
+      visibility: hidden; }
+  .app-checkbox.checked .app-checkbox-glyph-unchecked {
+    visibility: hidden; }
+  .app-checkbox.checked .app-checkbox-glyph-checked {
+    visibility: visible; }
 
 .dropdown-menu {
   max-height: 500px;
