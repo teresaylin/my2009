@@ -263,6 +263,9 @@ hr {
 .panel-body.no-lr-padding {
   padding-left: 0;
   padding-right: 0; }
+.panel-body .lr-padding {
+  padding-left: 15px;
+  padding-right: 15px; }
 
 .spinner {
   padding: 26px 0;

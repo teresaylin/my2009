@@ -1,3 +1,5 @@
+import json
+
 from django.db.models import Count, Q
 from django.contrib.auth.models import User
 from rest_framework import viewsets
@@ -31,6 +33,17 @@ class TaskViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
         completed = self.request.QUERY_PARAMS.get('exclude-completed', None)
         if completed:
             queryset = queryset.exclude(state='completed')
+
+        # Custom filter
+        customStr = self.request.QUERY_PARAMS.get('custom', None)
+        if customStr:
+            try:
+                custom = json.loads(customStr)
+                custom['teams']
+            except (ValueError, TypeError):
+                raise ParseError('Invalid custom filter string')
+
+            queryset = self.customFilter(queryset, custom)
 
         # Filter by team
         teamId = self.request.QUERY_PARAMS.get('team', None)
@@ -105,6 +118,143 @@ class TaskViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
             .prefetch_related('files')
 
         return queryset
+
+    def customFilter(self, queryset, filterData):
+        qFilter = Q()
+
+        for teamData in filterData['teams']:
+            # Pull in entire team if array member is a team ID
+            try:
+                teamId = int(teamData)
+                qFilter |= Q(team__id=teamId)
+                continue
+            except TypeError:
+                pass
+
+            # Partial team selection if array member is object
+            try:
+                teamId = int(teamData['id'])
+            except (TypeError, KeyError):
+                pass
+            except ValueError:
+                raise ParseError('Invalid team ID')
+                
+            if teamId:
+                conditions = Q()
+
+                # Get Team object
+                try:
+                    team = Team.objects.get(pk=teamId)
+                except Team.DoesNotExist:
+                    raise ParseError('Invalid team ID')
+
+                # Include current user
+                try:
+                    includeCurUser = bool(teamData['currentUser'])
+                except KeyError:
+                    includeCurUser = False
+                except ValueError:
+                    raise ParseError('Invalid value for "currentUser" field')
+                if includeCurUser:
+                    conditions |= \
+                        Q(owner=self.request.user) | \
+                        Q(assigned_users__in=[self.request.user]) | \
+                        Q(assigned_taskforces__in=self.request.user.taskforces.all())
+
+                # Include users
+                try:
+                    users = teamData['users']
+                except KeyError:
+                    users = None
+                if users:
+                    if users == 'all':
+                        # Include all users
+                        teamUsers = team.users.all()
+                        conditions |= \
+                            Q(assigned_users__in=teamUsers) | \
+                            Q(assigned_taskforces__in=TaskForce.objects.filter(members__in=teamUsers))
+                    else:
+                        # Partial user selection
+                        try:
+                            iter(users)
+                        except TypeError:
+                            raise ParseError('Expected array or string for "users" field')
+
+                        for userId in users:
+                            # Get user
+                            try:
+                                userId = int(userId)
+                                user = User.objects.get(pk=userId)
+                            except (ValueError, User.DoesNotExist):
+                                raise ParseError('Invalid user ID')
+
+                            conditions |= \
+                                Q(assigned_users__in=[user]) | \
+                                Q(assigned_taskforces__in=user.taskforces.all())
+
+                # Include taskforces
+                try:
+                    taskforces = teamData['taskforces']
+                except KeyError:
+                    taskforces = None
+                if taskforces:
+                    if taskforces == 'all':
+                        # Include all taskforces
+                        conditions |= \
+                            Q(assigned_taskforces__in=team.taskforces.all())
+                    else:
+                        # Partial taskforce selection
+                        try:
+                            taskforces.keys()
+                        except TypeError:
+                            raise ParseError('Expected object or string for "taskforces" field')
+
+                        def processTfs(taskforces):
+                            queryIds = []
+                            for tfId, selected in taskforces.items():
+                                # Get taskforce
+                                try:
+                                    tfId = int(tfId)
+                                    tf = TaskForce.objects.get(pk=tfId)
+                                except (ValueError, TaskForce.DoesNotExist):
+                                    raise ParseError('Invalid taskforce ID')
+
+                                if type(selected) == bool:
+                                    # Full taskforce included
+                                    queryIds += [tfId]
+
+                                    # Get all descendants of taskforce
+                                    # Note: this is hard-coded to 12 levels of nesting
+                                    tfs = TaskForce.objects.all().filter(
+                                        Q(parent_task_force=tf) |
+                                        Q(parent_task_force__parent_task_force=tf) |
+                                        Q(parent_task_force__parent_task_force__parent_task_force=tf) |
+                                        Q(parent_task_force__parent_task_force__parent_task_force__parent_task_force=tf) |
+                                        Q(parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force=tf) |
+                                        Q(parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force=tf) |
+                                        Q(parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force=tf) |
+                                        Q(parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force=tf) |
+                                        Q(parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force=tf) |
+                                        Q(parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force=tf) |
+                                        Q(parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force=tf) |
+                                        Q(parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force__parent_task_force=tf)
+                                    )
+                                    queryIds += [tf.id for tf in tfs]
+
+                                elif type(selected) == dict:
+                                    queryIds += processTfs(selected)
+                                else:
+                                    raise ParseError('Expected boolean or object')
+                            return queryIds
+                        
+                        queryIds = processTfs(taskforces)
+
+                        conditions |= \
+                            Q(assigned_taskforces__in=queryIds)
+
+                qFilter |= Q(team__id=teamId) & conditions
+
+        return queryset.filter(qFilter)
     
     def list(self, request, *args, **kwargs):
         if 'tree' in request.QUERY_PARAMS:

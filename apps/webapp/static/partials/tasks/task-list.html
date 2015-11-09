@@ -36,19 +36,7 @@
         <div class="pull-left">
             <h5>
                 <span class="fa fa-tasks"></span>
-                <span ng-if="!filterUserOwned && (filterUser || filterTaskforce)">Tasks assigned to
-                    <span ng-if="filterUser && filterUser.id != $parent.$parent.currentUser.id">{{ filterUser.full_name }}</span>
-                    <span ng-if="filterUser && filterUser.id == $parent.$parent.currentUser.id">me</span>
-                    <span ng-if="filterTaskforce">{{ filterTaskforce.name }}</span>
-                </span>
-                <span ng-if="filterUserOwned">Tasks owned by
-                    <span ng-if="filterUserOwned.id != $parent.$parent.currentUser.id">{{ filterUserOwned.full_name }}</span>
-                    <span ng-if="filterUserOwned.id == $parent.$parent.currentUser.id">me</span>
-                    <span ng-if="filterTaskforce"> and assigned to {{ filterTaskforce.name }}</span>
-                </span>
-                <span ng-if="!filterUserOwned && !filterUser && !filterTaskforce">
-                    {{ navTeam.name }} team tasks
-                </span>
+                <span>{{ title }}</span>
             </h5>
         </div>
         <div class="pull-right">
@@ -73,7 +61,14 @@
                     </li>
                 </ul>
             </div>
-            <button class="btn btn-success btn-sm" ng-if="filterUser && filterUser.id == $parent.currentUser.id" ng-click="newTask()">New task</button>
+            <div class="lr-padding">
+                <button class="btn btn-success btn-sm" ng-if="filterUser && filterUser.id == $parent.currentUser.id" ng-click="newTask()">New task</button>
+                <div class="pull-right">
+                    <button ng-if="showCustomize" ng-click="onCustomize()" class="btn btn-default">
+                        <span class="fa fa-cog"></span>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </section>

@@ -8,9 +8,46 @@ module.controller('TasksStateCtrl', function($scope, $modal, NavFilterService, T
 
 module.controller('TaskListCtrl', function($rootScope, $scope, $modal, TaskRepository, TaskDialogService, NavFilterService) {
     $scope.showCompleted = false;
+    $scope.title = 'Tasks';
+
+    var updateTitle = function() {
+        $scope.title = 'Tasks';
+
+        if(!$scope.filterCustom) {
+            if($scope.filterUserOwned) {
+                $scope.title = 'Tasks owned by ';
+                if($scope.filterUserOwned.id == $scope.$parent.$parent.currentUser.id) {
+                    $scope.title += 'me';
+                } else {
+                    $scope.title += $scope.filterUserOwned.full_name;
+                }
+
+                if($scope.filterTaskforce) {
+                    $scope.title += ' and assigned to '+$scope.filterTaskforce.name;
+                }
+            } else {
+                if($scope.filterUser || $scope.filterTaskforce) {
+                    $scope.title = 'Tasks assigned to ';
+                    if($scope.filterUser && $scope.filterUser.id == $scope.$parent.$parent.currentUser.id) {
+                        $scope.title += 'me';
+                    } else {
+                        $scope.title += $scope.filterUser.full_name;
+                    }
+
+                    if($scope.filterTaskforce) {
+                        $scope.title += $scope.filterTaskforce.name;
+                    }
+                } else if(!$scope.filterUser && !$scope.filterTaskforce) {
+                    $scope.title = NavFilterService.team.name+' team tasks';
+                }
+            }
+        }
+    }
 
     var refreshTasks = function() {
         if(!NavFilterService.team) return;
+
+        updateTitle();
 
         $scope.loading = true;
 
@@ -24,14 +61,18 @@ module.controller('TaskListCtrl', function($rootScope, $scope, $modal, TaskRepos
             query['exclude-completed'] = true;
         }
 
-        if($scope.filterUser) {
-            query.user = $scope.filterUser.id;
-        }
-        if($scope.filterTaskforce) {
-            query.taskforce = $scope.filterTaskforce.id;
-        }
-        if($scope.filterUserOwned) {
-            query['user-owned'] = $scope.filterUserOwned.id;
+        if($scope.filterCustom && !_.isEmpty($scope.filterCustom)) {
+            query.custom = $scope.filterCustom;
+        } else {
+            if($scope.filterUser) {
+                query.user = $scope.filterUser.id;
+            }
+            if($scope.filterTaskforce) {
+                query.taskforce = $scope.filterTaskforce.id;
+            }
+            if($scope.filterUserOwned) {
+                query['user-owned'] = $scope.filterUserOwned.id;
+            }
         }
         
         TaskRepository.list(query)
@@ -51,7 +92,7 @@ module.controller('TaskListCtrl', function($rootScope, $scope, $modal, TaskRepos
     $scope.navTeam = NavFilterService.team;
 
     // Refresh tasks if filters change
-    $scope.$watchCollection('[filterUser, filterTaskforce, filterUserOwned, showCompleted]', function(val) {
+    $scope.$watchCollection('[filterUser, filterTaskforce, filterUserOwned, filterCustom, showCompleted]', function(val) {
         if(val) {
             refreshTasks();
         }
@@ -212,9 +253,12 @@ module.directive('taskList', function() {
     return {
         restrict: 'E',
         scope: {
-            'filterUser': '=',
-            'filterTaskforce': '=',
-            'filterUserOwned': '='
+            filterUser: '=',
+            filterTaskforce: '=',
+            filterUserOwned: '=',
+            filterCustom: '=',
+            showCustomize: '=',
+            onCustomize: '&'
         },
         templateUrl: partial('tasks/task-list.html'),
         controller: 'TaskListCtrl'

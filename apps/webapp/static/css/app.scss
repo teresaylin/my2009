@@ -249,9 +249,16 @@ hr {
     -webkit-box-shadow: none;
 }
 
-.panel-body.no-lr-padding {
-    padding-left: 0;
-    padding-right: 0;
+.panel-body {
+    &.no-lr-padding {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .lr-padding {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
 }
 
 .spinner {

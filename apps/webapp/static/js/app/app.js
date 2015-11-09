@@ -177,6 +177,7 @@ app.controller('DashboardCtrl', function($scope, TaskDialogService, CustomFilter
     };
 
     $scope.calendarFilterModel = {};
+    $scope.tasksFilterModel = {};
 
     $scope.openCustomizeCalendar = function() {
         CustomFilterDialogService.open($scope.calendarFilterModel).result
@@ -191,7 +192,21 @@ app.controller('DashboardCtrl', function($scope, TaskDialogService, CustomFilter
             });
     };
 
+    $scope.openCustomizeTasks = function() {
+        CustomFilterDialogService.open($scope.tasksFilterModel).result
+            .then(function(data) {
+                $scope.tasksFilterModel = data;
+
+                // Save tasks filter
+                UserSettingRepository.set('dashboard.tasksFilter', {
+                    version: 1,
+                    value: angular.toJson(data)
+                });
+            });
+    };
+
     // Get calendar filter settings
+    $scope.loadingCalendar = true;
     UserSettingRepository.get('dashboard.calendarFilter', { errorsHandled: [404] })
         .then(function(response) {
             $scope.calendarFilterModel = angular.fromJson(response.data.value);
@@ -200,6 +215,24 @@ app.controller('DashboardCtrl', function($scope, TaskDialogService, CustomFilter
                 // User doesn't have a filter set up
                 $scope.calendarFilterModel = {};
             }
+        })
+        .finally(function() {
+            $scope.loadingCalendar = false;
+        });
+
+    // Get task list filter settings
+    $scope.loadingTasks = true;
+    UserSettingRepository.get('dashboard.tasksFilter', { errorsHandled: [404] })
+        .then(function(response) {
+            $scope.tasksFilterModel = angular.fromJson(response.data.value);
+        }, function(response) {
+            if(response.status == 404) {
+                // User doesn't have a filter set up
+                $scope.tasksFilterModel = {};
+            }
+        })
+        .finally(function() {
+            $scope.loadingTasks = false;
         });
 });
 
