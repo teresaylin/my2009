@@ -71,6 +71,7 @@ class Task(SoftDeleteableModel):
             name=self.name,
             parent=self.parent,
             owner=owner,
+            team=self.team,
             description=self.description,
             due_time=self.due_time,
             state=self.state,

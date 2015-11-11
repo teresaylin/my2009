@@ -34,19 +34,21 @@ class TaskAdmin(admin.ModelAdmin):
             if form.is_valid():
                 tasks = form.cleaned_data['tasks']
                 teams = form.cleaned_data['teams']
-                users = User.objects.all().filter(teams__in=teams)
                 
                 tasksCreated = 0
                 for task in tasks:
-                    for user in users:
-                        # Create new task
-                        newTask = task.clone(request.user)
-                        newTask.save()
-                        
-                        # Assign user to task
-                        newTask.assigned_users.add(user)
+                    for team in teams:
+                        users = User.objects.all().filter(teams__in=[team])
+                        for user in users:
+                            # Create new task
+                            newTask = task.clone(request.user)
+                            newTask.team = team
+                            newTask.save()
+                            
+                            # Assign user to task
+                            newTask.assigned_users.add(user)
 
-                        tasksCreated += 1
+                            tasksCreated += 1
                 
                 # Send user message and redirect to task list
                 if tasksCreated > 0:

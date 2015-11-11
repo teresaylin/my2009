@@ -60,6 +60,7 @@ class Event(SoftDeleteableModel):
         return self.__class__(
             title=self.title,
             owner=owner,
+            team=self.team,
             start=self.start,
             end=self.end,
             is_global=is_global,
