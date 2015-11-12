@@ -53,8 +53,7 @@ module.controller('TaskListCtrl', function($rootScope, $scope, $modal, TaskRepos
 
         // Get list of tasks
         var query = {
-            tree: true,
-            team: NavFilterService.team.id,
+            tree: true
         };
 
         if(!$scope.showCompleted) {
@@ -64,6 +63,8 @@ module.controller('TaskListCtrl', function($rootScope, $scope, $modal, TaskRepos
         if($scope.filterCustom && !_.isEmpty($scope.filterCustom)) {
             query.custom = $scope.filterCustom;
         } else {
+            query.team = NavFilterService.team.id;
+
             if($scope.filterUser) {
                 query.user = $scope.filterUser.id;
             }
