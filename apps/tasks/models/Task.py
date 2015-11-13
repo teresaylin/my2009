@@ -24,6 +24,7 @@ class Task(SoftDeleteableModel):
     due_time = models.DateTimeField(null=True, blank=True)
     state = models.CharField(max_length=50, choices=STATES, blank=True)
     completed_by = models.ForeignKey(User, related_name='completed_tasks', null=True, blank=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
     comment_thread = models.OneToOneField(CommentThread, editable=False)
     prototype = models.ForeignKey('Task', blank=True, null=True, related_name='prototype_for', editable=False)
 
