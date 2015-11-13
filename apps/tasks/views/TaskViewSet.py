@@ -1,5 +1,7 @@
 import json
+from datetime import datetime
 
+from django.utils.timezone import utc
 from django.db.models import Count, Q
 from django.contrib.auth.models import User
 from rest_framework import viewsets
@@ -100,10 +102,11 @@ class TaskViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
             
             queryset = queryset.filter(owner=user)
 
-        # Sort by due time; tasks with no due time are last in the list; completed tasks at end of list
+        # Sort by due time; tasks with no due time are last in the non-completed task list;
+        #   completed tasks at end of list in reverse order of completion time
         queryset = queryset \
             .annotate(null_due_time=Count('due_time')) \
-            .order_by('-state', '-null_due_time', 'due_time')
+            .order_by('state', '-completed_at', '-null_due_time', 'due_time')
 
         # Remove duplicate results from joins
         queryset = queryset.distinct()
@@ -329,6 +332,7 @@ class TaskViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
             if task.state != task.COMPLETED:
                 task.state = task.COMPLETED
                 task.completed_by = self.request.user
+                task.completed_at = datetime.utcnow().replace(tzinfo=utc)
                 task.save()
                 
         # Complete task and all subtasks
@@ -353,6 +357,7 @@ class TaskViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
             if task.state == task.COMPLETED:
                 task.state = ''
                 task.completed_by = None
+                task.completed_at = None
                 task.save()
                 
         # Un-complete task and all subtasks
