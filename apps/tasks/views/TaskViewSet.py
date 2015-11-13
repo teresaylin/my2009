@@ -103,7 +103,7 @@ class TaskViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
         # Sort by due time; tasks with no due time are last in the list; completed tasks at end of list
         queryset = queryset \
             .annotate(null_due_time=Count('due_time')) \
-            .order_by('state', '-null_due_time', 'due_time')
+            .order_by('-state', '-null_due_time', 'due_time')
 
         # Remove duplicate results from joins
         queryset = queryset.distinct()

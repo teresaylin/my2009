@@ -86,7 +86,7 @@ module.controller('EventDialogCtrl', function($scope, $modalInstance, EventRepos
     
     $scope.delete = function() {
         // Open delete event dialog
-        EventDialogService.deleteEvent(event).result
+        EventDialogService.deleteEvent($scope.event).result
             .then(function(deleted) {
                 if(deleted) {
                     $modalInstance.close(true);
