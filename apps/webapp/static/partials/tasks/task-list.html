@@ -62,7 +62,7 @@
                 </ul>
             </div>
             <div class="lr-padding">
-                <button class="btn btn-success btn-sm" ng-if="filterUser && filterUser.id == $parent.currentUser.id" ng-click="newTask()">New task</button>
+                <button class="btn btn-success btn-sm" ng-if="(filterUserOwned && filterUserOwned.id == $parent.currentUser.id) || (!filterTaskforce && !filterUser && !filterCustom)" ng-click="newTask()">New task</button>
                 <div class="pull-right">
                     <button ng-if="showCustomize" ng-click="onCustomize()" class="btn btn-default">
                         <span class="fa fa-cog"></span>
