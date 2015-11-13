@@ -27,3 +27,7 @@ class CommentThreadNotFound(APIException):
 class UserNotInTeam(APIException):
     status_code = 400
     default_detail = 'You are not a member of this team'
+
+class UserAlreadyInTaskForce(APIException):
+    status_code = 400
+    default_detail = 'User is already a member of this taskforce'

@@ -180,13 +180,11 @@ def getUserObjectPermissions(user, obj):
         if obj.owner == user:
             perms['update'] = True
             perms['delete'] = True
-            
         # Users assigned to task can edit task
-        if user in obj.assigned_users.all():
+        elif user in obj.assigned_users.all():
             perms['update'] = True
-            
         # Users, belonging to a task force which is assigned to this task, can edit task
-        if user in User.objects.filter(taskforces__assigned_tasks__in=[obj]):
+        elif any(tf in obj.assigned_taskforces.all() for tf in user.taskforces.all()):
             perms['update'] = True
     elif cls == TaskForce:
         # User can edit task forces belonging to teams to which they are assigned

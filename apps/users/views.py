@@ -17,6 +17,7 @@ from libs.permissions.user_permissions import getUserObjectPermissions
 from .models import TaskForce, Team, UserProfile, UserSetting, Milestone, Comment, CommentThread, CommentThreadSubscription, Role, UserRoleMapping
 from .serializers import TaskForceSerializer, TeamSerializer, UserSerializer, UserProfileSerializer, UserSettingSerializer, MilestoneSerializer, CommentSerializer, CommentThreadSubscriptionSerializer, RoleSerializer, UserRoleMappingSerializer
 from .exceptions import UserNotFound, UserAlreadyHasRole, CommentThreadNotFound
+from .exceptions import UserNotFound, UserAlreadyHasRole, CommentThreadNotFound, UserAlreadyInTaskForce
 
 class TeamViewSet(viewsets.ModelViewSet):
     queryset = Team.objects.all()
@@ -194,6 +195,10 @@ class TaskForceViewSet(viewsets.ModelViewSet):
             user = taskforce.team.users.all().get(id=userId)
         except User.DoesNotExist:
             raise UserNotFound()
+
+        # Check if user is already a member
+        if taskforce.members.filter(pk=user.pk).count() > 0:
+            raise UserAlreadyInTaskForce()
         
         # Add user to members
         taskforce.members.add(user)

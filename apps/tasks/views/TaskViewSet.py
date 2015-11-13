@@ -100,16 +100,17 @@ class TaskViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
             
             queryset = queryset.filter(owner=user)
 
-        # Sort by due time; tasks with no due time are last in the list
+        # Sort by due time; tasks with no due time are last in the list; completed tasks at end of list
         queryset = queryset \
             .annotate(null_due_time=Count('due_time')) \
-            .order_by('-null_due_time', 'due_time')
+            .order_by('state', '-null_due_time', 'due_time')
 
         # Remove duplicate results from joins
         queryset = queryset.distinct()
 
         # Optimizations
         queryset = queryset \
+            .select_related('parent') \
             .select_related('owner') \
             .select_related('completed_by') \
             .select_related('comment_thread') \

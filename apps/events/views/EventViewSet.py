@@ -311,17 +311,6 @@ class EventViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
         except TaskForce.DoesNotExist:
             raise TaskForceNotFound()
         
-        # Create EventAttendee objects for taskforce's users
-        for user in taskforce.members.all():
-            try:
-                EventAttendee.objects.create(
-                    event=event,
-                    user=user
-                )
-            except IntegrityError:
-                # Ignore members of the taskforce that are already attendees
-                pass
-
         # Add TaskForce to attending list
         event.attending_taskforces.add(taskforce)
             
