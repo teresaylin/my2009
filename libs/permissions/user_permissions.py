@@ -143,7 +143,7 @@ def getUserPermissions(user, cls):
         
     return perms
 
-def getUserObjectPermissions(user, obj):
+def getUserObjectPermissions(user, obj, request=None):
     """This returns user permissions on a per-object basis."""
 
     # Superuser has full permissions
@@ -163,6 +163,13 @@ def getUserObjectPermissions(user, obj):
     }
 
     cls = obj.__class__
+
+    def getUserTaskforcesAll():
+        # Use per-request cache if available
+        if request and hasattr(request, 'appCache'):
+            return request.appCache.getUserTaskforcesAll(user)
+        else:
+            return user.taskforces.all()
     
     if cls == CommentThreadSubscription:
         # User can update/delete their own subscriptions
@@ -184,7 +191,7 @@ def getUserObjectPermissions(user, obj):
         elif user in obj.assigned_users.all():
             perms['update'] = True
         # Users, belonging to a task force which is assigned to this task, can edit task
-        elif any(tf in obj.assigned_taskforces.all() for tf in user.taskforces.all()):
+        elif any(tf in obj.assigned_taskforces.all() for tf in getUserTaskforcesAll()):
             perms['update'] = True
     elif cls == TaskForce:
         # User can edit task forces belonging to teams to which they are assigned

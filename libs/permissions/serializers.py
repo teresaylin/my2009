@@ -8,4 +8,4 @@ class ObjectPermissionsSerializerMixin(object):
         return fields
     
     def getObjectPermissions(self, obj):
-        return getUserObjectPermissions(self.context['request'].user, obj)
+        return getUserObjectPermissions(self.context['request'].user, obj, request=self.context['request'])
