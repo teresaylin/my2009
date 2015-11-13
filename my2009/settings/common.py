@@ -51,6 +51,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'apps.user_tracking.middleware.UserTrackingMiddleware',
+    'libs.request_cache.middleware.RequestCacheMiddleware',
 )
 
 ROOT_URLCONF = 'my2009.urls'

@@ -42,7 +42,7 @@ class ObjectPermissions(BasePermission):
             modelCls = queryset.model
 
         user = request.user
-        perms = getUserObjectPermissions(user, obj)
+        perms = getUserObjectPermissions(user, obj, request)
         
         if request.method == 'GET' and perms['read']:
             return True
