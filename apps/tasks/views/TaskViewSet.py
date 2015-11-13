@@ -110,6 +110,7 @@ class TaskViewSet(ModelWithFilesViewSetMixin, viewsets.ModelViewSet):
 
         # Optimizations
         queryset = queryset \
+            .select_related('parent') \
             .select_related('owner') \
             .select_related('completed_by') \
             .select_related('comment_thread') \
