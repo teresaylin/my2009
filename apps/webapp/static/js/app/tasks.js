@@ -6,7 +6,23 @@ module.controller('TasksStateCtrl', function($scope, $modal, NavFilterService, T
     };
 });
 
-module.controller('TaskListCtrl', function($rootScope, $scope, $modal, TaskRepository, TaskDialogService, NavFilterService) {
+module.controller('TaskListCtrl', function($rootScope, $scope, $modal, $q, TaskRepository, TaskDialogService, NavFilterService) {
+    function getSubtasks(task) {
+        return $q(function(resolve, reject) {
+            if('subtasks' in task) {
+                // Already have subtasks
+                resolve();
+            } else {
+                // Get subtasks
+                TaskRepository.list({ parent: task.id })
+                    .success(function(data) {
+                        task.subtasks = data;
+                        resolve();
+                    });
+            }
+        });
+    }
+
     $scope.showCompleted = false;
     $scope.title = 'Tasks';
 
@@ -141,45 +157,59 @@ module.controller('TaskListCtrl', function($rootScope, $scope, $modal, TaskRepos
     });
     
     $scope.toggleTaskCompleted = function(task) {
-        /*
-        // Show confirm dialog
-        var modal = $modal.open({
-            backdrop: 'static',
-            templateUrl: partial('tasks/complete-dialog.html'),
-            controller: function($scope, $modalInstance, TaskRepository) {
-                $scope.task = task;
-                
-                $scope.ok = function(form) {
-                    $modalInstance.close();
-                };
+        getSubtasks(task).then(function() {
+            var promise = null;
+            var completing = task.state != 'completed';
 
-                $scope.cancel = function() {
-                    $modalInstance.dismiss('cancel');
-                };
+            if(task.subtasks.length > 0) {
+                // Show confirm dialog
+                var modal = $modal.open({
+                    backdrop: 'static',
+                    templateUrl: partial('tasks/complete-dialog.html'),
+                    controller: function($scope, $modalInstance, TaskRepository, completing) {
+                        $scope.task = task;
+                        $scope.completing = completing;
+                        
+                        $scope.ok = function(form) {
+                            $modalInstance.close();
+                        };
+
+                        $scope.cancel = function() {
+                            $modalInstance.dismiss('cancel');
+                        };
+                    },
+                    resolve: {
+                        completing: function() {
+                            return completing;
+                        }
+                    }
+                });
+
+                promise = modal.result;
+            } else {
+                promise = $q(function(resolve) { resolve(); });
             }
+            
+            promise.then(function() {
+                if(completing) {
+                    // Mark task as completed
+                    TaskRepository.complete(task.id)
+                        .success(function(data) {
+                            // Update task
+                            angular.copy(data, task);
+                            $rootScope.$broadcast('taskUpdated', data);
+                        });
+                } else {
+                    // Mark task as not completed
+                    TaskRepository.uncomplete(task.id)
+                        .success(function(data) {
+                            // Update task
+                            angular.copy(data, task);
+                            $rootScope.$broadcast('taskUpdated', data);
+                        });
+                }
+            });
         });
-        
-        modal.result.then(function() {
-        });
-        */
-
-        if(task.state != 'completed') {
-            // Mark task as completed
-            TaskRepository.complete(task.id)
-                .success(function(data) {
-                    // Update task
-                    angular.copy(data, task);
-                    $rootScope.$broadcast('taskUpdated', data);
-                });
-        } else {
-            // Mark task as not completed
-            TaskRepository.uncomplete(task.id)
-                .success(function(data) {
-                    // Update task
-                    angular.copy(data, task);
-                    $rootScope.$broadcast('taskUpdated', data);
-                });
-        }
     };
 
     $scope.openTask = function(task) {
@@ -192,13 +222,7 @@ module.controller('TaskListCtrl', function($rootScope, $scope, $modal, TaskRepos
     
     $scope.toggleTask = function(task, shown) {
         if(shown) {
-            // Get subtasks if not already loaded
-            if(!('subtasks' in task)) {
-                TaskRepository.list({ parent: task.id })
-                    .success(function(data) {
-                        task.subtasks = data;
-                    });
-            }
+            getSubtasks(task);
         }
     };
 
