@@ -131,7 +131,7 @@ PIPELINE_JS = {
             'js/jquery-1.11.1.min.js',
             'js/fullcalendar-2.1.1/lib/moment.min.js',
             'js/fullcalendar-2.1.1/fullcalendar.min.js',
-            'js/angular-1.2.19.min.js',
+            'js/angular-1.4.7.min.js',
             'js/angular-cookies-1.2.19.min.js',
             'js/angular-ui-router-0.2.10.min.js',
             'js/ui-bootstrap-tpls-0.10.0.min.js',

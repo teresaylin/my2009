@@ -183,8 +183,11 @@ def getUserObjectPermissions(user, obj, request=None):
             perms['update'] = True
             perms['delete'] = True
     elif cls == Task:
+        # Inherit parent task permissions
+        if obj.parent:
+            perms = getUserObjectPermissions(user, obj.parent, request=request)
         # User can update/delete tasks they own
-        if obj.owner == user:
+        elif obj.owner == user:
             perms['update'] = True
             perms['delete'] = True
         # Users assigned to task can edit task
