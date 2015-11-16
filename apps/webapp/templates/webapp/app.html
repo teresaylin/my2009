@@ -248,13 +248,13 @@
 </script>
 
 <script type="text/ng-template" id="events/calendar.html">
-    <div class="content-panel" ng-controller="CalendarCtrl">
+    <div class="content-panel">
         <div class="panel-body">
             <div class="calendar-container">
                 <div class="spinner-overlay" ng-show="loading">
                     <spinner></spinner>
                 </div>
-                <div ui-calendar="uiConfig.calendar" class="span8 calendar" ng-model="eventSources" calendar="calendar"></div> 
+                <div ui-calendar="uiConfig.calendar" class="span8 calendar" ng-model="eventSources" calendar="{{ calendarId }}"></div> 
                 <div class="mt">
                     <button class="btn btn-sm btn-success" ng-click="newEvent()">New event</button>
                     <div class="pull-right">
