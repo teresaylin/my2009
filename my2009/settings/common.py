@@ -148,10 +148,10 @@ PIPELINE_CSS = {
     'app': {
         'source_filenames': (
             'css/bootstrap.css',
-            'font-awesome/css/font-awesome.css',
+            'bower_components/font-awesome/css/font-awesome.min.css',
             'css/style.css',
             'css/style-responsive.css',
-            'js/fullcalendar-2.1.1/fullcalendar.min.css',
+            'bower_components/fullcalendar/dist/fullcalendar.css',
             'css/app.css',
         ),
         'output_filename': 'css/app_all.css'
