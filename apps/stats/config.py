@@ -9,7 +9,6 @@ class StatsConfig(AppConfig):
         # Create generic "view stats" permission
 
         ct, created = ContentType.objects.get_or_create(
-            name='stats',
             app_label='stats',
             model='none'
         )
