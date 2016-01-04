@@ -261,67 +261,72 @@ module.factory('EventDialogService', function($modal) {
     };
 });
 
-module.controller('CalendarCtrl', function($scope, $modal, $state, EventRepository, EventDialogService, NavFilterService) {
+module.controller('CalendarCtrl', function($scope, $modal, $state, uiCalendarConfig, EventRepository, EventDialogService, NavFilterService) {
     $scope.eventsSource = function(start, end, timezone, callback) {
-        $scope.loading = true;
+        // Skip if nav filter has not finished loading
+        if(!NavFilterService.team) {
+            callback([]);
+            return;
+        }
 
         // Get events within date range
-        if(NavFilterService.team) {
-            var query = {
-                start: start.toJSON(),
-                end: end.toJSON(),
-            };
+        $scope.loading = true;
 
-            if($scope.filterCustom && !_.isEmpty($scope.filterCustom)) {
-                query.custom = $scope.filterCustom;
-            } else {
-                query.team = NavFilterService.team.id;
+        var query = {
+            start: start.toJSON(),
+            end: end.toJSON(),
+        };
 
-                if($scope.filterUser) {
-                    query.user = $scope.filterUser.id;
-                }
+        if($scope.filterCustom && !_.isEmpty($scope.filterCustom)) {
+            query.custom = $scope.filterCustom;
+        } else {
+            query.team = NavFilterService.team.id;
 
-                if($scope.filterTaskforce) {
-                    query.taskforce = $scope.filterTaskforce.id;
-                }
+            if($scope.filterUser) {
+                query.user = $scope.filterUser.id;
             }
 
-            EventRepository.list(query)
-                .success(function(events) {
-                    angular.forEach(events, function(event) {
-                        // Add classes to distinguish global events, types of attendees etc
-                        event.className = [];
-                        var classes = event.className;
+            if($scope.filterTaskforce) {
+                query.taskforce = $scope.filterTaskforce.id;
+            }
+        }
 
-                        if(event.is_global) {
-                            classes.push('event-global');
+        EventRepository.list(query)
+            .success(function(events) {
+                angular.forEach(events, function(event) {
+                    // Add classes to distinguish global events, types of attendees etc
+                    event.className = [];
+                    var classes = event.className;
+
+                    if(event.is_global) {
+                        classes.push('event-global');
+                    } else {
+                        if(event.attending_taskforces.length > 0) {
+                            classes.push('event-taskforces-attending');
+                        } else if(event.attendees.length > 0) {
+                            classes.push('event-users-attending');
                         } else {
-                            if(event.attending_taskforces.length > 0) {
-                                classes.push('event-taskforces-attending');
-                            } else if(event.attendees.length > 0) {
-                                classes.push('event-users-attending');
-                            } else {
-                                classes.push('event-no-attendees');
-                            }
+                            classes.push('event-no-attendees');
                         }
+                    }
 
-                        if(NavFilterService.user && NavFilterService.user.id == event.owner.id) {
-                            classes.push('event-owner');
-                        }
-                    });
-
-                    callback(events);
-                })
-                .finally(function() {
-                    $scope.loading = false;
+                    if(NavFilterService.user && NavFilterService.user.id == event.owner.id) {
+                        classes.push('event-owner');
+                    }
                 });
-        };
+
+                callback(events);
+            })
+            .finally(function() {
+                $scope.loading = false;
+            });
     };
 
     function reloadEvents() {
         // Reload events
-        if('calendar' in $scope) {
-            $scope.calendar.fullCalendar('refetchEvents');
+        if($scope.calendarId in uiCalendarConfig.calendars) {
+            var calendar = uiCalendarConfig.calendars[$scope.calendarId];
+            calendar.fullCalendar('refetchEvents');
         }
     }
     
@@ -338,7 +343,7 @@ module.controller('CalendarCtrl', function($scope, $modal, $state, EventReposito
         dlg.result.then(function(changesMade) {
             if(changesMade) {
                 // Reload events
-                $scope.calendar.fullCalendar('refetchEvents');
+                reloadEvents();
             }
         });
     };
@@ -368,8 +373,12 @@ module.controller('CalendarCtrl', function($scope, $modal, $state, EventReposito
             eventResize: onEventResize
         }
     };
-
     $scope.eventSources = [$scope.eventsSource];
+
+    // Assign calendar a random ID
+    do {
+        $scope.calendarId = Math.floor(Math.random() * 0x100000000);
+    } while($scope.calendarId in uiCalendarConfig.calendars);
     
     $scope.newEvent = function() {
         var dlg = EventDialogService.newEvent();
@@ -377,7 +386,7 @@ module.controller('CalendarCtrl', function($scope, $modal, $state, EventReposito
         dlg.result.then(function(changesMade) {
             if(changesMade) {
                 // Reload events
-                $scope.calendar.fullCalendar('refetchEvents');
+                reloadEvents();
             }
         });
     };

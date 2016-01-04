@@ -128,17 +128,18 @@ PIPELINE_JS = {
     },
     'vendor': {
         'source_filenames': (
-            'js/jquery-1.11.1.min.js',
-            'js/fullcalendar-2.1.1/lib/moment.min.js',
-            'js/fullcalendar-2.1.1/fullcalendar.min.js',
-            'js/angular-1.4.7.min.js',
-            'js/angular-cookies-1.2.19.min.js',
-            'js/angular-ui-router-0.2.10.min.js',
-            'js/ui-bootstrap-tpls-0.10.0.min.js',
-            'js/indeterminate.js',
-            'js/calendar.js',
-            'js/angular-file-upload-1.1.1/angular-file-upload.min.js',
-            'js/ng-google-chart.js',
+            'bower_components/jquery/dist/jquery.js',
+            'bower_components/underscore/underscore.js',
+            'bower_components/moment/moment.js',
+            'bower_components/fullcalendar/dist/fullcalendar.js',
+            'bower_components/angular/angular.js',
+            'bower_components/angular-cookies/angular-cookies.js',
+            'bower_components/angular-ui-router/release/angular-ui-router.js',
+            'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
+            'bower_components/angular-ui-indeterminate/dist/indeterminate.js',
+            'bower_components/angular-ui-calendar/src/calendar.js',
+            'bower_components/angular-file-upload/dist/angular-file-upload.js',
+            'bower_components/angular-google-chart/ng-google-chart.js',
         ),
         'output_filename': 'js/vendor.js',
     }
@@ -148,10 +149,10 @@ PIPELINE_CSS = {
     'app': {
         'source_filenames': (
             'css/bootstrap.css',
-            'font-awesome/css/font-awesome.css',
+            'bower_components/font-awesome/css/font-awesome.min.css',
             'css/style.css',
             'css/style-responsive.css',
-            'js/fullcalendar-2.1.1/fullcalendar.min.css',
+            'bower_components/fullcalendar/dist/fullcalendar.css',
             'css/app.css',
         ),
         'output_filename': 'css/app_all.css'
