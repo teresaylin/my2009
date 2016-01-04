@@ -1,1 +1,1 @@
-web: ./start_waitress.py
+web: uwsgi --ini uwsgi.ini
