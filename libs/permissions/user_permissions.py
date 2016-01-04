@@ -3,7 +3,7 @@ from django.core.exceptions import PermissionDenied
 from django.contrib.auth.models import User
 from apps.events.models import Event
 from apps.tasks.models import Task
-from apps.users.models import Comment, Milestone, Role, TaskForce, Team, UserProfile, UserSetting
+from apps.users.models import Comment, CommentThreadSubscription, Milestone, Role, TaskForce, Team, UserProfile, UserSetting
 from apps.stats.models import DailyGlobalStats, DailyTaskForceStats, DailyTeamStats, DailyUserStats
 from notifications.models import Notification
 
@@ -19,6 +19,9 @@ def filterQueryset(queryset, user):
     if cls == Comment:
         # All comments visible to all users
         return queryset
+    elif cls == CommentThreadSubscription:
+        # Only show subscriptions belonging to user
+        return queryset.filter(user=user)
     elif cls == Event:
         # Only show events belonging to user's teams, or any events marked as global
         return queryset.filter(Q(owner__teams__in=user.teams.all()) | Q(is_global=True))
@@ -85,6 +88,12 @@ def getUserPermissions(user, cls):
         # Users can create/read comments
         perms['create'] = True
         perms['read'] = True
+    if cls == CommentThreadSubscription:
+        # Users can create/read/update/delete subscriptions
+        perms['create'] = True
+        perms['read'] = True
+        perms['update'] = True
+        perms['delete'] = True
     elif cls == Event:
         # Users can create/read/update/delete events
         perms['create'] = True
@@ -162,7 +171,13 @@ def getUserObjectPermissions(user, obj, request=None):
         else:
             return user.taskforces.all()
     
-    if cls == Event:
+    if cls == CommentThreadSubscription:
+        # User can update/delete their own subscriptions
+        if obj.user == user:
+            perms['update'] = True
+            perms['delete'] = True
+        pass
+    elif cls == Event:
         # User can update/delete events they own
         if obj.owner == user:
             perms['update'] = True

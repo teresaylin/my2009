@@ -16,6 +16,25 @@ module.factory('CommentRepository', function($http) {
     };
 });
 
+module.factory('CommentThreadSubscriptionRepository', function($http) {
+    var baseUrl = '/api/comment-thread-subscriptions/';
+    
+    return {
+        get: function(id) {
+            return $http.get(baseUrl+id+'/');
+        },
+        list: function(params) {
+            return $http.get(baseUrl, { params: params });
+        },
+        create: function(data) {
+            return $http.post(baseUrl, data);
+        },
+        delete: function(id) {
+            return $http.delete(baseUrl+id+'/');
+        }
+    };
+});
+
 module.factory('EventRepository', function($http) {
     var baseUrl = '/api/events/';
     

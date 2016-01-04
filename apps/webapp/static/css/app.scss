@@ -433,17 +433,21 @@ hr {
 
 /*---------- Comments ----------*/
 
-.comment {
-    margin-bottom: 24px;
-    
-    figure {
-        float: left;
-        margin-right: 12px;
-    }
-    
-    .body {
-        overflow: hidden;
-        white-space: pre-wrap;
+.comments {
+    position: relative;
+
+    .comment {
+        margin-bottom: 24px;
+        
+        figure {
+            float: left;
+            margin-right: 12px;
+        }
+        
+        .body {
+            overflow: hidden;
+            white-space: pre-wrap;
+        }
     }
 }
 

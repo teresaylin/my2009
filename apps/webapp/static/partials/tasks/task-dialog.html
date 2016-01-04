@@ -39,27 +39,6 @@
         <tab active="assigneeTabActive">
             <tab-heading><span class="fa fa-users"></span></tab-heading>
 
-            <h4>Assigned task forces</h4>
-            <div>
-                <form class="form-inline" ng-if="task._permissions.update">
-                    <taskforce-picker taskforce="newAssignedTaskforce" on-select="addAssignedTaskforce($model)"></taskforce-picker>
-                    <button class="btn btn-sm btn-primary"
-                        ng-click="addAssignedTaskforce(newAssignedTaskforce); newAssignedTaskforce = null"
-                        ng-disabled="!newAssignedTaskforce">
-                    Add</button>
-                </form> 
-
-                <p ng-if="task.assigned_taskforces.length == 0">There are no task forces assigned to this task.</p>
-                <ul class="list-group">
-                    <li class="list-group-item" ng-repeat="taskforce in task.assigned_taskforces">
-                        <a href ng-click="removeAssignedTaskforce(taskforce)" ng-if="task._permissions.update">
-                            <span class="glyphicon glyphicon-remove"></span>
-                        </a>
-                        {{ taskforce.name }}
-                    </li>
-                </ul>
-            </div>
-
             <h4>Assigned users</h4>
             <div>
                 <form class="form-inline" ng-if="task._permissions.update">
@@ -77,6 +56,27 @@
                             <span class="glyphicon glyphicon-remove"></span>
                         </a>
                         <a ui-sref="users.detail({ userId: user.id })">{{ user.full_name }}</a>
+                    </li>
+                </ul>
+            </div>
+
+            <h4>Assigned task forces</h4>
+            <div>
+                <form class="form-inline" ng-if="task._permissions.update">
+                    <taskforce-picker taskforce="newAssignedTaskforce" on-select="addAssignedTaskforce($model)"></taskforce-picker>
+                    <button class="btn btn-sm btn-primary"
+                        ng-click="addAssignedTaskforce(newAssignedTaskforce); newAssignedTaskforce = null"
+                        ng-disabled="!newAssignedTaskforce">
+                    Add</button>
+                </form> 
+
+                <p ng-if="task.assigned_taskforces.length == 0">There are no task forces assigned to this task.</p>
+                <ul class="list-group">
+                    <li class="list-group-item" ng-repeat="taskforce in task.assigned_taskforces">
+                        <a href ng-click="removeAssignedTaskforce(taskforce)" ng-if="task._permissions.update">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </a>
+                        {{ taskforce.name }}
                     </li>
                 </ul>
             </div>

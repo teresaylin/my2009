@@ -8,13 +8,15 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied, ParseError
+import django_filters
 
 from notifications import notify
 
 from libs.permissions.user_permissions import getUserObjectPermissions
 
-from .models import TaskForce, Team, UserProfile, UserSetting, Milestone, Comment, CommentThread, Role, UserRoleMapping
-from .serializers import TaskForceSerializer, TeamSerializer, UserSerializer, UserProfileSerializer, UserSettingSerializer, MilestoneSerializer, CommentSerializer, RoleSerializer, UserRoleMappingSerializer
+from .models import TaskForce, Team, UserProfile, UserSetting, Milestone, Comment, CommentThread, CommentThreadSubscription, Role, UserRoleMapping
+from .serializers import TaskForceSerializer, TeamSerializer, UserSerializer, UserProfileSerializer, UserSettingSerializer, MilestoneSerializer, CommentSerializer, CommentThreadSubscriptionSerializer, RoleSerializer, UserRoleMappingSerializer
+from .exceptions import UserNotFound, UserAlreadyHasRole, CommentThreadNotFound
 from .exceptions import UserNotFound, UserAlreadyHasRole, CommentThreadNotFound, UserAlreadyInTaskForce
 
 class TeamViewSet(viewsets.ModelViewSet):
@@ -232,7 +234,7 @@ class TaskForceViewSet(viewsets.ModelViewSet):
 class MilestoneViewSet(viewsets.ModelViewSet):
     queryset = Milestone.objects.all()
     serializer_class = MilestoneSerializer
-    ordering = ('end_date',)
+    ordering = ('end_date',) 
     
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
@@ -264,6 +266,44 @@ class CommentViewSet(viewsets.ModelViewSet):
 
         # Set time to now
         obj.time = datetime.utcnow().replace(tzinfo=utc)
+
+    def post_save(self, obj, created=False):
+        if created:
+            # Subscribe user to thread (if not already)
+            CommentThreadSubscription.objects.get_or_create(
+                user=self.request.user,
+                thread=obj.thread
+            )
+
+            # Generate notifications for subscribed users; exclude current user
+            for recipient in obj.thread.subscribed_users.exclude(pk=self.request.user.pk):
+                notify.send(self.request.user,
+                    recipient=recipient,
+                    verb='commented',
+                    target=obj.thread.content_object,
+                    description='A user commented on a thread'
+                )
+
+class CommentThreadSubscriptionViewSet(viewsets.ModelViewSet):
+    class Filter(django_filters.FilterSet):
+        class Meta:
+            model = CommentThreadSubscription
+            fields = ['thread']
+        thread = django_filters.NumberFilter(name='thread__publicId')
+
+    queryset = CommentThreadSubscription.objects.all()
+    lookup_field = 'thread__publicId'
+    serializer_class = CommentThreadSubscriptionSerializer
+    filter_class = Filter
+
+    def get_queryset(self):
+        # Only show subscriptions belonging to current user
+        queryset = super().get_queryset()
+        return queryset.filter(user=self.request.user)
+
+    def pre_save(self, obj):
+        # Set user
+        obj.user = self.request.user
         
 class RoleViewSet(viewsets.ModelViewSet):
     queryset = Role.objects.all()

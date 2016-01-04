@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from rest_framework import serializers
 
 from apps.user_tracking.models import UserTracking
-from .models import UserProfile, UserSetting, Role, UserRoleMapping, TaskForce, Team, Milestone, Comment, CommentThread
+from .models import UserProfile, UserSetting, Role, UserRoleMapping, TaskForce, Team, Milestone, Comment, CommentThread, CommentThreadSubscription
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -113,3 +113,17 @@ class CommentSerializer(serializers.ModelSerializer):
         
     thread = CommentThreadIdField(write_only=True)
     user = UserSerializer(read_only=True)
+
+class CommentThreadSubscriptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CommentThreadSubscription
+        fields = ('thread',)
+        
+    thread = CommentThreadIdField()
+
+    def restore_object(self, attrs, instance=None):
+        # Disallow changing of thread ID on created objects
+        if instance is not None:
+            attrs.pop('thread', None)
+        return super().restore_object(attrs, instance)
+    
