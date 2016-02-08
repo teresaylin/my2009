@@ -33,6 +33,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'notifications',
 
+    'apps.courses',
     'apps.events',
     'apps.files',
     'apps.tasks',

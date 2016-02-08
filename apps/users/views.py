@@ -22,6 +22,7 @@ from .exceptions import UserNotFound, UserAlreadyHasRole, CommentThreadNotFound,
 class TeamViewSet(viewsets.ModelViewSet):
     queryset = Team.objects.all()
     serializer_class = TeamSerializer
+    filter_fields = ('course',)
     ordering = ('name',)
     
     def get_queryset(self):

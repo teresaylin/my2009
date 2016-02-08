@@ -5,6 +5,7 @@
 
 {% block htmlAttr %} ng-app="app"{% endblock %}
 {% block bodyAttr %} ng-controller="AppCtrl"{% endblock %}
+{% block overridePageTitle %}{% verbatim %}{{ currentUser.activeCourse.title }}{% endverbatim %}{% endblock %}
 
 {% block pageScriptHead %}
     {% javascript 'app' %}

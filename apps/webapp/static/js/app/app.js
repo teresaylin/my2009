@@ -123,7 +123,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
         ;
 });
 
-app.controller('AppCtrl', function($rootScope, $scope, $modal, NavFilterService, UserRepository) {
+app.controller('AppCtrl', function($rootScope, $scope, $modal, NavFilterService, UserRepository, CourseRepository) {
     $scope.$on('serverError', function(ev, response) {
         var modal = $modal.open({
             backdrop: 'static',
@@ -161,7 +161,14 @@ app.controller('AppCtrl', function($rootScope, $scope, $modal, NavFilterService,
         .success(function(data) {
             var user = data[0];
             $rootScope.currentUser = user;
-            $rootScope.$broadcast('gotCurrentUser', user);
+
+            // Get active course (assume first course that the user has access to for now)
+            CourseRepository.list().success(function(data) {
+                var course = data[0];
+                user.activeCourse = course;
+
+                $rootScope.$broadcast('gotCurrentUser', user);
+            });
         });
         
     $scope.toggleSidebar = function() {

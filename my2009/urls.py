@@ -5,6 +5,7 @@ from rest_framework import routers
 from django.contrib import admin
 admin.autodiscover()
 
+from apps.courses import views as courseViews
 from apps.users import views as userViews
 from apps.events import views as eventViews
 from apps.tasks import views as taskViews
@@ -28,6 +29,7 @@ router.register(r'user-settings', userViews.UserSettingViewSet)
 router.register(r'events', eventViews.EventViewSet)
 router.register(r'tasks', taskViews.TaskViewSet)
 router.register(r'notifications', notificationsViews.NotificationViewSet)
+router.register(r'courses', courseViews.CourseViewSet)
 
 urlpatterns = patterns('',
     # Examples:

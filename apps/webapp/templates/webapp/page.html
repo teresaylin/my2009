@@ -9,7 +9,7 @@
         <meta name="description" content="">
         <meta name="author" content="">
 
-        <title>My2009{% block pageTitle %}{% endblock %}</title>
+        <title>{% block overridePageTitle %}My2009{% block pageTitle %}{% endblock %}{% endblock %}</title>
 
         <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Ruda:400,700,900">
         {% stylesheet 'app' %}
