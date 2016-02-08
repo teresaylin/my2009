@@ -1,6 +1,6 @@
 from .common import *
 
-WSGI_APPLICATION = 'my2009.wsgi-dev.application'
+WSGI_APPLICATION = 'opencpm.wsgi-dev.application'
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '_=-e4r)kiwe7vbif+64_bi$%$w1@jhwuz7+ac+ccn&2+tjvi=r'

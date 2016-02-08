@@ -32,10 +32,6 @@ router.register(r'notifications', notificationsViews.NotificationViewSet)
 router.register(r'courses', courseViews.CourseViewSet)
 
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'my2009.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
-    
     # Main page (redirect to web app)
     url(r'^$', RedirectView.as_view(pattern_name='webapp:app', permanent=False)),
 
