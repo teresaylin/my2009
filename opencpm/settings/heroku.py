@@ -65,3 +65,8 @@ LOGGING = {
         }
     }
 }
+
+# Django-RT
+RT_REDIS_HOST = redis_url.hostname
+RT_REDIS_PORT = redis_url.port
+RT_REDIS_PASSWORD = redis_url.password
