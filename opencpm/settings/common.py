@@ -165,3 +165,6 @@ SITE_NAME = 'OpenCPM'
 
 FILE_THUMBNAIL_CACHE_TIMEOUT = 5*60    # Number of seconds to cache Dropbox thumbnails
 FILE_METADATA_CACHE_TIMEOUT = 60*60    # Number of seconds to cache Dropbox file metadata
+
+# Django-RT settings
+RT_SSE_HEARTBEAT = 30

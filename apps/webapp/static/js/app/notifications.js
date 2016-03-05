@@ -1,8 +1,34 @@
 var module = angular.module('notifications', []);
 
-module.controller('NotificationsController', function($scope, $rootScope, $timeout, NotificationRepository) {
-    var timeoutDelay = 60*1000; // Update every 60 seconds
-    var timeoutPromise = null;
+module.factory('NotificationsUpdateService', function($rootScope, NotificationRepository) {
+    var evtSource = null;
+
+    var open = function() {
+        if(evtSource) return;
+
+        evtSource = new EventSource(NotificationRepository.getRtUrl(), { withCredentials: true });
+        evtSource.addEventListener('notification', function(e) {
+            var evt = JSON.parse(e.data);
+            $rootScope.$broadcast('userNotification', evt.data);
+        });
+    };
+
+    var close = function() {
+        if(evtSource) {
+            evtSource.close();
+        }
+    };
+
+    return {
+        listen: function() {
+            open();
+        }
+    };
+});
+
+module.controller('NotificationsController', function($scope, $rootScope, $timeout, NotificationRepository, NotificationsUpdateService) {
+    // Listen for new notifications
+    NotificationsUpdateService.listen();
 
     var update = function() {
         $scope.loading = true;
@@ -14,17 +40,18 @@ module.controller('NotificationsController', function($scope, $rootScope, $timeo
             })
             .finally(function() {
                 $scope.loading = false;
-
-                // Set timeout for next update
-                timeoutPromise = $timeout(update, timeoutDelay);
             });
     }
     update();
 
     $scope.$on('$destroy', function() {
-        if(timeoutPromise) {
-            $timeout.cancel(timeoutPromise);
-        }
+    });
+
+    $scope.$on('userNotification', function(evt, nt) {
+        // Receive new notification
+        $scope.$apply(function() {
+            $scope.unreadNts.unshift(nt);
+        });
     });
 
     $scope.$on('userNotificationRead', function(evt, nt) {

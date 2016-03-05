@@ -323,5 +323,8 @@ module.factory('NotificationRepository', function($http) {
         markUnread: function(id, notificationId) {
             return $http.put(baseUrl+id+'/mark_unread/', {});
         },
+        getRtUrl: function() {
+            return baseUrl+'.sse';
+        }
     };
 });
