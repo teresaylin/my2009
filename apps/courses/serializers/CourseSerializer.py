@@ -6,6 +6,6 @@ from apps.users.serializers import TeamSerializer
 class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
-        fields = ('id', 'title', 'teams')
+        fields = ('id', 'title', 'website_url', 'website_name', 'teams')
 
     teams = TeamSerializer()
