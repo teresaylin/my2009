@@ -97,16 +97,16 @@
         <!-- Right buttons -->
         <div class="top-menu hidden-xs">
             <ul class="nav pull-right top-menu">
-                {% verbatim %}<li><a class="logout" target="_blank"
+                {% verbatim %}<li><a class="button" target="_blank"
                     ng-href="{{ currentUser.activeCourse.website_url }}" ng-if="currentUser.activeCourse.website_url"
                 >
                     <span class="fa fa-external-link"></span>
                     {{ currentUser.activeCourse.website_name ? currentUser.activeCourse.website_name : 'Course website' }}
                 </a></li>{% endverbatim %}
-                <li><a class="logout" ui-sref="settings">
+                <li><a class="button" ui-sref="settings">
                 	<span class="fa fa-cog"></span> Settings
                 </a></li>
-                <li><a class="logout" href="{% url 'webapp:logout' %}">
+                <li><a class="button" href="{% url 'webapp:logout' %}">
                     <span class="fa fa-sign-out"></span> Logout
                 </a></li>
             </ul>
