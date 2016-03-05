@@ -54,6 +54,9 @@ module.factory('NavFilterService', function($rootScope) {
 module.controller('NavFilterCtrl', function($scope, NavFilterService, TeamRepository, UserRepository, TaskForceRepository) {
     var initUser = function(user) {
         var filter = {};
+
+        // Restrict list to teams belonging to the active course
+        filter.course = user.activeCourse.id;
         
         // Restrict list to teams user belongs to if non-superuser; otherwise show all
         if(!user.is_superuser) {

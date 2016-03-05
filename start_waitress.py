@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from os import environ
-from my2009.wsgi import application
+from opencpm.wsgi import application
 import logging
 from waitress import serve
 

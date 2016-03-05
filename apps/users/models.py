@@ -6,12 +6,15 @@ from django.core.validators import RegexValidator
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 
+from apps.courses.models import Course
+
 from libs.softdelete.models import SoftDeleteableModel
 
 from random import SystemRandom
 rngSource = SystemRandom()
 
 class Team(models.Model):
+    course = models.ForeignKey(Course, related_name='teams', null=True, blank=True)
     name = models.CharField(max_length=50, blank=False)
     team_email = models.EmailField(max_length=30)
     color = models.CharField(max_length=20, blank=True)

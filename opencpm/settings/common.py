@@ -1,5 +1,5 @@
 """
-Django settings for my2009 project.
+Django settings for opencpm project.
 
 For more information on this file, see
 https://docs.djangoproject.com/en/1.6/topics/settings/
@@ -33,6 +33,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'notifications',
 
+    'apps.courses',
     'apps.events',
     'apps.files',
     'apps.tasks',
@@ -54,9 +55,9 @@ MIDDLEWARE_CLASSES = (
     'libs.request_cache.middleware.RequestCacheMiddleware',
 )
 
-ROOT_URLCONF = 'my2009.urls'
+ROOT_URLCONF = 'opencpm.urls'
 
-WSGI_APPLICATION = 'my2009.wsgi.application'
+WSGI_APPLICATION = 'opencpm.wsgi.application'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
@@ -160,6 +161,7 @@ PIPELINE_CSS = {
 }
 
 # Other settings
+SITE_NAME = 'OpenCPM'
 
 FILE_THUMBNAIL_CACHE_TIMEOUT = 5*60    # Number of seconds to cache Dropbox thumbnails
 FILE_METADATA_CACHE_TIMEOUT = 60*60    # Number of seconds to cache Dropbox file metadata

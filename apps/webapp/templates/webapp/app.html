@@ -5,6 +5,7 @@
 
 {% block htmlAttr %} ng-app="app"{% endblock %}
 {% block bodyAttr %} ng-controller="AppCtrl"{% endblock %}
+{% block overridePageTitle %}{% verbatim %}{{ currentUser.activeCourse.title }}{% endverbatim %}{% endblock %}
 
 {% block pageScriptHead %}
     {% javascript 'app' %}
@@ -18,9 +19,12 @@
             <div class="fa fa-bars" tooltip="Toggle navigation" tooltip-placement="right" ng-click="toggleSidebar()"></div>
         </div>
         <!-- Logo -->
+        {% verbatim %}
         <a ui-sref="dashboard" class="logo hidden-xs">
-            <img ng-src="{% static 'img/logos/' %}{% verbatim %}{{ activeTeam.logo_filename ? activeTeam.logo_filename : 'logo.png' }}{% endverbatim %}">
+            <img ng-if="currentUser.activeCourse.logo" ng-src="{{ currentUser.activeCourse.logo }}">
+            <span ng-if="!currentUser.activeCourse.logo">{{ currentUser.activeCourse.title }}</span>
         </a>
+        {% endverbatim %}
 
         {% verbatim %}
         <!-- Notifications -->
@@ -93,16 +97,19 @@
         </div>
         {% endverbatim %}
 
-        <!-- Logout -->
+        <!-- Right buttons -->
         <div class="top-menu hidden-xs">
             <ul class="nav pull-right top-menu">
-                <li><a class="logout" href="http://web.mit.edu/2.009/www/index.html">
-                    <span class="fa"></span>2.009 Today
-                </a></li>
-                <li><a class="logout" ui-sref="settings">
+                {% verbatim %}<li><a class="button" target="_blank"
+                    ng-href="{{ currentUser.activeCourse.website_url }}" ng-if="currentUser.activeCourse.website_url"
+                >
+                    <span class="fa fa-external-link"></span>
+                    {{ currentUser.activeCourse.website_name ? currentUser.activeCourse.website_name : 'Course website' }}
+                </a></li>{% endverbatim %}
+                <li><a class="button" ui-sref="settings">
                 	<span class="fa fa-cog"></span> Settings
                 </a></li>
-                <li><a class="logout" href="{% url 'webapp:logout' %}">
+                <li><a class="button" href="{% url 'webapp:logout' %}">
                     <span class="fa fa-sign-out"></span> Logout
                 </a></li>
             </ul>

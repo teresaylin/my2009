@@ -1,6 +1,7 @@
 from django.db.models import Q
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.models import User
+from apps.courses.models import Course
 from apps.events.models import Event
 from apps.tasks.models import Task
 from apps.users.models import Comment, CommentThreadSubscription, Milestone, Role, TaskForce, Team, UserProfile, UserSetting
@@ -22,6 +23,9 @@ def filterQueryset(queryset, user):
     elif cls == CommentThreadSubscription:
         # Only show subscriptions belonging to user
         return queryset.filter(user=user)
+    elif cls == Course:
+        # Only show courses which any of the user's teams belong to
+        return queryset.filter(teams=user.teams.all())
     elif cls == Event:
         # Only show events belonging to user's teams, or any events marked as global
         return queryset.filter(Q(owner__teams__in=user.teams.all()) | Q(is_global=True))
@@ -38,8 +42,8 @@ def filterQueryset(queryset, user):
         # Only show task forces belonging to user's teams
         return queryset.filter(team=user.teams.all())
     elif cls == Team:
-        # Teams visible to all users
-        return queryset
+        # User can only see teams belonging to courses that any of the user's teams belong to
+        return queryset.filter(course__in=Course.objects.filter(teams=user.teams.all()))
     elif cls == User:
         # Users visible to all users
         return queryset
@@ -94,6 +98,9 @@ def getUserPermissions(user, cls):
         perms['read'] = True
         perms['update'] = True
         perms['delete'] = True
+    elif cls == Course:
+        # Courses are read-only in the API
+        perms['read'] = True
     elif cls == Event:
         # Users can create/read/update/delete events
         perms['create'] = True

@@ -1,10 +1,13 @@
 from django.conf.urls import patterns, include, url
 from django.views.generic.base import RedirectView
+from django.conf import settings
+from django.conf.urls.static import static
 from rest_framework import routers
 
 from django.contrib import admin
 admin.autodiscover()
 
+from apps.courses import views as courseViews
 from apps.users import views as userViews
 from apps.events import views as eventViews
 from apps.tasks import views as taskViews
@@ -28,12 +31,9 @@ router.register(r'user-settings', userViews.UserSettingViewSet)
 router.register(r'events', eventViews.EventViewSet)
 router.register(r'tasks', taskViews.TaskViewSet)
 router.register(r'notifications', notificationsViews.NotificationViewSet)
+router.register(r'courses', courseViews.CourseViewSet)
 
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'my2009.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
-    
     # Main page (redirect to web app)
     url(r'^$', RedirectView.as_view(pattern_name='webapp:app', permanent=False)),
 
@@ -48,3 +48,6 @@ urlpatterns = patterns('',
     url(r'^api/stats/', include(statsUrls, namespace='stats')),
     url(r'^api/', include(router.urls)),
 )
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

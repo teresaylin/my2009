@@ -35,6 +35,19 @@ module.factory('CommentThreadSubscriptionRepository', function($http) {
     };
 });
 
+module.factory('CourseRepository', function($http) {
+    var baseUrl = '/api/courses/';
+    
+    return {
+        get: function(id) {
+            return $http.get(baseUrl+id+'/');
+        },
+        list: function(params) {
+            return $http.get(baseUrl, { params: params });
+        }
+    };
+});
+
 module.factory('EventRepository', function($http) {
     var baseUrl = '/api/events/';
     
