@@ -79,26 +79,36 @@ $teamAccentColors: (
 }
 
 .header {
-    color: white;
+    $header-color: #f2f2f2;
+    $header-color-hover: darken($header-color, 15%);
+
+    color: $header-color;
 
     a.dropdown-toggle {
-        color: #eee;
+        color: $header-color;
         &:hover {
-            color: #ccc;
+            color: $header-color-hover;
         }
     }
 
     a.home-button {
-        color: #ccc;
+        color: $header-color;;
 
         &.selected {
-            color: #eee;
+            color: $header-color-hover;
         }
     }
     
     a.logo {
         margin-top: 0;
         line-height: 60px;
+        width: 100px;
+        overflow: hidden;
+
+        span {
+            font-weight: bold;
+            color: $header-color;
+        }
     }
 }
 
@@ -116,7 +126,9 @@ $teamAccentColors: (
     }
     
     a.logo {
-        color: #212121;
+        span {
+            color: #212121;
+        }
     }
 }
 

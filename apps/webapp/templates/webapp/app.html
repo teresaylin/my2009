@@ -19,9 +19,12 @@
             <div class="fa fa-bars" tooltip="Toggle navigation" tooltip-placement="right" ng-click="toggleSidebar()"></div>
         </div>
         <!-- Logo -->
+        {% verbatim %}
         <a ui-sref="dashboard" class="logo hidden-xs">
-            <img ng-src="{% static 'img/logos/' %}{% verbatim %}{{ activeTeam.logo_filename ? activeTeam.logo_filename : 'logo.png' }}{% endverbatim %}">
+            <img ng-if="currentUser.activeCourse.logo" ng-src="{{ currentUser.activeCourse.logo }}">
+            <span ng-if="!currentUser.activeCourse.logo">{{ currentUser.activeCourse.title }}</span>
         </a>
+        {% endverbatim %}
 
         {% verbatim %}
         <!-- Notifications -->

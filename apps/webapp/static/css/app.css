@@ -149,18 +149,23 @@
       color: white; }
 
 .header {
-  color: white; }
+  color: #f2f2f2; }
   .header a.dropdown-toggle {
-    color: #eee; }
+    color: #f2f2f2; }
     .header a.dropdown-toggle:hover {
-      color: #ccc; }
+      color: #cccccc; }
   .header a.home-button {
-    color: #ccc; }
+    color: #f2f2f2; }
     .header a.home-button.selected {
-      color: #eee; }
+      color: #cccccc; }
   .header a.logo {
     margin-top: 0;
-    line-height: 60px; }
+    line-height: 60px;
+    width: 100px;
+    overflow: hidden; }
+    .header a.logo span {
+      font-weight: bold;
+      color: #f2f2f2; }
 
 /* Yellow team styling has black text */
 .team-yellow .header {
@@ -173,7 +178,7 @@
     .team-yellow .header ul.top-menu > li a:hover,
     .team-yellow .header .nav-filter .home-button:hover {
       color: #434343; }
-  .team-yellow .header a.logo {
+  .team-yellow .header a.logo span {
     color: #212121; }
 
 .nav-filter {
