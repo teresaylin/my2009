@@ -17,9 +17,9 @@ class TaskAdmin(admin.ModelAdmin):
     def get_urls(self):
         # Add "clone task" view to available URLs
         urls = super().get_urls()
-        return patterns('',
+        return [
             url(r'^clone_tasks/$', self.__class__.CloneTasksView.as_view(), name='clone-tasks'),
-        ) + urls
+        ] + urls
 
     class CloneTasksForm(forms.Form):
         tasks = forms.ModelMultipleChoiceField(queryset=Task.objects.all())

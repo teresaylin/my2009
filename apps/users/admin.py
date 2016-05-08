@@ -85,10 +85,10 @@ class CustomUserAdmin(UserAdmin):
     def get_urls(self):
         # Add "assign role" view to available URLs
         urls = super().get_urls()
-        return patterns('',
+        return [
             url(r'^assign_role/$', self.__class__.AssignRoleView.as_view(), name='assign-role'),
             url(r'^assign_group/$', self.__class__.AssignGroupView.as_view(), name='assign-group'),
-        ) + urls
+        ] + urls
 
     def sendWelcomeEmail(self, request, queryset):
         """Generates a random password for, and sends a welcome e-mail to, the selected users"""

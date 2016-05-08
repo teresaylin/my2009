@@ -2,7 +2,7 @@ from django.conf.urls import patterns, include, url
 
 from .views import *
 
-urlpatterns = patterns('',
+urlpatterns = [
     url(r'^create-folder/$', CreateFolderView.as_view(), name='create-folder'),
     url(r'^delete/$', DeleteView.as_view(), name='delete'),
     url(r'^download(?P<path>/.+)$', DownloadView.as_view(), name='download'),
@@ -13,4 +13,4 @@ urlpatterns = patterns('',
     url(r'^upload/$', UploadView.as_view(), name='upload'),
 
     url(r'^dropbox-webhook/$', DropboxWebhookView.as_view(), name='dropbox-webhook'),
-)
+]

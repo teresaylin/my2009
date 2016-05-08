@@ -33,7 +33,7 @@ router.register(r'tasks', taskViews.TaskViewSet)
 router.register(r'notifications', notificationsViews.NotificationViewSet)
 router.register(r'courses', courseViews.CourseViewSet)
 
-urlpatterns = patterns('',
+urlpatterns = [
     # Main page (redirect to web app)
     url(r'^$', RedirectView.as_view(pattern_name='webapp:app', permanent=False)),
 
@@ -47,7 +47,7 @@ urlpatterns = patterns('',
     url(r'^api/files/', include(filesUrls, namespace='files')),
     url(r'^api/stats/', include(statsUrls, namespace='stats')),
     url(r'^api/', include(router.urls)),
-)
+]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
