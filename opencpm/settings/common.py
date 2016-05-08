@@ -16,9 +16,9 @@ ALLOWED_HOSTS = []
 
 # Add request object to template contexts
 from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP
-TEMPLATE_CONTEXT_PROCESSORS = TCP + (
+TEMPLATE_CONTEXT_PROCESSORS = TCP + [
     'django.core.context_processors.request',
-)
+]
 
 # Application definition
 
@@ -103,9 +103,9 @@ INSTALLED_APPS += (
 
 STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
 from django.conf.global_settings import STATICFILES_FINDERS as STATICFILES_FINDERS_DEFAULT
-STATICFILES_FINDERS = STATICFILES_FINDERS_DEFAULT + (
+STATICFILES_FINDERS = STATICFILES_FINDERS_DEFAULT + [
     'pipeline.finders.PipelineFinder',
-)
+]
 
 PIPELINE = {
     'JS_COMPRESSOR': 'pipeline.compressors.jsmin.JSMinCompressor',
@@ -165,3 +165,8 @@ SITE_NAME = 'OpenCPM'
 
 FILE_THUMBNAIL_CACHE_TIMEOUT = 5*60    # Number of seconds to cache Dropbox thumbnails
 FILE_METADATA_CACHE_TIMEOUT = 60*60    # Number of seconds to cache Dropbox file metadata
+
+# HACK: this fixes https://github.com/tomchristie/django-rest-framework/issues/2763
+import django.core.handlers.wsgi as wsgi
+from django.utils.six.moves.http_client import responses
+wsgi.STATUS_CODE_TEXT = responses
