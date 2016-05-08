@@ -107,56 +107,56 @@ STATICFILES_FINDERS = STATICFILES_FINDERS_DEFAULT + (
     'pipeline.finders.PipelineFinder',
 )
 
-PIPELINE_JS_COMPRESSOR = 'pipeline.compressors.jsmin.JSMinCompressor'
-PIPELINE_CSS_COMPRESSOR = 'pipeline.compressors.cssmin.CSSMinCompressor'
-PIPELINE_CSSMIN_BINARY = 'cssmin'
-
-PIPELINE_JS = {
-    'app': {
-        'source_filenames': (
-          'js/app/app.js',
-          'js/app/custom_filter.js',
-          'js/app/events.js',
-          'js/app/files.js',
-          'js/app/navfilter.js',
-          'js/app/notifications.js',
-          'js/app/repositories.js',
-          'js/app/stats.js',
-          'js/app/tasks.js',
-          'js/app/users.js',
-        ),
-        'output_filename': 'js/app.js',
+PIPELINE = {
+    'JS_COMPRESSOR': 'pipeline.compressors.jsmin.JSMinCompressor',
+    'CSS_COMPRESSOR': 'pipeline.compressors.cssmin.CSSMinCompressor',
+    'CSSMIN_BINARY': 'cssmin',
+    'JAVASCRIPT': {
+        'app': {
+            'source_filenames': (
+              'js/app/app.js',
+              'js/app/custom_filter.js',
+              'js/app/events.js',
+              'js/app/files.js',
+              'js/app/navfilter.js',
+              'js/app/notifications.js',
+              'js/app/repositories.js',
+              'js/app/stats.js',
+              'js/app/tasks.js',
+              'js/app/users.js',
+            ),
+            'output_filename': 'js/app.js',
+        },
+        'vendor': {
+            'source_filenames': (
+                'bower_components/jquery/dist/jquery.js',
+                'bower_components/underscore/underscore.js',
+                'bower_components/moment/moment.js',
+                'bower_components/fullcalendar/dist/fullcalendar.js',
+                'bower_components/angular/angular.js',
+                'bower_components/angular-cookies/angular-cookies.js',
+                'bower_components/angular-ui-router/release/angular-ui-router.js',
+                'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
+                'bower_components/angular-ui-indeterminate/dist/indeterminate.js',
+                'bower_components/angular-ui-calendar/src/calendar.js',
+                'bower_components/angular-file-upload/dist/angular-file-upload.js',
+                'bower_components/angular-google-chart/ng-google-chart.js',
+            ),
+            'output_filename': 'js/vendor.js',
+        }
     },
-    'vendor': {
-        'source_filenames': (
-            'bower_components/jquery/dist/jquery.js',
-            'bower_components/underscore/underscore.js',
-            'bower_components/moment/moment.js',
-            'bower_components/fullcalendar/dist/fullcalendar.js',
-            'bower_components/angular/angular.js',
-            'bower_components/angular-cookies/angular-cookies.js',
-            'bower_components/angular-ui-router/release/angular-ui-router.js',
-            'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
-            'bower_components/angular-ui-indeterminate/dist/indeterminate.js',
-            'bower_components/angular-ui-calendar/src/calendar.js',
-            'bower_components/angular-file-upload/dist/angular-file-upload.js',
-            'bower_components/angular-google-chart/ng-google-chart.js',
-        ),
-        'output_filename': 'js/vendor.js',
-    }
-}
-
-PIPELINE_CSS = {
-    'app': {
-        'source_filenames': (
-            'css/bootstrap.css',
-            'bower_components/font-awesome/css/font-awesome.min.css',
-            'css/style.css',
-            'css/style-responsive.css',
-            'bower_components/fullcalendar/dist/fullcalendar.css',
-            'css/app.css',
-        ),
-        'output_filename': 'css/app_all.css'
+    'STYLESHEETS': {
+        'app': {
+            'source_filenames': (
+                'css/bootstrap.css',
+                'bower_components/font-awesome/css/font-awesome.min.css',
+                'css/style.css',
+                'css/style-responsive.css',
+                'bower_components/fullcalendar/dist/fullcalendar.css',
+                'css/app.css',
+            ),
+            'output_filename': 'css/app_all.css'
+        }
     }
 }
 
