@@ -40,7 +40,7 @@ INSTALLED_APPS = (
     'apps.users',
     'apps.user_tracking',
     'apps.webapp',
-    'apps.stats',
+   # 'apps.stats',
     'apps.notifications_api',
 )
 
