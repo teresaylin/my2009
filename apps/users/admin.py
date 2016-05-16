@@ -7,6 +7,7 @@ from django.core.mail import send_mass_mail
 from django.core.urlresolvers import reverse
 from django.contrib.messages import ERROR, WARNING
 from django.shortcuts import render_to_response, redirect
+from django.conf import settings
 
 from apps.users.models import Team, UserTeamMapping, Role, UserRoleMapping, UserProfile, UserSetting, Milestone, TaskForce, UserTaskForceMapping, CommentThread
 
@@ -95,6 +96,7 @@ class CustomUserAdmin(UserAdmin):
         messages = []
         subject = get_template('users/email/welcome-email-subject.txt').render(Context({}))
         appUrl = request.build_absolute_uri(reverse('webapp:app'))
+        fromAddr = getattr(settings, 'EMAIL_FROM', None)
 
         for user in queryset:
             # Check user has an e-mail address
@@ -114,7 +116,7 @@ class CustomUserAdmin(UserAdmin):
                 'password': newPassword
             }
             message = get_template('users/email/welcome-email.txt').render(Context(context))
-            messages.append((subject, message, None, [user.email]))
+            messages.append((subject, message, fromAddr, [user.email]))
         
         # Send messages
         if len(messages) > 0:
