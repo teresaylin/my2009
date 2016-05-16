@@ -27,6 +27,8 @@ if 'MAILGUN_SMTP_SERVER' in os.environ:
     EMAIL_HOST_PASSWORD = os.environ['MAILGUN_SMTP_PASSWORD']
     EMAIL_USE_TLS = True
 
+EMAIL_FROM = os.environ.get('EMAIL_FROM', None)
+
 # Dropbox configuration
 DROPBOX_APP_KEY = os.environ['DROPBOX_APP_KEY']
 DROPBOX_APP_SECRET = os.environ['DROPBOX_APP_SECRET']
