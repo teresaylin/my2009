@@ -4,7 +4,7 @@ import django.contrib.auth.views as authViews
 
 from .views import *
 
-urlpatterns = patterns('',
+urlpatterns = [
     # Main app page
     url(r'^$', AppView.as_view(), name="app"),
 
@@ -41,4 +41,4 @@ urlpatterns = patterns('',
             'template_name': 'webapp/reset-password-done.html',
         }, name='reset-password-done'
     ),
-)
+]

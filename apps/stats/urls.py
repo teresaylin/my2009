@@ -9,8 +9,8 @@ router.register(r'user-daily', DailyUserStatsViewset)
 router.register(r'taskforce-daily', DailyTaskForceStatsViewset)
 router.register(r'global-daily', DailyGlobalStatsViewset)
 
-urlpatterns = patterns('',
+urlpatterns = [
     url(r'^tasks/$', TaskStatsView.as_view(), name='task-stats'),
 
     url(r'', include(router.urls)),
-)
+]
