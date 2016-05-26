@@ -64,3 +64,10 @@ LOGGING = {
         }
     }
 }
+
+# Django-RT
+RT_REDIS_HOST = redis_url.hostname
+RT_REDIS_PORT = redis_url.port
+RT_REDIS_PASSWORD = redis_url.password
+RT_SSE_HEARTBEAT = 5
+RT_COURIER_IPS = ['127.0.0.1', '0.0.0.0']

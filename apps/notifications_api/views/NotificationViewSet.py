@@ -4,10 +4,11 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from notifications.models import Notification
+from django_rt.views import RtResourceView
 
 from ..serializers import NotificationSerializer
 
-class NotificationViewSet(mixins.RetrieveModelMixin, mixins.DestroyModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
+class NotificationViewSet(RtResourceView, mixins.RetrieveModelMixin, mixins.DestroyModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Notification.objects.all()
     serializer_class = NotificationSerializer
     ordering = '-timestamp'
@@ -37,3 +38,9 @@ class NotificationViewSet(mixins.RetrieveModelMixin, mixins.DestroyModelMixin, m
         notification.unread = True
         notification.save()
         return Response({})
+
+    def rt_get_permission(self, action, request):
+        return request.user.is_authenticated()
+
+    def rt_get_channel(self, request):
+        return '%s$%d' % (self.rt_get_path(request), request.user.id)
