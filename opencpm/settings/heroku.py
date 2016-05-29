@@ -1,6 +1,7 @@
 from .prod import *
 
 import os
+from urllib.parse import urlparse
 
 # Parse database configuration from $DATABASE_URL
 import dj_database_url
@@ -66,6 +67,7 @@ LOGGING = {
 }
 
 # Django-RT
+redis_url = urlparse(os.environ.get('REDISCLOUD_URL'))
 RT_REDIS_HOST = redis_url.hostname
 RT_REDIS_PORT = redis_url.port
 RT_REDIS_PASSWORD = redis_url.password
