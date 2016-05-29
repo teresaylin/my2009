@@ -132,7 +132,6 @@ chat.controller('ChatRoomStateCtrl', function($scope, $stateParams, $modal, Chat
     function processNewMsg(msg) {
         // Add msg to list
         $scope.messages.push(msg);
-        scrollToBottom();
 
         if(msg.msg_type == 'join' || msg.msg_type == 'part') {
             // Refresh user list
