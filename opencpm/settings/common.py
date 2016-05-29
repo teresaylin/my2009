@@ -20,6 +20,10 @@ TEMPLATE_CONTEXT_PROCESSORS = TCP + [
     'django.core.context_processors.request',
 ]
 
+TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR, 'templates'),
+)
+
 # Application definition
 
 INSTALLED_APPS = (
