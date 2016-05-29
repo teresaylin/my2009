@@ -1,0 +1,22 @@
+<h1>Chat</h1>
+
+<h2>Rooms</h2>
+<ul class="list-group">
+    <li class="list-group-item" ng-repeat="room in rooms">
+        <div class="pull-right">
+            <button class="btn btn-xs btn-warning" ng-click="partRoom(room)">
+                <span class="fa fa-close"></span>
+            </button>
+            <button class="btn btn-xs btn-primary" ng-if="room._permissions.update" ng-click="editRoom(room)">
+                <span class="fa fa-pencil"></span>
+            </button>
+            <button class="btn btn-xs btn-danger" ng-if="room._permissions.delete" ng-click="deleteRoom(room)">
+                <span class="fa fa-trash"></span>
+            </button>
+        </div>
+        <a ui-sref="chat.room({name: room.name})">
+            {{ room.name|roomName }}: {{ room.title }}
+        </a>
+    </li>
+</ul>
+<button class="btn btn-success" ng-click="newRoom()">New room</button>

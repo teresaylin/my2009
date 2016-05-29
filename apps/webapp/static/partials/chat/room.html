@@ -1,0 +1,76 @@
+<h1>{{ room.name|roomName }}</h1>
+<p>
+    {{ room.title }}
+</p>
+
+<div class="row mt">
+    <div class="col-md-9">
+        <ol class="list-unstyled chat-messages">
+            <li ng-repeat="msg in messages">
+                <span class="chat-message-time text-muted">
+                    {{ msg.time|date:'short' }}
+                </span>
+                <span ng-if="msg.msg_type == 'msg'">
+                    <b>{{ msg.user_fullname }}</b>: {{ msg.content }}
+                </span>
+                <span class="chat-message-action" ng-if="msg.msg_type != 'msg'">
+                    <b>{{ msg.user_fullname }}</b> {{ msg.content }}
+                </span>
+            </li>
+        </ol>
+
+        <form ng-submit="postMessage(newMessageContent); newMessageContent = ''">
+            <input class="form-control" type="text" ng-model="newMessageContent"></input>
+            <button class="btn btn-sm btn-primary"
+                ng-disabled="!newMessageContent">
+            Send</button>
+        </form>
+    </div>
+
+    <div class="col-md-3 ds">
+        <h3 class="bg-team">Users</h3>
+        <div class="desc" ng-repeat="roomUser in room.room_users | orderBy:['-is_online', 'last_name']">
+            <div class="thumb">
+                <img class="img-circle" height="40" user-picture="roomUser.user" size="small">
+            </div>
+            <div class="details">
+                <div class="pull-right" ng-if="room._permissions.update">
+                    <button class="btn btn-xs btn-danger" ng-click="removeUser(roomUser.user)">
+                        <span class="fa fa-close"></span>
+                    </button>
+                </div>
+                <p>
+                    <a ui-sref="users.detail({ userId: roomUser.user.id })" ng-class="roomUser.status == 'oper' ? 'text-warning' : ''">
+                        {{ roomUser.user.full_name }}
+                    </a><br/>
+                    <span class="text-success" ng-if="roomUser.user.is_online">
+                        <span class="fa fa-circle"></span>
+                        Online
+                    </span>
+                    <span class="text-muted" ng-if="!roomUser.user.is_online">
+                        <span class="fa fa-circle-o"></span>
+                        Offline
+                    </span>
+                </p>
+            </div>
+        </div>
+
+        <div ng-if="room._permissions.update">
+            <form class="form-inline">
+                <user-picker user="addingUser"></user-picker>
+                <button class="btn btn-sm btn-primary"
+                    ng-click="addUser(addingUser); addingUser = null"
+                    ng-disabled="!addingUser">
+                Add user</button>
+            </form> 
+
+            <form class="form-inline">
+                <taskforce-picker taskforce="addingTf"></taskforce-picker>
+                <button class="btn btn-sm btn-primary"
+                    ng-click="addTaskforce(addingTf); addingTf = null"
+                    ng-disabled="!addingTf">
+                Add taskforce</button>
+            </form> 
+        </div>
+    </div>
+</div>

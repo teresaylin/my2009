@@ -13,6 +13,7 @@ from apps.events import views as eventViews
 from apps.tasks import views as taskViews
 from apps.notifications_api import views as notificationsViews
 
+from apps.chat import urls as chatUrls
 from apps.webapp import urls as webappUrls
 from apps.files import urls as filesUrls
 from apps.stats import urls as statsUrls
@@ -44,6 +45,7 @@ urlpatterns = [
     url(r'^app/', include(webappUrls, namespace='webapp')),
     
     # API
+    url(r'^api/chat/', include(chatUrls, namespace='chat')),
     url(r'^api/files/', include(filesUrls, namespace='files')),
     url(r'^api/stats/', include(statsUrls, namespace='stats')),
     url(r'^api/', include(router.urls)),

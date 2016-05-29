@@ -561,4 +561,12 @@ ul.customfilter-tree li.spacer {
   margin: 2px 16px;
   border-bottom: 1px solid #ddd; }
 
+/*---------- Chat ----------*/
+.chat-messages {
+  height: 60vh;
+  overflow-y: scroll; }
+
+.chat-message-action {
+  font-style: italic; }
+
 /*# sourceMappingURL=app.css.map */

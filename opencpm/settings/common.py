@@ -33,6 +33,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'notifications',
 
+    'apps.chat',
     'apps.courses',
     'apps.events',
     'apps.files',
@@ -115,6 +116,7 @@ PIPELINE = {
         'app': {
             'source_filenames': (
               'js/app/app.js',
+              'js/app/chat.js',
               'js/app/custom_filter.js',
               'js/app/events.js',
               'js/app/files.js',
