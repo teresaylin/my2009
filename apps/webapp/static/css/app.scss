@@ -627,6 +627,14 @@ ul.customfilter-tree {
 
 /*---------- Chat ----------*/
 
+.chat-roomlist-notinroom {
+    background-color: #eee;
+
+    a {
+        color: #728596;
+    }
+}
+
 .chat-messages {
     height: 60vh;
     overflow-y: scroll;

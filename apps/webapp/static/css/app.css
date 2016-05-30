@@ -562,6 +562,11 @@ ul.customfilter-tree li.spacer {
   border-bottom: 1px solid #ddd; }
 
 /*---------- Chat ----------*/
+.chat-roomlist-notinroom {
+  background-color: #eee; }
+  .chat-roomlist-notinroom a {
+    color: #728596; }
+
 .chat-messages {
   height: 60vh;
   overflow-y: scroll; }

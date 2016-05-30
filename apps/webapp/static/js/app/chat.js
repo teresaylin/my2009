@@ -92,6 +92,20 @@ chat.controller('ChatStateCtrl', function($scope, NavFilterService, ChatRoomRepo
         ChatRoomRepository.list({ team: navTeam.id })
             .success(function(data) {
                 $scope.rooms = data;
+
+                // Flag rooms that user has joined
+                function update(user) {
+                    angular.forEach($scope.rooms, function(room) {
+                        room._inRoom = _.contains(_.map(room.room_users, function(ru) { return ru.user.id; }), user.id);
+                    });
+                } 
+                if('currentUser' in $scope && $scope.currentUser) {
+                    update($scope.currentUser);
+                } else {
+                    $scope.$on('gotCurrentUser', function(event, user) {
+                        update(user);
+                    });
+                }
             });
     }
     getRoomList();
@@ -139,10 +153,25 @@ chat.controller('ChatRoomStateCtrl', function($scope, $stateParams, $modal, Chat
         }
     }
 
+    function updateInRoom() {
+        function update(user) {
+            $scope.inRoom = _.contains(_.map($scope.room.room_users, function(ru) { return ru.user.id; }), user.id);
+        } 
+
+        if('currentUser' in $scope && $scope.currentUser) {
+            update($scope.currentUser);
+        } else {
+            $scope.$on('gotCurrentUser', function(event, user) {
+                update(user);
+            });
+        }
+    }
+
     function updateRoom() {
         return ChatRoomRepository.get(roomName)
             .success(function(data) {
                 $scope.room = data;
+                updateInRoom();
             });
     }
 

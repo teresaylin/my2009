@@ -1,10 +1,11 @@
 <h1>Chat</h1>
 
 <h2>Rooms</h2>
+<p ng-if="rooms.length == 0">You are not a member of any chat rooms in this team.</p>
 <ul class="list-group">
-    <li class="list-group-item" ng-repeat="room in rooms">
+    <li class="list-group-item" ng-repeat="room in rooms" ng-class="{'chat-roomlist-notinroom' : !room._inRoom}">
         <div class="pull-right">
-            <button class="btn btn-xs btn-warning" ng-click="partRoom(room)">
+            <button class="btn btn-xs btn-warning" ng-if="room._inRoom" ng-click="partRoom(room)">
                 <span class="fa fa-close"></span>
             </button>
             <button class="btn btn-xs btn-primary" ng-if="room._permissions.update" ng-click="editRoom(room)">
