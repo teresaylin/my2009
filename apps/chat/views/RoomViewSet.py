@@ -22,6 +22,7 @@ from ..serializers import RoomSerializer, RoomMessageSerializer
 class RoomViewSet(viewsets.ModelViewSet):
     queryset = Room.objects.all()
     lookup_field = 'name'
+    filter_fields = ('team',)
     serializer_class = RoomSerializer
     
     def get_queryset(self):
