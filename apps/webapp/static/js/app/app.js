@@ -4,6 +4,7 @@ var app = angular.module('app', [
     'ui.indeterminate',
     'ui.calendar',
     
+    'chat',
     'customFilter',
     'events',
     'files',

@@ -1,6 +1,7 @@
 from django.db.models import Q
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.models import User
+from apps.chat.models import Room, RoomMessage, RoomUser
 from apps.courses.models import Course
 from apps.events.models import Event
 from apps.tasks.models import Task
@@ -35,6 +36,15 @@ def filterQueryset(queryset, user):
     elif cls == Role:
         # Roles visible to all users
         return queryset
+    elif cls == Room:
+        # Only show rooms user is a member of
+        return queryset.filter(users=user)
+    elif cls == RoomMessage:
+        # Only show messages sent to rooms that the user is a member of
+        return queryset.filter(room__in=user.chat_rooms.all())
+    elif cls == RoomUser:
+        # Only show users of rooms that the user is a member of
+        return queryset.filter(room__in=user.chat_rooms.all())
     elif cls == Task:
         # Only show tasks belonging to user's teams
         return queryset.filter(owner__teams__in=user.teams.all())
@@ -110,6 +120,21 @@ def getUserPermissions(user, cls):
     elif cls == Milestone:
         # Users can see milestones
         perms['read'] = True
+    elif cls == Room:
+        # Users can create/read/update/delete rooms
+        perms['create'] = True
+        perms['read'] = True
+        perms['update'] = True
+        perms['delete'] = True
+    elif cls == RoomMessage:
+        # Users can't update or delete messages
+        perms['create'] = True
+        perms['read'] = True
+    elif cls == RoomUser:
+        # Users can't create RoomUser objects directly
+        perms['read'] = True
+        perms['update'] = True
+        perms['delete'] = True
     elif cls == Role:
         # Users can see roles
         perms['read'] = True
@@ -189,6 +214,15 @@ def getUserObjectPermissions(user, obj, request=None):
         if obj.owner == user:
             perms['update'] = True
             perms['delete'] = True
+    elif cls == Room:
+        # Room owner has full permissions
+        if obj.owner == user:
+            perms['update'] = True
+            perms['delete'] = True
+
+        # Room operators have update permission
+        if user in obj.roomuser_set.filter(status=RoomUser.OPER):
+            perms['update'] = True
     elif cls == Task:
         # Inherit parent task permissions
         if obj.parent:

@@ -153,6 +153,11 @@
                         <span class="fa fa-folder"></span> <span>Files</span>
                     </a>
                 </li>
+                <li>
+                    <a ui-sref="chat" ng-class="{ active: stateName == 'chat' }">
+                        <span class="fa fa-comments"></span> <span>Chat</span>
+                    </a>
+                </li>
                 {% if perms.stats.can_view_stats %}
                 <li>
                     <a ui-sref="stats" ng-class="{ active: stateName == 'stats' }">

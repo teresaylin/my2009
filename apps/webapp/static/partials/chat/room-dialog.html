@@ -1,0 +1,27 @@
+<div class="modal-header">
+    <h3 class="modal-title" ng-if="!creating">Edit room</h3>
+    <h3 class="modal-title" ng-if="creating">New room</h3>
+</div>
+<div class="modal-body">
+    <form name="form">
+        <fieldset>
+            <label for="room-name">
+                Name
+            </label>
+            <div class="input-group">
+                <div class="input-group-addon">#</div>
+                <input id="room-name" type="text" class="form-control" placeholder="my-room" maxlength="50" required ng-model="room.name">
+            </div>
+            <label for="room-title">
+                Title
+            </label>
+            <input id="room-title" type="text" class="form-control" placeholder="My Room Title" maxlength="200" required ng-model="room.title">
+        </fieldset>
+    </form>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-danger" ng-click="delete()" ng-if="room._permissions.delete && !creating">Delete</button>
+    <button class="btn btn-primary" ng-click="update(form)" ng-disabled="form.$invalid || !form.$dirty" ng-if="!creating">Save</button>
+    <button class="btn btn-primary" ng-click="create(form)" ng-disabled="form.$invalid" ng-if="creating">Create</button>
+    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>
